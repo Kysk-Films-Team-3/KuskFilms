@@ -15,8 +15,8 @@
   "offlineSessionMaxLifespanEnabled": false,
   "offlineSessionMaxLifespan": 5184000,
 
-  "loginTheme": "base",
-  "accountTheme": "base",
+  "loginTheme": "KYSKfilms",
+  "accountTheme": "KYSKfilms",
   "adminTheme": "base",
   "emailTheme": "base",
 
