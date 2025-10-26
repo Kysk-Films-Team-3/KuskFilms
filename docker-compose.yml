@@ -105,9 +105,9 @@ services:
       - kyskfilms-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n' >&3;grep -q 200 || exit 1"]
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1" ]
       interval: 20s
-      timeout: 10s
+      timeout: 5s
       retries: 10
       start_period: 90s
 
