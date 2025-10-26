@@ -1,0 +1,443 @@
+{
+  "home": {
+    "errorLoading": "Error",
+    "nav": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+
+    "categoryRemove": "Remove category"
+  },
+
+  "category": {
+    "Фільми": "Films",
+    "Серіали": "Series",
+    "Спорт": "Sports",
+    "Мультфільми": "Cartoons",
+    "Документальне": "Documentary",
+    "Інтерв'ю": "Interview",
+    "Відеокурси": "Video Courses",
+    "Лекції": "Lectures",
+    "Фантастика": "Fantasy",
+    "Ужаси": "Horror",
+    "Подкасти": "Podcasts",
+    "Мюзикли": "Musicals",
+    "Природа": "Nature"
+  },
+
+  "homeContent": {
+    "categoryLabel": "{{category}}"
+  },
+
+
+  "slide": {
+    "new1": "New",
+    "filmname1": "Superman",
+    "genre1": "• Action, fantasy, adventure",
+    "time1": "• 2h 9m",
+    "new2": "New",
+    "filmname2": "Fantastic Four",
+    "genre2": "• Action/Science Fiction",
+    "time2": "• 1h 55m",
+    "new3": "New",
+    "filmname3": "Squid game",
+    "genre3": "• Survival, action, thriller, drama",
+    "time3": "• 1h",
+    "new4": "New",
+    "filmname4": "Wensday",
+    "genre4": "• Horror, drama, thriller, detective",
+    "time4": "• 45m"
+  },
+
+
+
+"header": {
+    "nav": {
+      "home": "Home",
+      "catalog": "Catalog",
+      "tvShows": "TV Shows",
+      "newAndPopular": "New & Popular",
+      "favorites": "Favorites"
+    },
+
+    "search": {
+      "placeholder": "Movie, series, actor, director"
+    },
+
+    "premium": "Get Premium",
+    "promo": "Enter promo code",
+    "login": "Login",
+    "dropdown": {
+      "manageProfile": "Manage Profile",
+      "settings": "Settings"
+    }
+  },
+
+  "premium": {
+    "backToSettings": "To Settings",
+    "backToHome": "To Home",
+    "confirmSelection": "Confirm Selection",
+    "premium": "Premium",
+    "features": {
+      "moviesCount": "Over",
+      "movies": "movies, series and cartoons",
+      "catalog": "Viju & Paramount movies and series catalog",
+      "parentControl": "Parental control",
+      "offline": "Download and watch offline"
+    },
+
+    "subscribe": "Subscribe"
+  },
+
+  "settings": {
+    "backToHome": "To Home",
+    "mySubscriptions": "My Subscriptions",
+    "premium": "Premium",
+    "connect": "Connect",
+    "paymentMethod": "Payment Method",
+    "add": "Add",
+    "devices": "Devices",
+    "childProtection": "Child Protection",
+    "childProtectionEnabled": "Child Protection Enabled",
+    "childProtectionDisabled": "Child Protection Disabled",
+    "childProtectionSubtitle": "Children can make purchases, switch to adult profile and access Settings",
+    "sport": "Sport",
+    "showResults": "Show Results",
+    "logout": "Logout"
+  },
+
+  "footer": {
+    "needHelp": "Need help?",
+    "kysk": "Kysk",
+    "aboutUs": "About Us",
+    "careers": "Careers at Kysk",
+    "agents": "Kysk Agents",
+    "help": "Help",
+    "faq": "FAQ",
+    "devices": "Device List",
+    "distributors": "For Distributors",
+    "contacts": "Contacts",
+    "other": "Other",
+    "offers": "Offers & Promotions",
+    "logoAlt": "Kysk Logo",
+    "companyName": "Kysk LLC",
+    "freeChannels": "National channels available for free 24/7",
+    "softwareRegistry": "Kysk LLC software is listed in the domestic software registry",
+    "terms": "User Agreement",
+    "privacy": "Privacy Policy",
+    "rules": "Recommendation technologies are applied on this platform according to the Rules"
+  },
+
+  "payment": {
+    "backToSettings": "To Settings",
+    "title": "Payment",
+    "accountInfo": "Account Information",
+    "accountNumberLabel": "Kysk Account Number",
+    "balance": "Balance",
+    "cards": "Bank Cards",
+    "newCard": "New Card",
+    "addCard": "Add Card",
+    "copied": "Copied!"
+  },
+
+  "device": {
+    "backToSettings": "To Settings",
+    "title": "Devices",
+    "description": "You can connect up to five devices to your Kysk account. Start watching on one device and continue on another.",
+    "device": "Device",
+    "addDevice": "Add TV"
+  },
+
+  "logout": {
+    "confirmMessage": "Are you sure you want to log out of your<br/>account?",
+    "description": "Your account will be removed from this device. You will need to log in again<br/>for access to recommendations, watch history<br/>and subscription management",
+    "cancel": "Stay",
+    "exit": "Logout"
+  },
+
+  "login": {
+    "title": "Login",
+    "emailOrPhone": "Email or mobile phone",
+    "password": "Password",
+    "loginButton": "Login",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
+    "firstTime": "First time on KYSKFilms?",
+    "register": "Create your KYSK account.",
+    "terms": "By continuing, you agree to KYSK",
+    "termsLink": "Terms of Use",
+    "privacyNotice": "Please see our",
+    "privacyLink": "Privacy Notice,",
+    "cookiesLink": "Cookies & Interest-Based Ads notice.",
+    "emailError": "Please enter a valid email address or phone number.",
+    "passwordError": "Your password must be between 4 and 60 characters.",
+    "loginError": "Error trying to log in"
+  },
+
+  "registration": {
+    "title": "Registration",
+    "subtitle": "Ready to watch? Enter your email or mobile phone to create an account.",
+    "emailOrPhone": "Email or mobile phone",
+    "startButton": "Get Started",
+    "rememberMe": "Remember me",
+    "terms": "By continuing, you agree to KYSK",
+    "termsLink": "Terms of Use",
+    "privacyNotice": "Please see our",
+    "privacyLink": "Privacy Notice",
+    "cookiesLink": "Cookies & Interest-Based Ads notice.",
+    "emailError": "Please enter a valid email address or phone number.",
+    "registrationError": "Registration error",
+    "serverError": "Error connecting to the server"
+  },
+
+  "sendCode": {
+    "checkMailbox": "Check your mailbox or messages",
+    "description": "To continue, complete this verification step.<br/>We sent a one-time password to your email {{email}}.<br/>Please enter it below.",
+    "continue": "Continue",
+    "resend": "Resend code",
+    "invalidCode": "Invalid code",
+    "testCode": "Test code: "
+  },
+
+  "verifyCode": {
+    "title": "Reset password",
+    "description": "To continue, please complete this verification step.<br/>We have sent a one-time password to {{email}}.<br/>Please enter it below.",
+    "submit": "Continue",
+    "resend": "Resend code",
+    "invalidCode": "Невірний код",
+    "testCode": "Тестовий код: "
+  },
+
+  "createPassword": {
+    "title": "Create a password to start membership",
+    "subtitle": "Just a few more steps and you’re ready!<br/>We also hate paperwork.",
+    "passwordLabel": "Password",
+    "nextButton": "Next",
+    "noList": "Please do not send me emails with KYSK special offers",
+    "passwordError": "Password must be between 4 and 60 characters",
+    "emailRequired": "Please verify your email or phone first",
+    "serverError": "Error creating password"
+  },
+
+  "forgot": {
+    "title": "Reset Password",
+    "description": "Enter your email address or phone number associated with your account to continue.<br/>We will send you a verification code to reset your password.",
+    "emailOrPhone": "Email or mobile phone",
+    "submit": "Continue",
+    "emailError": "Please enter a valid email address or phone number",
+    "generalError": "An error occurred. Please try again."
+  },
+
+  "registrationComplete": {
+    "title": "Account Created",
+    "subtitle": "Use this email to access your account:<br/>{{email}}",
+    "button": "Next"
+  },
+
+  "forgotComplete": {
+    "title": "Account Restored",
+    "subtitle": "Use this email to access your account:<br/>{{email}}",
+    "button": "Continue"
+  },
+
+  "newPassword": {
+    "title": "Create a new password",
+    "subtitle": "To continue, create a new password that is not your current one",
+    "passwordLabel": "New password",
+    "confirmPasswordLabel": "Confirm new password",
+    "submit": "Continue",
+    "passwordError": "Password must be between 4 and 60 characters",
+    "mismatchError": "Passwords do not match",
+    "emailRequired": "Please verify your email/phone first",
+    "sameAsCurrent": "New password cannot be the same as current",
+    "serverError": "An error occurred. Please try again."
+  },
+
+  "actors": {
+    "Джейсон Стетхем": "Jason Statham",
+    "Леонардо Ді Капріо": "Leonardo DiCaprio",
+    "Марго Роббі": "Margot Robbie",
+    "Роберт Паттінсон": "Robert Pattinson"
+  },
+
+  "actorRoles": {
+    "Актор": "Actor",
+    "Актриса": "Actress"
+  },
+
+  "searchFrequently": "Frequently searched",
+
+  "trailer": {
+    "title": "Deadpool",
+    "genre": "•  Action, Comedy, Adventure, Superhero",
+    "description": "Wade Wilson gets involved with the ime Variance Authority,  forcing him <br/>to return as his alter ego Deadpool and rewrite history <br/> with Wolverine.",
+    "details": "More details"
+  },
+
+  "trailerMenu": {
+    "funny": "Laugh",
+    "relax": "Relax",
+    "sad": "Feel Sad",
+    "romance": "Romance",
+    "thrill": "Thrill",
+    "excite": "Get Inspired",
+    "surprise": "Surprise",
+    "scare": "Scare Yourself"
+  },
+  "watchMode": {
+    "alone": "Alone",
+    "together": "Together",
+    "group": "In a group",
+    "family": "With family"
+  },
+  "ad": {
+    "newSeason": "New Season",
+    "title": "Wednesday",
+    "genre": "Horror, Drama, Thriller, Detective",
+    "duration": "45m",
+    "description": "Wednesday, daughter of Gomez and Morticia Addams, studies at Nevermore Academy.<br/> She must master her extrasensory abilities to stop a local <br/>serial killer and uncover her parents' mystery.",
+    "premiumButton": "Get Premium"
+  },
+  "stars": {
+    "title": "Stars Recommend",
+    "collection": "Collection",
+    "watch": "Watching",
+    "actors": {
+      "statham": "Jason Statham",
+      "garfield": "Andrew Garfield",
+      "cage": "Nicolas Cage",
+      "downey": "Robert Downey Jr."
+    }
+  },
+  "recommendations": {
+    "fromActor": "Recommendations from",
+    "quotes": {
+      "statham": "Plays by his own rules — and always looks a million bucks.",
+      "garfield": "Always in the spotlight and spreads smiles.",
+      "cage": "Doesn't fear taking risks and amazes everyone.",
+      "downey": "Masterfully combines charisma and talent."
+    }
+  },
+  "subcategories": {
+    "new-series": "New series",
+    "cartoons-liked": "Cartoons you will like",
+    "drama": "Drama",
+    "true-story": "Based on true events",
+    "sports-docs": "Sports films",
+    "doc-history": "Historical",
+    "talks": "Famous interviews",
+    "courses-it": "IT courses",
+    "lectures-science": "Science lectures",
+    "sci-fi": "Sci-fi adventures",
+    "horror-classics": "Classic horror",
+    "popular-podcasts": "Popular podcasts",
+    "broadway": "Broadway",
+    "nature-docs": "Nature films",
+    "crime": "Crime detective"
+  },
+
+  "films": {
+    "1": {"rating":"8.0","linedate":"2021-2025","line1":"• South","line2":"Korea • Survival","season":"3 seasons"},
+    "2": {"rating":"9.2","linedate":"2025","line1":"• USA •","line2":"Drama","season":"1 season"},
+    "3": {"rating":"8.0","linedate":"2022-2025","line1":"• USA • Horror","line2":"","season":"2 seasons"},
+    "4": {"rating":"6.8","linedate":"2025","line1":"• USA • Horror","line2":"","season":"1 season"},
+    "5": {"rating":"6.2","linedate":"2025","line1":"• USA • Historical","line2":"","season":"1 season"},
+    "6": {"rating":"7.3","linedate":"2025","line1":"• USA • Thriller","line2":"","season":"1 season"},
+    "7": {"rating":"7.3","linedate":"2021-2025","line1":"• USA • Crime","line2":"","season":"1 season"},
+    "8": {"rating":"7.6","linedate":"2021-2025","line1":"• South Korea •","line2":"Drama","season":"1 season"},
+    "9": {"rating":"8.0","linedate":"2021-2025","line1":"• UK •","line2":"Military","season":"1 season"},
+    "10":{"rating":"6.9","linedate":"2021-2025","line1":"• USA • Drama","line2":"","season":"1 season"},
+    "11":{"rating":"6.5","linedate":"2017","line1":"• USA • Detective","line2":"","season":""},
+    "12":{"rating":"7.8","linedate":"2022","line1":"• USA • Action","line2":"","season":""},
+    "13":{"rating":"5.7","linedate":"2025","line1":"• USA • Drama","line2":"","season":""},
+    "14":{"rating":"8.6","linedate":"1991","line1":"• USA • Crime","line2":"","season":""},
+    "15":{"rating":"5.6","linedate":"2025","line1":"• USA • Crime","line2":"","season":""},
+    "16":{"rating":"6.6","linedate":"2023","line1":"• USA • Horror","line2":"","season":""},
+    "17":{"rating":"6.5","linedate":"2023","line1":"• USA • Thriller","line2":"","season":""},
+    "18":{"rating":"6.5","linedate":"2023","line1":"• USA • Drama","line2":"","season":""},
+    "19":{"rating":"6.8","linedate":"2022","line1":"• UK •","line2":"Action","season":""},
+    "20":{"rating":"6.6","linedate":"2022","line1":"• USA •","line2":"Documentary","season":""},
+    "21":{"rating":"8.9","linedate":"2012","line1":"• USA • Comedy","line2":"","season":"2 seasons"},
+    "22":{"rating":"9.0","linedate":"2013-2025","line1":"• USA •","line2":"Comedy","season":"8 seasons"},
+    "23":{"rating":"7.7","linedate":"2025","line1":"• USA • Fantasy","line2":"","season":""},
+    "24":{"rating":"9.0","linedate":"2021-2024","line1":"• USA •","line2":"Fantasy","season":"2 seasons"},
+    "25":{"rating":"7.1","linedate":"2012","line1":"• USA • Fantasy","line2":"","season":""},
+    "26":{"rating":"7.9","linedate":"2024","line1":"• Latvia • Adventure","line2":"","season":""},
+    "27":{"rating":"7.6","linedate":"2016","line1":"• USA • Fantasy","line2":"","season":""},
+    "28":{"rating":"8.0","linedate":"2004","line1":"• USA •","line2":"Action","season":""},
+    "29":{"rating":"7.3","linedate":"2021-2024","line1":"• USA •","line2":"Fantasy","season":"3 seasons"},
+    "30":{"rating":"7.6","linedate":"2008","line1":"• USA •","line2":"Action","season":"1 season"},
+    "31":{"rating":"8.8","linedate":"1999","line1":"• USA •","line2":"Drama","season":""},
+    "32":{"rating":"9.3","linedate":"1994","line1":"• USA •","line2":"Drama","season":""},
+    "33":{"rating":"7.9","linedate":"2025","line1":"• USA •","line2":"Fantasy","season":""},
+    "34":{"rating":"7.7","linedate":"2022-2025","line1":"• USA •","line2":"Fantasy","season":"2 seasons"},
+    "35":{"rating":"5.3","linedate":"2021","line1":"• France •","line2":"Horror","season":""},
+    "36":{"rating":"7.3","linedate":"2025","line1":"• USA • Action","line2":"","season":""},
+    "37":{"rating":"8.2","linedate":"2013","line1":"• USA • Drama","line2":"","season":""},
+    "38":{"rating":"7.6","linedate":"2019","line1":"• USA • Drama","line2":"","season":""},
+    "39":{"rating":"8.5","linedate":"2011","line1":"• France • Drama","line2":"","season":""},
+    "40":{"rating":"8.2","linedate":"2018","line1":"• USA • Drama","line2":"","season":""},
+    "41":{"rating":"8.3","linedate":"2023","line1":"• USA •","line2":"Biographical","season":""},
+    "42":{"rating":"7.9","linedate":"1997","line1":"• USA • Melodrama","line2":"","season":""},
+    "43":{"rating":"6.1","linedate":"2022","line1":"• USA • Drama","line2":"","season":""},
+    "44":{"rating":"7.7","linedate":"2008","line1":"• UK •","line2":"Military","season":""},
+    "45":{"rating":"7.0","linedate":"2015","line1":"• France • Thriller","line2":"","season":""},
+    "46":{"rating":"9.0","linedate":"1993","line1":"• USA • Historical","line2":"","season":""},
+    "47":{"rating":"7.3","linedate":"2004","line1":"• USA • Drama","line2":"","season":""},
+    "48":{"rating":"6.3","linedate":"2023","line1":"• USA • Action","line2":"","season":""},
+    "49":{"rating":"7.8","linedate":"2015","line1":"• USA • Comedy","line2":"","season":""},
+    "50":{"rating":"7.8","linedate":"2017","line1":"• UK •","line2":"Thriller","season":""}
+  },
+
+
+  "filmsactor": {
+    "statham": {
+      "film1": {
+        "linedate": "2017",
+        "line1": "• USA • Detective"
+      },
+      "film2": {
+        "linedate": "2020 ",
+        "line1": "• USA • Thriller",
+        "line2": "Series",
+        "season": "Season 1"
+      },
+      "film3": {
+        "linedate": "2015 ",
+        "line1": "• UK • Action, Crime"
+      },
+      "film4": {
+        "linedate": "2023 ",
+        "line1": "• USA • Adventure, Action",
+        "line2": "Movie"
+      }
+    }
+  },
+
+
+  "tooltip": {
+    "watch": "Watch later",
+    "share": "Share",
+    "dislike": "Dislike"
+  },
+
+  "profile": {
+    "editTitle": "Edit Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nickname": "Nickname",
+    "exit": "Exit",
+    "save": "Save"
+  },
+
+  "favorites": {
+    "title": "Favorite",
+    "empty": "There is no favorite yet"
+  }
+
+}
+
+
+
+
+

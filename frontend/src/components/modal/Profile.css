@@ -1,0 +1,193 @@
+.profile_overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+    box-sizing: border-box;
+}
+
+.profile_modal {
+    font-family: "Raleway", sans-serif;
+    position: relative;
+    background: #262630;
+    border-radius: 20px;
+    width: 1001px;
+    padding: 30px 60px;
+    box-sizing: border-box;
+    color: #F8F8FE;
+    line-height: 1.45;
+    cursor: default;
+    text-align: center;
+    justify-content: center;
+}
+
+.profile_close_icon {
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    position: absolute;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756244998/Close.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+}
+
+.profile_close_icon:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756245190/Close_light_hover.png');
+}
+
+.profile_title {
+    font-weight: 600;
+    font-size: 32px;
+    text-align: center;
+}
+
+.profile_content {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.profile_inputs_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.profile_avatar{
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+    cursor: pointer;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1759336275/Component_183_n8pqr3.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    transition: background-image 0.5s ease;
+}
+
+.profile_avatar:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1759341476/Component_183_1_mcukpz.png');
+}
+
+.profile_input_block {
+    position: relative;
+    width: 100%;
+}
+
+.profile_input {
+    background: #34353F;
+    border: 1px solid #838387;
+    border-radius: 15px;
+    color: #F8F8FE;
+    font-family: "Inter", sans-serif;
+    font-weight: 200;
+    font-size: 16px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    height: 52px;
+    padding: 15px;
+    transition: border-color 0.3s ease, height 0.3s ease, padding-top 0.3s ease;
+}
+
+.profile_input::placeholder {
+    color: transparent;
+}
+
+.profile_input:focus {
+    border-color: #F8F8FE;
+}
+
+.profile_input:focus,
+.profile_input:not(:placeholder-shown) {
+    height: 69px;
+    padding-top: 28px;
+}
+
+.profile_input:focus ~ label,
+.profile_input:not(:placeholder-shown) ~ label {
+    top: 15px;
+    font-size: 12px;
+    color: #9999A1;
+}
+
+.profile_input_block label {
+    position: absolute;
+    left: 15px;
+    top: 18px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #838387;
+    pointer-events: none;
+    transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+    z-index: 1;
+}
+
+.profile_button_block {
+    margin-top: 30px;
+    gap: 15px;
+    display: flex;
+    right: 0;
+    justify-content: flex-end;
+}
+
+.profile_button_save {
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
+    width: 182px;
+    height: 58px;
+    color: #F8F8FE;
+    background: rgba(78, 85, 212, 0.5);
+    font-size: 20px;
+    text-align: center;
+    font-family: inherit;
+    letter-spacing: inherit;
+    font-weight: 600;
+    transition: background-image 0.5s ease;
+    box-sizing: border-box;
+}
+
+.profile_button_save.active{
+    background: #4E55D4;
+    cursor: pointer;
+}
+
+.profile_button_save.active:hover {
+    background: #3429B0;
+}
+
+.profile_button_exit {
+    border: 1px solid transparent;
+    border-radius: 15px;
+    padding: 15px;
+    width: 182px;
+    height: 58px;
+    color: #F8F8FE;
+    background: #34353F;
+    font-size: 20px;
+    text-align: center;
+    font-family: inherit;
+    letter-spacing: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-image 0.5s ease;
+    box-sizing: border-box;
+}
+
+.profile_button_exit:hover {
+    border-color: #4E55D4;
+    background: #34353F;
+}
