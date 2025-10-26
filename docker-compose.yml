@@ -11,7 +11,7 @@ services:
     container_name: kyskfilms-postgres
     environment:
       POSTGRES_USER: kysk_user
-      POSTGRES_PASSWORD: kyskfilms_secure_password_2024
+      POSTGRES_PASSWORD: kyskfilms_secure_password
       PGTZ: UTC
     ports:
       - "5432:5432"
@@ -33,7 +33,7 @@ services:
     container_name: kyskfilms-minio
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin_secure_2024
+      MINIO_ROOT_PASSWORD: minioadmin_secure
     ports:
       - "9000:9000"   # API
       - "9001:9001"   # Web Console
@@ -58,7 +58,7 @@ services:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      mc alias set myminio http://minio:9000 minioadmin minioadmin_secure_2024;
+      mc alias set myminio http://minio:9000 minioadmin minioadmin_secure;
       mc mb --ignore-existing myminio/kyskfilms;
       mc anonymous set download myminio/kyskfilms;
       echo '✓ MinIO bucket kyskfilms created successfully';
@@ -76,11 +76,11 @@ services:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
       KC_DB_USERNAME: kysk_user
-      KC_DB_PASSWORD: kyskfilms_secure_password_2024
+      KC_DB_PASSWORD: kyskfilms_secure_password
 
       # Admin credentials
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin_secure_2024
+      KEYCLOAK_ADMIN_PASSWORD: admin_secure
 
       # Server settings
       KC_HOSTNAME_STRICT: "false"
@@ -127,7 +127,7 @@ services:
       # Database
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kyskfilms_db
       SPRING_DATASOURCE_USERNAME: kysk_user
-      SPRING_DATASOURCE_PASSWORD: kyskfilms_secure_password_2024
+      SPRING_DATASOURCE_PASSWORD: kyskfilms_secure_password
 
       # Keycloak (внутрішні адреси для backend)
       KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
@@ -139,7 +139,7 @@ services:
       # MinIO (S3)
       MINIO_URL: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin_secure_2024
+      MINIO_SECRET_KEY: minioadmin_secure
       MINIO_BUCKET: kyskfilms
       MINIO_REGION: us-east-1
 
