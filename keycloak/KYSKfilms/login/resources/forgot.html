@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>KYSKFilms - Забули пароль?</title>
+    <link rel="stylesheet" href="css/forgot.css">
+    <script src="js/forgot.js" defer></script>
+</head>
+<body class="forgot-page">
+<div class="forgot_page">
+    <div class="forgot_layout">
+        <div class="forgot_title">Скинути пароль</div>
+        <div class="forgot_subtitle">
+            Введіть свою адресу електронної пошти або номер телефону, який ви
+            використовуєте для свого облікового запису, щоб продовжити. Ми надішлемо вам <br />
+            код підтвердження для скидання пароля.
+        </div>
+
+        <form class="forgot_form" id="forgotForm" method="post" action="${url.forgotAction}">
+            <div class="forgot_input_group">
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder=" "
+                        class="forgot_input"
+                        value=""
+                        autocomplete="username"
+                />
+                <label for="username">Адреса електронної пошти або мобільний телефон</label>
+                <div class="forgot_error_text" id="username-client-error" style="display:none;">
+                    <div class="forgot_error_icon"></div>
+                    <span id="username-client-text"></span>
+                </div>
+            </div>
+
+        </form>
+
+        <div class="forgot_block">
+            <button type="button" class="forgot_button disabled" id="forgotBtn" >Продовжити</button>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
