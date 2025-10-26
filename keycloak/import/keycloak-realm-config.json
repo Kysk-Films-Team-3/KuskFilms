@@ -3,6 +3,7 @@
   "enabled": true,
   "displayName": "KYSKFilms",
   "displayNameHtml": "<h2>KYSKFilms</h2>",
+
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -13,6 +14,27 @@
   "offlineSessionIdleTimeout": 2592000,
   "offlineSessionMaxLifespanEnabled": false,
   "offlineSessionMaxLifespan": 5184000,
+
+  "loginTheme": "base",
+  "accountTheme": "base",
+  "adminTheme": "base",
+  "emailTheme": "base",
+
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "uk", "ru"],
+  "defaultLocale": "en",
+
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+
+  "smtpServer": {},
 
   "roles": {
     "realm": [
@@ -61,7 +83,8 @@
         "client.secret.creation.allowed": "false",
         "backchannel.logout.session.required": "true",
         "access.token.format": "jwt",
-        "use.refresh.tokens": "true"
+        "use.refresh.tokens": "true",
+        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:3001/*##https://kyskfilms.com/*"
       },
       "protocolMappers": [
         {
@@ -74,7 +97,8 @@
             "user.attribute": "username",
             "id.token.claim": "true",
             "access.token.claim": "true",
-            "claim.name": "username"
+            "claim.name": "username",
+            "jsonType.label": "String"
           }
         },
         {
@@ -87,7 +111,8 @@
             "user.attribute": "email",
             "id.token.claim": "true",
             "access.token.claim": "true",
-            "claim.name": "email"
+            "claim.name": "email",
+            "jsonType.label": "String"
           }
         },
         {
@@ -100,7 +125,36 @@
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "roles",
-            "multivalued": "true"
+            "multivalued": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "firstName",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "firstName",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "given_name",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "lastName",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "lastName",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "family_name",
+            "jsonType.label": "String"
           }
         }
       ]
@@ -138,10 +192,8 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["USER", "ADMIN", "default-roles-kyskfilms"],
-      "clientRoles": {
-        "kyskfilms-backend": ["admin"]
-      }
+      "realmRoles": ["USER", "ADMIN"],
+      "clientRoles": {}
     },
     {
       "username": "user@kyskfilms.com",
@@ -157,7 +209,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["USER", "default-roles-kyskfilms"],
+      "realmRoles": ["USER"],
       "clientRoles": {}
     }
   ]

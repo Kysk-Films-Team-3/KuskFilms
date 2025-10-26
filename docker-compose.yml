@@ -12,6 +12,7 @@ services:
     environment:
       POSTGRES_USER: kysk_user
       POSTGRES_PASSWORD: kyskfilms_secure_password
+      POSTGRES_DB: postgres
       PGTZ: UTC
     ports:
       - "5432:5432"
@@ -19,7 +20,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kysk_user -d kyskfilms_db"]
+      test: ["CMD-SHELL", "pg_isready -U kysk_user -d postgres && psql -U kysk_user -lqt | cut -d '|' -f 1 | grep -qw kyskfilms_db && psql -U kysk_user -lqt | cut -d '|' -f 1 | grep -qw keycloak_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,12 +68,12 @@ services:
       - kyskfilms-network
     restart: "no"
 
-  # ============ KEYCLOAK (з темами) ============
+  # ============ KEYCLOAK ============
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.0
     container_name: kyskfilms-keycloak
     environment:
-      # Database connection
+      # Database connection (окрема база!)
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
       KC_DB_USERNAME: kysk_user
@@ -91,17 +92,14 @@ services:
 
       # Features
       KC_FEATURES: preview,token-exchange,admin-fine-grained-authz
-    command: start-dev --import-realm
+    command: start-dev
     ports:
       - "8081:8080"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      # Realm configuration (автоматичний імпорт)
-      - ./keycloak/import:/opt/keycloak/data/import:ro
-
-      # Custom themes (твої кастомні теми)
+      # Custom themes
       - ./keycloak/themes:/opt/keycloak/themes:ro
     networks:
       - kyskfilms-network
@@ -112,6 +110,26 @@ services:
       timeout: 10s
       retries: 10
       start_period: 90s
+
+  # ============ KEYCLOAK INIT (імпорт realm) ============
+  keycloak-init:
+    image: curlimages/curl:latest
+    container_name: kyskfilms-keycloak-init
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: admin_secure
+      KEYCLOAK_REALM: kyskfilms
+    volumes:
+      - ./keycloak/keycloak-init.sh:/scripts/keycloak-init.sh:ro
+      - ./keycloak/import:/keycloak/import:ro
+    entrypoint: ["/bin/sh", "/scripts/keycloak-init.sh"]
+    networks:
+      - kyskfilms-network
+    restart: "no"
 
   # ============ BACKEND (Spring Boot) ============
   backend:
@@ -124,7 +142,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       JAVA_OPTS: "-Xmx1024m -Xms512m"
 
-      # Database
+      # Database (окрема база для додатку!)
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kyskfilms_db
       SPRING_DATASOURCE_USERNAME: kysk_user
       SPRING_DATASOURCE_PASSWORD: kyskfilms_secure_password
@@ -156,6 +174,8 @@ services:
       keycloak:
         condition: service_healthy
       minio-init:
+        condition: service_completed_successfully
+      keycloak-init:
         condition: service_completed_successfully
     volumes:
       - ./backend/logs:/app/logs
