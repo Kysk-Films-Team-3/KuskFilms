@@ -1,0 +1,164 @@
+{
+  "realm": "kyskfilms",
+  "enabled": true,
+  "displayName": "KYSKFilms",
+  "displayNameHtml": "<h2>KYSKFilms</h2>",
+  "defaultSignatureAlgorithm": "RS256",
+  "revokeRefreshToken": false,
+  "refreshTokenMaxReuse": 0,
+  "accessTokenLifespan": 300,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespanEnabled": false,
+  "offlineSessionMaxLifespan": 5184000,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "USER",
+        "description": "Regular user role",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "ADMIN",
+        "description": "Administrator role",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "kyskfilms-frontend",
+      "name": "KYSKFilms Frontend",
+      "description": "React frontend application",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://kyskfilms.com"
+      ],
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:3001/*",
+        "https://kyskfilms.com/*"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "frontchannelLogout": true,
+      "attributes": {
+        "oauth2.device.authorization.grant.enabled": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.allowed": "false",
+        "backchannel.logout.session.required": "true",
+        "access.token.format": "jwt",
+        "use.refresh.tokens": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "username",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "username"
+          }
+        },
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "email",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "email"
+          }
+        },
+        {
+          "name": "roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "kyskfilms-backend",
+      "name": "KYSKFilms Backend",
+      "description": "Spring Boot backend service",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "attributes": {
+        "access.token.format": "jwt"
+      }
+    }
+  ],
+
+  "users": [
+    {
+      "username": "admin@kyskfilms.com",
+      "email": "admin@kyskfilms.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["USER", "ADMIN", "default-roles-kyskfilms"],
+      "clientRoles": {
+        "kyskfilms-backend": ["admin"]
+      }
+    },
+    {
+      "username": "user@kyskfilms.com",
+      "email": "user@kyskfilms.com",
+      "firstName": "Test",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["USER", "default-roles-kyskfilms"],
+      "clientRoles": {}
+    }
+  ]
+}
