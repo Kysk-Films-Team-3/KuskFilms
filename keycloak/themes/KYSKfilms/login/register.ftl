@@ -14,8 +14,17 @@
             Готові дивитися? Введіть свою електронну адресу або
             мобільний телефон, щоб створити акаунт.
         </div>
+        <#if message?has_content>
+            <div class="registration_error_text" id="server-error"
+                 style="display: flex; margin-bottom: 16px; text-align: left;">
+                <div class="registration_error_icon"></div>
+                <span>${message.summary}</span>
+            </div>
+        </#if>
+        <form class="registration_form" id="registrationForm"
+              action="${url.registrationAction}"
+              method="post">
 
-        <form class="registration_form" id="registrationForm" onsubmit="return false;">
             <div class="registration_input_block">
                 <input
                         type="text"
@@ -26,14 +35,42 @@
                         value="${(username)!}"
                         autocomplete="username"
                 />
-                <label for="username">Адреса електронної пошти або мобільний телефон</label>
+                <label for="username">Адреса електронної пошти</label>
                 <div class="registration_error_text" id="username-client-error" style="display:none;">
                     <div class="registration_error_icon"></div>
                     <span id="username-client-text"></span>
                 </div>
             </div>
+
+            <div class="registration_input_block">
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder=" "
+                        class="registration_input"
+                        autocomplete="new-password"
+                />
+                <label for="password">Пароль</label>
+            </div>
+
+            <div class="registration_input_block">
+                <input
+                        type="password"
+                        id="password-confirm"
+                        name="password-confirm"
+                        placeholder=" "
+                        class="registration_input"
+                        autocomplete="new-password"
+                />
+                <label for="password-confirm">Підтвердьте пароль</label>
+                <div class="registration_error_text" id="password-confirm-client-error" style="display:none;">
+                    <div class="registration_error_icon"></div>
+                    <span id="password-confirm-client-text"></span>
+                </div>
+            </div>
             <div class="registration_block">
-                <button type="button" id="registerBtn" class="registration_button"   onclick="window.location.href='${url.resourcesPath}/confirm_code.html'">
+                <button type="submit" id="registerBtn" class="registration_button">
                     Почати
                 </button>
             </div>
