@@ -5,5 +5,6 @@ export const keycloak = new Keycloak({
     url: AUTH_URL,
     realm: 'kyskfilms',
     clientId: 'kyskfilms-frontend',
+    clientSecret: '0aZwEU1CtWKVOHfqw5klYJmuEQtRDnHK'
 });
 

@@ -22,15 +22,15 @@ echo "✓ Config file found: $CONFIG_FILE"
 
 # --- Шаг 1: Ожидание Keycloak ---
 echo " Waiting for Keycloak to be ready..."
-for i in $(seq 1 90); do
-    if curl -sf "$KEYCLOAK_URL/realms/master" > /dev/null 2>&1; then
+for i in $(seq 1 30); do
+    if curl -sf "$KEYCLOAK_URL/health/ready" > /dev/null 2>&1; then
         echo "✓ Keycloak is ready"
         break
     fi
-    echo "   Attempt $i/90: Keycloak not ready yet..."
+    echo "   Attempt $i/30: Keycloak not ready yet..."
     sleep 3
-    if [ $i -eq 90 ]; then
-        echo " ERROR: Keycloak did not start within 270 seconds"
+    if [ $i -eq 30 ]; then
+        echo " ERROR: Keycloak did not start within 90 seconds"
         exit 1
     fi
 done

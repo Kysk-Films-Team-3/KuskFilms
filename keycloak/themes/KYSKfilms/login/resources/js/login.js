@@ -36,8 +36,8 @@
 });
 
     function checkFormValidity() {
-    const emailValid = emailRe.value.length >= 4;
-    const passwordValid = passwordEl.value.length >= 4;
+        const emailValid = usernameEl.value.length >= 4;
+        const passwordValid = passwordEl.value.length >= 4;
     const valid = emailValid && passwordValid;
 
     submitBtn.classList.toggle('valid', valid);

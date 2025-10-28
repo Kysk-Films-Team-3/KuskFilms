@@ -1,61 +1,149 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Находим основные элементы формы
     const form = document.getElementById('registrationForm');
     const usernameEl = document.getElementById('username');
     const passwordEl = document.getElementById('password');
     const passwordConfirmEl = document.getElementById('password-confirm');
-    const submitBtn = document.getElementById('registerBtn');
 
-    // Регулярное выражение для проверки email
+    const submitBtn = document.getElementById('registerBtn');
+    const rememberCheckbox = document.getElementById('rememberCheckbox');
+    const rememberInput = document.getElementById('rememberMeInput');
+
+    const usernameError = document.getElementById('username-client-error');
+    const usernameErrorText = document.getElementById('username-client-text');
+    const passwordConfirmError = document.getElementById('password-confirm-client-error');
+    const passwordConfirmErrorText = document.getElementById('password-confirm-client-text');
+
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Функция для проверки, что все поля валидны и можно активировать кнопку
-    function checkFormValidity() {
-        const isEmailValid = emailRe.test(usernameEl.value.trim());
-        const isPasswordValid = passwordEl.value.length > 0;
-        const doPasswordsMatch = passwordEl.value === passwordConfirmEl.value;
+    const savedUsername = localStorage.getItem('lastUsername');
+    const savedRemember = localStorage.getItem('rememberMe');
 
-        const isFormValid = isEmailValid && isPasswordValid && doPasswordsMatch;
+    if (savedUsername) usernameEl.value = savedUsername;
+    if (savedRemember === 'true') {
+        rememberCheckbox.classList.add('registration_checked');
+        if (rememberInput) rememberInput.value = 'true';
+    }
 
-        // Включаем или выключаем кнопку в зависимости от валидности формы
-        submitBtn.disabled = !isFormValid;
-        if (isFormValid) {
-            submitBtn.classList.add('valid');
-            submitBtn.classList.remove('disabled');
+    rememberCheckbox.addEventListener('click', () => {
+        rememberCheckbox.classList.toggle('registration_checked');
+        const isChecked = rememberCheckbox.classList.contains('registration_checked');
+        if (rememberInput) rememberInput.value = isChecked ? 'true' : 'false';
+    });
+
+    function isEmailValid() {
+        return emailRe.test(usernameEl.value.trim());
+    }
+
+    function arePasswordsValid() {
+        const password = passwordEl.value;
+        const passwordConfirm = passwordConfirmEl.value;
+
+        if (password.length === 0 && passwordConfirm.length === 0) {
+            hidePasswordError();
+            return false;
+        }
+
+        if (password === passwordConfirm) {
+            hidePasswordError();
+            return true;
         } else {
-            submitBtn.classList.add('disabled');
-            submitBtn.classList.remove('valid');
+            if (password.length > 0 && passwordConfirm.length > 0) {
+                showPasswordError('Паролі не співпадають.');
+            }
+            return false;
         }
     }
 
-    // Добавляем слушатели на ввод в каждое поле, чтобы проверять валидность "на лету"
-    usernameEl.addEventListener('input', checkFormValidity);
-    passwordEl.addEventListener('input', checkFormValidity);
-    passwordConfirmEl.addEventListener('input', checkFormValidity);
+    function checkFormValidity() {
+        const emailValid = isEmailValid();
+        const passwordsValid = (passwordEl.value.length > 0 && passwordConfirmEl.value.length > 0 && passwordEl.value === passwordConfirmEl.value);
 
-    // Главный обработчик отправки формы
+        const allValid = emailValid && passwordsValid;
+
+        submitBtn.classList.toggle('valid', allValid);
+        submitBtn.classList.toggle('disabled', !allValid);
+        submitBtn.disabled = !allValid;
+        return allValid;
+    }
+
+    function showError(msg) {
+        usernameEl.classList.add('error');
+        usernameError.style.display = 'flex';
+        usernameErrorText.textContent = msg;
+    }
+    function hideError() {
+        usernameEl.classList.remove('error');
+        usernameError.style.display = 'none';
+        usernameErrorText.textContent = '';
+    }
+    function showPasswordError(msg) {
+        passwordConfirmEl.classList.add('error');
+        if (passwordConfirmError) {
+            passwordConfirmError.style.display = 'flex';
+            passwordConfirmErrorText.textContent = msg;
+        }
+    }
+    function hidePasswordError() {
+        passwordConfirmEl.classList.remove('error');
+        if (passwordConfirmError) {
+            passwordConfirmError.style.display = 'none';
+            passwordConfirmErrorText.textContent = '';
+        }
+    }
+
+    usernameEl.addEventListener('input', () => {
+        hideError();
+        checkFormValidity();
+    });
+    passwordEl.addEventListener('input', () => {
+        arePasswordsValid();
+        checkFormValidity();
+    });
+    passwordConfirmEl.addEventListener('input', () => {
+        arePasswordsValid();
+        checkFormValidity();
+    });
+
+    checkFormValidity();
+
     form.addEventListener('submit', (e) => {
-        // Создаем и добавляем скрытые поля ПЕРЕД отправкой
-        // Это гарантирует, что Keycloak их получит.
 
-        // Поле для Имени
+        if (!isEmailValid()) {
+            e.preventDefault();
+            showError('Будь ласка, введіть дійсну електронну адресу.');
+            return;
+        }
+        if (!arePasswordsValid() || passwordEl.value.length === 0) {
+            e.preventDefault();
+            showPasswordError('Будь ласка, введіть та підтвердьте ваш пароль.');
+            return;
+        }
+
+        hideError();
+        hidePasswordError();
+
         const firstNameInput = document.createElement('input');
         firstNameInput.type = 'hidden';
         firstNameInput.name = 'firstName';
-        firstNameInput.value = 'User'; // Задаем значение по умолчанию
-        form.appendChild(firstNameInput);
+        firstNameInput.value = 'User';
 
-        // Поле для Фамилии
         const lastNameInput = document.createElement('input');
         lastNameInput.type = 'hidden';
         lastNameInput.name = 'lastName';
-        lastNameInput.value = 'User'; // Задаем значение по умолчанию
+        lastNameInput.value = 'User';
+
+        form.appendChild(firstNameInput);
         form.appendChild(lastNameInput);
 
-        // После добавления полей, позволяем форме отправиться стандартным образом.
-        // Мы НЕ используем e.preventDefault(), так как нам нужна обычная отправка.
-    });
+        const username = usernameEl.value.trim();
+        const remember = rememberCheckbox.classList.contains('registration_checked');
 
-    // Вызываем проверку один раз при загрузке страницы
-    checkFormValidity();
+        if (remember) {
+            localStorage.setItem('lastUsername', username);
+        } else {
+            localStorage.removeItem('lastUsername');
+        }
+        localStorage.setItem('rememberMe', remember ? 'true' : 'false');
+
+    });
 });
