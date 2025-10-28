@@ -27,14 +27,12 @@
   "registrationAllowed": true,
   "registrationEmailAsUsername": true,
   "rememberMe": true,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
-
-  "smtpServer": {},
 
   "roles": {
     "realm": [
@@ -174,43 +172,6 @@
       "attributes": {
         "access.token.format": "jwt"
       }
-    }
-  ],
-
-  "users": [
-    {
-      "username": "admin@kyskfilms.com",
-      "email": "admin@kyskfilms.com",
-      "firstName": "Admin",
-      "lastName": "User",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "admin123",
-          "temporary": false
-        }
-      ],
-      "realmRoles": ["USER", "ADMIN"],
-      "clientRoles": {}
-    },
-    {
-      "username": "user@kyskfilms.com",
-      "email": "user@kyskfilms.com",
-      "firstName": "Test",
-      "lastName": "User",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "user123",
-          "temporary": false
-        }
-      ],
-      "realmRoles": ["USER"],
-      "clientRoles": {}
     }
   ]
 }

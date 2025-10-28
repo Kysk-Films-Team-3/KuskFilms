@@ -111,7 +111,7 @@ services:
       retries: 10
       start_period: 90s
 
-  # ============ KEYCLOAK INIT (імпорт realm) ============
+  # ============ KEYCLOAK INIT (імпорт realm з SMTP) ============
   keycloak-init:
     image: curlimages/curl:latest
     container_name: kyskfilms-keycloak-init
@@ -120,9 +120,19 @@ services:
         condition: service_healthy
     environment:
       KEYCLOAK_URL: http://keycloak:8080
-      ADMIN_USER: admin
-      ADMIN_PASSWORD: admin_secure
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin_secure
       KEYCLOAK_REALM: kyskfilms
+
+      # SMTP Configuration (передається в init скрипт)
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: kyskfilms@gmail.com
+      SMTP_PASSWORD: kmcg tgto ulzf kmfl
+      SMTP_FROM: kyskfilms@gmail.com
+      SMTP_AUTH: "true"
+      SMTP_STARTTLS: "true"
+      SMTP_SSL: "false"
     volumes:
       - ./keycloak/keycloak-init.sh:/scripts/keycloak-init.sh:ro
       - ./keycloak/import:/keycloak/import:ro
