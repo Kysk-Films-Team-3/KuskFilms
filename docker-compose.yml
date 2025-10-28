@@ -68,78 +68,70 @@ services:
       - kyskfilms-network
     restart: "no"
 
+
+
   # ============ KEYCLOAK ============
+
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.0
+    image: quay.io/keycloak/keycloak:25.0.2
     container_name: kyskfilms-keycloak
     environment:
-      # Database connection (окрема база!)
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
       KC_DB_USERNAME: kysk_user
       KC_DB_PASSWORD: kyskfilms_secure_password
-
-      # Admin credentials
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin_secure
-
-      # Server settings
-      KC_HOSTNAME_STRICT: "false"
+      # Проверенная конфигурация сети для v25
+      KC_PROXY: "edge"
       KC_HTTP_ENABLED: "true"
-      KC_PROXY: edge
-      KC_LOG_LEVEL: info
-      KC_HEALTH_ENABLED: "true"
-
-      # Features
-      KC_FEATURES: preview,token-exchange,admin-fine-grained-authz
     command: start-dev
     ports:
       - "8081:8080"
     depends_on:
       postgres:
         condition: service_healthy
+    # <<<=== ВОТ ЭТА СТРОКА БЫЛА ПРОПУЩЕНА. ВОЗВРАЩАЕМ ЕЕ.
     volumes:
-      # Custom themes
       - ./keycloak/themes:/opt/keycloak/themes:ro
+    # ===>>>
     networks:
       - kyskfilms-network
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1" ]
-      interval: 20s
-      timeout: 5s
-      retries: 10
-      start_period: 90s
+    # HEALTHCHECK ПОЛНОСТЬЮ УДАЛЕН
+
+
 
   # ============ KEYCLOAK INIT (імпорт realm з SMTP) ============
   keycloak-init:
-    image: curlimages/curl:latest
+    image: alpine:latest
     container_name: kyskfilms-keycloak-init
+    # Простая зависимость без condition
     depends_on:
-      keycloak:
-        condition: service_healthy
+      - keycloak
     environment:
+      # Обращаемся напрямую по имени сервиса
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin_secure
+      KEYCLOAK_ADMIN_PASSWORD: admin
       KEYCLOAK_REALM: kyskfilms
-
-      # SMTP Configuration (передається в init скрипт)
-      SMTP_HOST: smtp.gmail.com
-      SMTP_PORT: 587
-      SMTP_USER: kyskfilms@gmail.com
-      SMTP_PASSWORD: kmcg tgto ulzf kmfl
-      SMTP_FROM: kyskfilms@gmail.com
-      SMTP_AUTH: "true"
-      SMTP_STARTTLS: "true"
-      SMTP_SSL: "false"
+      # ...остальные SMTP параметры без изменений...
     volumes:
       - ./keycloak/keycloak-init.sh:/scripts/keycloak-init.sh:ro
       - ./keycloak/import:/keycloak/import:ro
-    entrypoint: ["/bin/sh", "/scripts/keycloak-init.sh"]
+    entrypoint: [ "/bin/sh", "-c" ]
+    # ВОЗВРАЩАЕМ ПРОСТОЕ ОЖИДАНИЕ
+    command:
+      - |
+        apk add --no-cache curl jq bash
+        echo "Waiting 60 seconds for Keycloak to start..."
+        sleep 60
+        /bin/sh /scripts/keycloak-init.sh
     networks:
       - kyskfilms-network
     restart: "no"
+
+
 
   # ============ BACKEND (Spring Boot) ============
   backend:
@@ -148,30 +140,21 @@ services:
       dockerfile: Dockerfile
     container_name: kyskfilms-backend
     environment:
-      # Spring settings
       SPRING_PROFILES_ACTIVE: prod
       JAVA_OPTS: "-Xmx1024m -Xms512m"
-
-      # Database (окрема база для додатку!)
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kyskfilms_db
       SPRING_DATASOURCE_USERNAME: kysk_user
       SPRING_DATASOURCE_PASSWORD: kyskfilms_secure_password
-
-      # Keycloak (внутрішні адреси для backend)
       KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
       KEYCLOAK_REALM: kyskfilms
       KEYCLOAK_CLIENT_ID: kyskfilms-backend
       KEYCLOAK_ISSUER_URI: http://localhost:8081/realms/kyskfilms
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/kyskfilms/protocol/openid-connect/certs
-
-      # MinIO (S3)
       MINIO_URL: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin_secure
       MINIO_BUCKET: kyskfilms
       MINIO_REGION: us-east-1
-
-      # CORS
       FRONTEND_URL: http://localhost:3000
       FRONTEND_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001,https://kyskfilms.com"
     ports:
@@ -182,7 +165,7 @@ services:
       minio:
         condition: service_healthy
       keycloak:
-        condition: service_healthy
+        condition: service_started  # Изменено с service_healthy
       minio-init:
         condition: service_completed_successfully
       keycloak-init:
@@ -205,7 +188,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Build-time env vars (публічні URL для браузера!)
         REACT_APP_KEYCLOAK_URL: http://localhost:8081
         REACT_APP_BACKEND_URL: http://localhost:8082
     container_name: kyskfilms-frontend

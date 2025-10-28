@@ -156,22 +156,6 @@
           }
         }
       ]
-    },
-    {
-      "clientId": "kyskfilms-backend",
-      "name": "KYSKFilms Backend",
-      "description": "Spring Boot backend service",
-      "enabled": true,
-      "publicClient": false,
-      "protocol": "openid-connect",
-      "bearerOnly": true,
-      "standardFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": true,
-      "authorizationServicesEnabled": false,
-      "attributes": {
-        "access.token.format": "jwt"
-      }
     }
   ]
 }
