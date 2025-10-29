@@ -69,21 +69,25 @@ services:
     restart: "no"
 
 
-
   # ============ KEYCLOAK ============
-
   keycloak:
     image: quay.io/keycloak/keycloak:26.0.2
     container_name: kyskfilms-keycloak
     environment:
+
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: "false"
+
+
+      KC_HOSTNAME_ADMIN_URL: http://keycloak:8080
+
+
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
       KC_DB_USERNAME: kysk_user
       KC_DB_PASSWORD: kyskfilms_secure_password
-      # Проверенная конфигурация сети для v25
-      KC_PROXY: "edge"
       KC_HTTP_ENABLED: "true"
     command: start-dev
     ports:
@@ -91,40 +95,33 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./keycloak/themes:/opt/keycloak/themes:ro
     networks:
       - kyskfilms-network
     restart: unless-stopped
 
 
-
-  # ============ KEYCLOAK INIT (імпорт realm з SMTP) ============
+    # ============ KEYCLOAK INIT  ============
   keycloak-init:
-    image: alpine:latest
-    container_name: kyskfilms-keycloak-init
-    depends_on:
-      - keycloak
-    environment:
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KEYCLOAK_REALM: kyskfilms
-    volumes:
-      - ./keycloak/keycloak-init.sh:/scripts/keycloak-init.sh:ro
-      - ./keycloak/import:/keycloak/import:ro
-    entrypoint: [ "/bin/sh", "-c" ]
-    command:
-      - |
-        apk add --no-cache curl jq bash
-        echo "Waiting 60 seconds for Keycloak to start..."
-        sleep 60
-        /bin/sh /scripts/keycloak-init.sh
-    networks:
-      - kyskfilms-network
-    restart: "no"
+      image: alpine:latest
+      container_name: kyskfilms-keycloak-init
+      depends_on:
+        - keycloak
+      environment:
 
+        KEYCLOAK_URL: http://keycloak:8080
 
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: admin
+        KEYCLOAK_REALM: kyskfilms
+      volumes:
+        - ./keycloak/keycloak-init.sh:/scripts/keycloak-init.sh:ro
+        - ./keycloak/import:/keycloak/import:ro
+      entrypoint: /bin/sh
+      command:
+        - "/scripts/keycloak-init.sh"
+      networks:
+        - kyskfilms-network
+      restart: "no"
 
   # ============ BACKEND (Spring Boot) ============
   backend:
@@ -210,4 +207,3 @@ volumes:
 networks:
   kyskfilms-network:
     driver: bridge
-    name: kyskfilms_network

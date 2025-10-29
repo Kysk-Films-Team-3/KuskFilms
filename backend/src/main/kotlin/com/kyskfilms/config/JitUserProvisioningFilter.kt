@@ -23,7 +23,7 @@ class JitUserProvisioningFilter(
 
         if (authentication != null && authentication.isAuthenticated && authentication.principal is Jwt) {
             val jwt = authentication.principal as Jwt
-            // Вызываем сервис для проверки и/или создания профиля
+
             userProfileService.findOrCreateUserProfile(jwt)
         }
 

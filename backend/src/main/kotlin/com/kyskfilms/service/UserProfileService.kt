@@ -26,3 +26,4 @@ class UserProfileService(
             userProfileRepository.save(newUserProfile)
         }
     }
+}

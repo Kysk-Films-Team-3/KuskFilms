@@ -15,14 +15,16 @@ data class UserProfile(
 
     @Id
     @Column(name = "keycloak_id")
-    val keycloakId: UUID,
-
+    var keycloakId: UUID,
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    val createdAt: Instant? = null,
+    var createdAt: Instant? = null,
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    val updatedAt: Instant? = null
-)
+    var updatedAt: Instant? = null
+) {
+
+    constructor() : this(UUID.randomUUID(), null, null)
+}

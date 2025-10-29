@@ -21,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
-    // --- ИЗМЕНЕНО: 1. Внедряем зависимость нашего нового фильтра ---
+
     private val jitUserProvisioningFilter: JitUserProvisioningFilter,
     private val keycloakProperties: KeycloakProperties
 ) {
@@ -59,9 +59,7 @@ class SecurityConfig(
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
                 }
             }
-            // --- ИЗМЕНЕНО: 2. Добавляем наш фильтр в цепочку безопасности Spring ---
-            // Он выполняется ПОСЛЕ стандартного фильтра аутентификации,
-            // чтобы гарантировать, что пользователь уже аутентифицирован.
+
             .addFilterAfter(jitUserProvisioningFilter, BasicAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
                 auth
