@@ -6,7 +6,6 @@ import { Trans, useTranslation } from 'react-i18next';
 export const Footer = () => {
     useTranslation();
 
-
     return (
         <footer className="footer">
             <div className="footer_block">

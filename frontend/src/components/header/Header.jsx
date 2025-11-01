@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {NavLink, Link, useLocation, Route} from 'react-router-dom';
+import {NavLink, Link, useLocation } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './Header.css';
 import { getPopularFilms, getPopularActors } from '../../services/api';
+import { useHasRole } from '../../services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 
-export const Header = ({ onLoginClick, user, onProfileClick }) => {
+export const Header = ({ user, onProfileClick }) => {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const { keycloak } = useKeycloak();
+    const hasAdminRole = useHasRole("ADMIN");
     const isPremiumPage = location.pathname === '/Premium';
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -130,7 +132,7 @@ export const Header = ({ onLoginClick, user, onProfileClick }) => {
                     {!isSearchOpen && !isPremiumPage && (
                         <nav className="header_nav">
                             <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
-                            <NavLink to="/catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
+                            <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
                             <NavLink to="/Login"><Trans i18nKey="header.nav.tvShows" /></NavLink>
                             <NavLink to="/new"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                             <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
@@ -295,6 +297,14 @@ export const Header = ({ onLoginClick, user, onProfileClick }) => {
                                                 {i18n.language === 'ua' ? 'English' : 'Українська'}
                                             </button>
                                         </li>
+                                        {hasAdminRole && (
+                                            <Link
+                                                to="/admin"
+                                                style={{ color: '#00ffaa', fontWeight: 'bold' }}
+                                            >
+                                                Адмін-панель
+                                            </Link>
+                                        )}
                                     </ul>
                                 </div>
                             )}

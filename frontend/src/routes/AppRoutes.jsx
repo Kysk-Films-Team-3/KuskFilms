@@ -4,6 +4,8 @@ import { Home } from '../pages/Home';
 import { Settings } from '../pages/Settings';
 import { Premium } from '../pages/Premium';
 import { Favorites } from '../pages/Favorites';
+import { Catalog } from '../pages/Catalog';
+import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
 
@@ -14,6 +16,7 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                 element={<Layout onLoginClick={onLoginClick} isLoggedIn={isLoggedIn} user={user} onProfileClick={onProfileClick}/>}
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
+                <Route path="/catalog" element={<Catalog />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
                 <Route
@@ -25,6 +28,14 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                                 onPaymentClick={onPaymentClick}
                                 onDeviceClick={onDeviceClick}
                                 user={user}
+                            />
+                            <Route
+                                path="/admin"
+                                element={
+                                    <PrivateRoute>
+                                        <AdminPage />
+                                    </PrivateRoute>
+                                }
                             />
                         </PrivateRoute>
                     }
