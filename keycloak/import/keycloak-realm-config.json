@@ -61,13 +61,11 @@
       "publicClient": true,
       "protocol": "openid-connect",
       "webOrigins": [
-        "http://localhost:3000",
-        "http://localhost:3001",
+        "http://localhost",
         "https://kyskfilms.com"
       ],
       "redirectUris": [
-        "http://localhost:3000/*",
-        "http://localhost:3001/*",
+        "http://localhost/*",
         "https://kyskfilms.com/*"
       ],
       "standardFlowEnabled": true,
@@ -83,7 +81,7 @@
         "backchannel.logout.session.required": "true",
         "access.token.format": "jwt",
         "use.refresh.tokens": "true",
-        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:3001/*##https://kyskfilms.com/*"
+        "post.logout.redirect.uris": "http://localhost/*, https://kyskfilms.com/*"
       },
       "protocolMappers": [
         {

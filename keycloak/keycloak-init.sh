@@ -26,7 +26,7 @@ echo "✓ Config file found: $CONFIG_FILE"
 echo "Initial delay of 60 seconds to ensure Keycloak is fully started..."
 sleep 60
 
-echo "Attempting to get admin token from $KEYCLOAK_URL..." # Переменная придет из docker-compose
+echo "Attempting to get admin token from $KEYCLOAK_URL..."
 for i in $(seq 1 30); do
 
     TOKEN_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
@@ -53,7 +53,6 @@ done
 # --- Шаг 2 и далее: ваш оригинальный скрипт ---
 echo "Proceeding with realm configuration..."
 
-# Теперь мы запрашиваем токен еще раз, чтобы его использовать
 TOKEN_RESPONSE=$(curl -s -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -d "username=$KEYCLOAK_ADMIN" \
@@ -78,7 +77,6 @@ HTTP_CODE=$(curl -s -o /tmp/realm_response.json -w "%{http_code}" \
     -H "Content-Type: application/json" \
     -d @$CONFIG_FILE)
 
-# Keycloak при импорте может вернуть 201 (создан) или 409 (уже существует)
 if [ "$HTTP_CODE" = "201" ]; then
     echo "✅ Realm '$REALM_NAME' created successfully!"
 elif [ "$HTTP_CODE" = "409" ]; then
@@ -91,7 +89,6 @@ fi
 
 
 # --- Шаг 4: Обновление SMTP (используем PUT для обновления) ---
-# NOTE: Для PUT/обновления нам нужно только поле, которое мы хотим изменить.
 echo " Updating SMTP configuration..."
 SMTP_CONFIG=$(cat <<EOF
 {
@@ -122,7 +119,6 @@ if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
     echo "✅ SMTP configuration updated!"
 else
     echo "⚠️  Failed to update SMTP (HTTP $HTTP_CODE)"
-    # Выводим ошибку, но не прерываем скрипт, так как реалм может быть рабочим
     cat /tmp/smtp_response.json
 fi
 

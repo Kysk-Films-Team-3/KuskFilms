@@ -1,3 +1,4 @@
+
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -5,6 +6,16 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install --legacy-peer-deps
+
+# ======================================================
+
+ARG REACT_APP_KEYCLOAK_URL
+ARG REACT_APP_BACKEND_URL
+
+ENV REACT_APP_KEYCLOAK_URL=$REACT_APP_KEYCLOAK_URL
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+
+# ======================================================
 
 COPY . .
 
