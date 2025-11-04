@@ -1,0 +1,57 @@
+* [33ma16c828[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Initial commit: Full working Docker Compose setup
+* [33m4550be1[m edpoints
+* [33mb1fe586[m Keycloak 26.0.2 / init
+*   [33m5b153df[m Merge branch 'main' of https://github.com/Kysk-Films-Team-3/KuskFilms
+[32m|[m[33m\[m  
+[32m|[m * [33m5af7ee9[m update keycloak 1.0
+* [33m|[m [33m8480010[m Implement JIT user provisioning via security filter / Realm settings
+[33m|[m[33m/[m  
+* [33ma00bc09[m Keycloak
+* [33mabdb749[m db
+* [33m5717dae[m 123123
+*   [33me97b479[m Merge branch 'main' of https://github.com/Kysk-Films-Team-3/KuskFilms
+[34m|[m[35m\[m  
+[34m|[m * [33ma9b6e79[m newest compose
+* [35m|[m [33m3d6d4e7[m 123
+[35m|[m[35m/[m  
+* [33m7a6fee9[m Update Layout.jsx
+*   [33m3526e43[m Merge branch 'main' of https://github.com/Kysk-Films-Team-3/KuskFilms
+[36m|[m[1;31m\[m  
+[36m|[m *   [33m76ae798[m Merge branch 'main' of https://github.com/Kysk-Films-Team-3/KuskFilms
+[36m|[m [1;32m|[m[1;33m\[m  
+[36m|[m * [1;33m|[m [33m2716b93[m keycloak
+* [1;33m|[m [1;33m|[m [33m54d76cb[m Update Layout.jsx
+[1;33m|[m [1;33m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[1;33m|[m   
+* [1;33m|[m [33m0a2750d[m Keycloak
+* [1;33m|[m   [33m9e9fe10[m Merge branch 'main' of https://github.com/Kysk-Films-Team-3/KuskFilms
+[1;34m|[m[1;35m\[m [1;33m\[m  
+[1;34m|[m * [1;33m|[m [33m3b13390[m Create a
+[1;34m|[m * [1;33m|[m [33maf7f197[m Delete keycloak/themes
+[1;34m|[m * [1;33m|[m [33me33152b[m Create themes
+[1;34m|[m [1;33m|[m[1;33m/[m  
+[1;34m|[m * [33m0290f9a[m first compose
+[1;34m|[m * [33m3cda7d4[m Добавлена полная конфигурация Keycloak с отдельной БД
+[1;34m|[m * [33m91e18b5[m Delete .idea directory
+[1;34m|[m * [33m5d32ea8[m new
+[1;34m|[m * [33m1bb0a62[m new compose
+[1;34m|[m * [33m2b78da6[m New compose and keycloak
+[1;34m|[m * [33ma644dcd[m feat(backend): add Spring Boot backend application
+* [1;35m|[m [33me1ca2aa[m Theam Keykloak
+[1;35m|[m[1;35m/[m  
+* [33m17e600b[m frontend
+* [33mf005256[m Delete frontend/a
+* [33mfc5f03a[m Create a
+* [33mb91374f[m Create a
+* [33m7d19225[m Create а
+* [33m310d6fe[m Create a
+* [33m760422d[m Delete frontend/public
+* [33m55d328f[m Delete frontend/src
+* [33m8be6619[m Update src
+* [33ma838b30[m Delete frontend/a
+* [33m270a3f2[m Add files via upload
+* [33m4f1cf0d[m Create docker-compose.yml
+* [33m14e28fd[m Create a
+* [33mde9c57a[m Create a
+* [33mf20357a[m Create a
+* [33m8220e3d[m Initial commit

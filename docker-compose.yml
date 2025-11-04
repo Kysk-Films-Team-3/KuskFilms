@@ -100,9 +100,12 @@ services:
       KC_PROXY: "edge"
       KC_HOSTNAME_ADMIN_URL: http://${DOMAIN}/admin/keycloak
 
+
     command: start-dev --hostname-strict=false
     depends_on:
       postgres: { condition: service_healthy }
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes
     networks:
       - kyskfilms-network
     restart: unless-stopped
