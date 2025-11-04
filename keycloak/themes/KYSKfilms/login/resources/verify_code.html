@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Підтвердження коду</title>
+    <link rel="stylesheet" href="css/verify_code.css">
+    <script src="js/verify_code.js" defer></script>
+</head>
+<body class="verify_code_page">
+<div class="verify_code_page">
+    <div class="verify_code_layout">
+        <div class="verify_code_title">Скинути пароль</div>
+        <div class="verify_code_subtitle">
+            Щоб продовжити, виконайте цей крок підтвердження. Ми надіслали одноразовий пароль на електронну адресу
+            <span class="verify_code_email">${storedEmail}</span>.
+            Будь ласка, введіть його нижче.
+        </div>
+        <form class="verify_code_form" id="verify_codeForm">
+            <div class="verify_code_input_group">
+                <input type="text" maxlength="1" class="verify_code_input" />
+                <input type="text" maxlength="1" class="verify_code_input" />
+                <input type="text" maxlength="1" class="verify_code_input" />
+                <input type="text" maxlength="1" class="verify_code_input" />
+                <input type="text" maxlength="1" class="verify_code_input" />
+            </div>
+
+            <div class="verify_code_error_text" id="errorText" style="display:none;">
+                <div class="verify_code_error_icon"></div>
+                <span id="username-client-text"></span>
+            </div>
+            <div class="verify_code_block">
+                <button type="submit" class="verify_code_button" id="submitBtn" href="/forgot_password.html">Продовжити</button>
+            </div>
+        </form>
+
+        <button class="verify_code_resend" id="resendBtn">
+            <span class="verify_code_refresh_icon"></span>Надіслати код повторно
+        </button>
+
+    </div>
+</div>
+</body>
+</html>
