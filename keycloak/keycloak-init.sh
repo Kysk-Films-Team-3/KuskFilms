@@ -1,59 +1,93 @@
-#!/bin/sh
-set -e
 
-echo "Installing dependencies (curl, jq, bash)..."
-apk add --no-cache curl jq bash
+#!/usr/bin/env bash
+# Завершать скрипт при любой ошибке (-e)
+# и при ошибках в пайплайнах (-o pipefail)
+set -eo pipefail
+
+echo "Installing dependencies (curl, jq, bash, netcat, getent)..."
+# Добавляем libc-utils для утилиты getent и netcat для проверки порта
+apk add --no-cache curl jq bash netcat-openbsd libc-utils
 
 echo "=================================================="
 echo " Keycloak Realm Initialization Script Starting..."
 echo "=================================================="
 
-# <--- КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Мы НЕ переопределяем KEYCLOAK_URL --->
-# Он будет взят из окружения, которое передает docker-compose
+# --- Определение переменных ---
 ADMIN_USER="${KEYCLOAK_ADMIN:-admin}"
 ADMIN_PASSWORD="${KEYCLOAK_ADMIN_PASSWORD:-admin}"
 REALM_NAME="${KEYCLOAK_REALM:-kyskfilms}"
 CONFIG_FILE="/keycloak/import/keycloak-realm-config.json"
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo " ERROR: Config file not found: $CONFIG_FILE"
+    echo "❌ ERROR: Config file not found: $CONFIG_FILE"
     exit 1
 fi
 echo "✓ Config file found: $CONFIG_FILE"
 
-# --- Шаг 1: Просто ждем, а затем пытаемся получить токен ---
 
-echo "Initial delay of 60 seconds to ensure Keycloak is fully started..."
-sleep 60
+# --- ШАГ 1: Усиленный блок ожидания доступности сервиса Keycloak ---
 
-echo "Attempting to get admin token from $KEYCLOAK_URL..." # Переменная придет из docker-compose
-for i in $(seq 1 30); do
+# Извлекаем хост и порт из переменной окружения
+KEYCLOAK_HOST=$(echo "$KEYCLOAK_URL" | sed -e 's,http://\([^/]*\).*,\1,' | cut -d: -f1)
+KEYCLOAK_PORT=$(echo "$KEYCLOAK_URL" | sed -e 's,http://\([^/]*\).*,\1,' | cut -d: -f2)
 
-    TOKEN_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
-        -H "Content-Type: application/x-www-form-urlencoded" \
-        -d "username=$KEYCLOAK_ADMIN" \
-        -d "password=$KEYCLOAK_ADMIN_PASSWORD" \
-        -d "grant_type=password" \
-        -d "client_id=admin-cli")
+echo "Waiting for Keycloak service '${KEYCLOAK_HOST}' to be resolvable..."
 
-    if [ "$TOKEN_RESPONSE" = "200" ]; then
-        echo "✅ Successfully connected to Keycloak and received a token!"
-        break
-    fi
-
-    echo "   Attempt $i/30: Keycloak not ready (HTTP code: $TOKEN_RESPONSE). Retrying in 10 seconds..."
-    sleep 10
-
-    if [ $i -eq 30 ]; then
-        echo "❌ ERROR: Could not connect to Keycloak and get a token."
+i=0
+# ЭТАП 1.1: Ждем, пока DNS-имя начнет разрешаться. Это решает ошибку "Name does not resolve".
+until getent hosts "$KEYCLOAK_HOST"; do
+    i=$((i+1))
+    if [ "$i" -gt 30 ]; then
+        echo "❌ ERROR: Could not resolve Keycloak host '${KEYCLOAK_HOST}' after 60 seconds."
         exit 1
     fi
+    echo "   Attempt ${i}/30: Host '${KEYCLOAK_HOST}' not yet resolvable. Retrying in 2 seconds..."
+    sleep 2
 done
 
-# --- Шаг 2 и далее: ваш оригинальный скрипт ---
-echo "Proceeding with realm configuration..."
+echo "✅ Host '${KEYCLOAK_HOST}' is resolvable. Now waiting for port ${KEYCLOAK_PORT}..."
 
-# Теперь мы запрашиваем токен еще раз, чтобы его использовать
+i=0
+# ЭТАП 1.2: Теперь ждем, пока порт на этом хосте станет доступен.
+until nc -z -w 3 "$KEYCLOAK_HOST" "$KEYCLOAK_PORT"; do
+    i=$((i+1))
+    if [ "$i" -gt 30 ]; then
+        echo "❌ ERROR: Keycloak port ${KEYCLOAK_PORT} is not available after 90 seconds."
+        exit 1
+    fi
+    echo "   Attempt $((i))/30: Waiting for Keycloak port to open..."
+    sleep 3
+done
+
+echo "✅ Keycloak network is ready. Now waiting for API..."
+
+
+# --- ШАГ 2: Ожидание полной готовности API и получение токена ---
+
+i=0
+# ЭТАП 1.3: Ждем, пока API Keycloak не начнет возвращать корректный HTTP-статус.
+until curl -s -o /dev/null -w "%{http_code}" -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "username=${KEYCLOAK_ADMIN}" \
+        -d "password=${KEYCLOAK_ADMIN_PASSWORD}" \
+        -d "grant_type=password" \
+        -d "client_id=admin-cli" | grep -q "200"; do
+    i=$((i+1))
+    if [ "$i" -gt 30 ]; then
+        echo "❌ ERROR: Could not get a token from Keycloak API after multiple retries."
+        exit 1
+    fi
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username=${KEYCLOAK_ADMIN}" -d "password=${KEYCLOAK_ADMIN_PASSWORD}" -d "grant_type=password" -d "client_id=admin-cli")
+    echo "   Attempt ${i}/30: Keycloak API not ready (HTTP code: ${HTTP_CODE}). Retrying in 5 seconds..."
+    sleep 5
+done
+
+echo "✅ Successfully connected to Keycloak API!"
+
+
+# --- ШАГ 3: Получение токена для дальнейших операций ---
+
+echo "Obtaining admin access token..."
 TOKEN_RESPONSE=$(curl -s -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -d "username=$KEYCLOAK_ADMIN" \
@@ -61,38 +95,37 @@ TOKEN_RESPONSE=$(curl -s -X POST "$KEYCLOAK_URL/realms/master/protocol/openid-co
     -d "grant_type=password" \
     -d "client_id=admin-cli")
 
-TOKEN=$(echo "$TOKEN_RESPONSE" | grep -o '"access_token":"[^"]*' | cut -d'"' -f4)
+TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
 
-if [ -z "$TOKEN" ]; then
-    echo " ERROR: Failed to obtain access token after successful connection."
+if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+    echo "❌ ERROR: Failed to obtain access token after successful connection."
     echo "$TOKEN_RESPONSE" | jq .
     exit 1
 fi
-echo "✓ Access token obtained"
+echo "✓ Access token obtained."
 
-# --- Шаг 3: Создание/Обновление Реалма (основной конфиг) ---
-echo " Importing realm configuration from $CONFIG_FILE..."
+
+# --- ШАГ 4: Импорт конфигурации реалма ---
+echo "Importing realm configuration from $CONFIG_FILE..."
 HTTP_CODE=$(curl -s -o /tmp/realm_response.json -w "%{http_code}" \
     -X POST "$KEYCLOAK_URL/admin/realms" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
-    -d @$CONFIG_FILE)
+    -d "@$CONFIG_FILE")
 
-# Keycloak при импорте может вернуть 201 (создан) или 409 (уже существует)
 if [ "$HTTP_CODE" = "201" ]; then
     echo "✅ Realm '$REALM_NAME' created successfully!"
 elif [ "$HTTP_CODE" = "409" ]; then
-    echo "⚠️  Realm '$REALM_NAME' already exists. Configuration might have been updated."
+    echo "⚠️  Realm '$REALM_NAME' already exists. Skipping creation."
 else
-    echo "❌ Failed to import/create realm (HTTP $HTTP_CODE)"
+    echo "❌ Failed to import realm (HTTP $HTTP_CODE)"
     cat /tmp/realm_response.json
     exit 1
 fi
 
 
-# --- Шаг 4: Обновление SMTP (используем PUT для обновления) ---
-# NOTE: Для PUT/обновления нам нужно только поле, которое мы хотим изменить.
-echo " Updating SMTP configuration..."
+# --- ШАГ 5: Обновление SMTP ---
+echo "Updating SMTP configuration..."
 SMTP_CONFIG=$(cat <<EOF
 {
   "smtpServer": {
@@ -121,56 +154,35 @@ HTTP_CODE=$(curl -s -o /tmp/smtp_response.json -w "%{http_code}" \
 if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
     echo "✅ SMTP configuration updated!"
 else
-    echo "⚠️  Failed to update SMTP (HTTP $HTTP_CODE)"
-    # Выводим ошибку, но не прерываем скрипт, так как реалм может быть рабочим
+    echo "⚠️  Failed to update SMTP (HTTP $HTTP_CODE). This is non-critical."
     cat /tmp/smtp_response.json
 fi
 
 
-# --- Шаг 5: Создание/Обновление пользователей (только если не существует) ---
+# --- ШАГ 6: Создание пользователей (если они не существуют) ---
 
 # Пользователь ADMIN
 ADMIN_EMAIL="admin@kyskfilms.com"
-if ! curl -s -X GET "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users?email=$ADMIN_EMAIL" \
+if ! curl -s -f -X GET "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users?email=$ADMIN_EMAIL&exact=true" \
     -H "Authorization: Bearer $TOKEN" | jq -e '.[]' > /dev/null; then
-    echo " Creating Admin user: $ADMIN_EMAIL"
-    curl -s -X POST "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users" \
-        -H "Authorization: Bearer $TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{
-            "username": "admin",
-            "email": "admin@kyskfilms.com",
-            "firstName": "Admin",
-            "lastName": "User",
-            "enabled": true,
-            "emailVerified": true,
-            "credentials": [{"type": "password", "value": "admin123", "temporary": false}],
-            "realmRoles": ["USER", "ADMIN"]
-        }' > /dev/null
-    echo "✓ Admin user created"
+    echo "Creating Admin user: $ADMIN_EMAIL..."
+    curl -s -f -X POST "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users" \
+        -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+        -d '{"username": "admin", "email": "admin@kyskfilms.com", "firstName": "Admin", "lastName": "User", "enabled": true, "emailVerified": true, "credentials": [{"type": "password", "value": "admin123", "temporary": false}], "realmRoles": ["USER", "ADMIN"]}' > /dev/null
+    echo "✓ Admin user created."
 else
     echo "⚠️ Admin user already exists. Skipping creation."
 fi
 
 # Пользователь USER
 USER_EMAIL="user@kyskfilms.com"
-if ! curl -s -X GET "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users?email=$USER_EMAIL" \
+if ! curl -s -f -X GET "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users?email=$USER_EMAIL&exact=true" \
     -H "Authorization: Bearer $TOKEN" | jq -e '.[]' > /dev/null; then
-    echo " Creating Test user: $USER_EMAIL"
-    curl -s -X POST "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users" \
-        -H "Authorization: Bearer $TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{
-            "username": "user",
-            "email": "user@kyskfilms.com",
-            "firstName": "Test",
-            "lastName": "User",
-            "enabled": true,
-            "emailVerified": true,
-            "credentials": [{"type": "password", "value": "user123", "temporary": false}],
-            "realmRoles": ["USER"]
-        }' > /dev/null
-    echo "✓ Test user created"
+    echo "Creating Test user: $USER_EMAIL..."
+    curl -s -f -X POST "$KEYCLOAK_URL/admin/realms/$REALM_NAME/users" \
+        -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+        -d '{"username": "user", "email": "user@kyskfilms.com", "firstName": "Test", "lastName": "User", "enabled": true, "emailVerified": true, "credentials": [{"type": "password", "value": "user123", "temporary": false}], "realmRoles": ["USER"]}' > /dev/null
+    echo "✓ Test user created."
 else
     echo "⚠️ Test user already exists. Skipping creation."
 fi
@@ -178,5 +190,6 @@ fi
 
 echo ""
 echo "=================================================="
-echo "✅ Keycloak Realm Import and Initialization Completed!"
+echo "✅ Keycloak Realm Initialization Completed!"
 echo "=================================================="
+

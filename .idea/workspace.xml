@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ea43bc7-2114-4920-84c0-80c08baeac23" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/header/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/header/Header.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AdminPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AdminPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/register.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/register.ftl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/confirm_code.html" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/verify-email.ftl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/confirm_code.css" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/verify-email.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/register.css" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/register.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/confirm_code.js" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/verify-email.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/register.js" afterDir="false" />
-    </list>
+    <list default="true" id="0ea43bc7-2114-4920-84c0-80c08baeac23" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,7 +44,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/$/Documents/GitHub/KuskFilms/keycloak&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/$/Documents/GitHub/KuskFilms&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -68,11 +57,8 @@
   }
 }</component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\$\Documents\GitHub\KuskFilms\keycloak" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\$\Documents\GitHub\KuskFilms\keycloak\themes\KYSKfilms\login" />
+      <recent name="C:\Users\artem\Desktop\KuskFilms\keycloak\themes" />
       <recent name="C:\Users\artem\Desktop\KuskFilms\keycloak\themes\KYSKfilms\login" />
     </key>
   </component>
@@ -92,8 +78,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
       </set>
     </attachedChunks>
   </component>
@@ -104,13 +89,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1754390516880</updated>
-      <workItem from="1762003194907" duration="15085000" />
-      <workItem from="1762253354279" duration="1270000" />
-      <workItem from="1762268620133" duration="7700000" />
-      <workItem from="1762354184009" duration="5605000" />
-      <workItem from="1762360477256" duration="1964000" />
-      <workItem from="1762362697348" duration="4848000" />
-      <workItem from="1762428171099" duration="2406000" />
+      <workItem from="1762003194907" duration="14965000" />
     </task>
     <servers />
   </component>
