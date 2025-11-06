@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { useHasRole } from '../hooks/useHasRole';
+import { useHasRole } from '../services/useHasRole';
 
 export const AdminPage = () => {
     const [adminData, setAdminData] = useState(null);

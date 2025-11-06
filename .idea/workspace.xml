@@ -6,6 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="0ea43bc7-2114-4920-84c0-80c08baeac23" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/header/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/header/Header.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AdminPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AdminPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/register.ftl" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/register.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/confirm_code.html" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/verify-email.ftl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/confirm_code.css" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/verify-email.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/register.css" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/css/register.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/confirm_code.js" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/verify-email.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/keycloak/themes/KYSKfilms/login/resources/js/register.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,33 +45,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHELLCHECK.PATH": "C:\\Users\\artem\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/$/Documents/GitHub/KuskFilms/keycloak",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "D:\\Programs\\Intellij IDEA\\IntelliJ IDEA 2025.1.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\artem\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/$/Documents/GitHub/KuskFilms/keycloak&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Programs\\Intellij IDEA\\IntelliJ IDEA 2025.1.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\$\Documents\GitHub\KuskFilms\keycloak" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\$\Documents\GitHub\KuskFilms\keycloak\themes\KYSKfilms\login" />
       <recent name="C:\Users\artem\Desktop\KuskFilms\keycloak\themes\KYSKfilms\login" />
     </key>
   </component>
@@ -96,6 +106,11 @@
       <updated>1754390516880</updated>
       <workItem from="1762003194907" duration="15085000" />
       <workItem from="1762253354279" duration="1270000" />
+      <workItem from="1762268620133" duration="7700000" />
+      <workItem from="1762354184009" duration="5605000" />
+      <workItem from="1762360477256" duration="1964000" />
+      <workItem from="1762362697348" duration="4848000" />
+      <workItem from="1762428171099" duration="2406000" />
     </task>
     <servers />
   </component>

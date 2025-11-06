@@ -19,6 +19,7 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
+
                 <Route
                     path="/settings"
                     element={
@@ -29,14 +30,15 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                                 onDeviceClick={onDeviceClick}
                                 user={user}
                             />
-                            <Route
-                                path="/admin"
-                                element={
-                                    <PrivateRoute>
-                                        <AdminPage />
-                                    </PrivateRoute>
-                                }
-                            />
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin"
+                    element={
+                        <PrivateRoute>
+                            <AdminPage />
                         </PrivateRoute>
                     }
                 />

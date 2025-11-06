@@ -45,6 +45,7 @@
 }
 
 .registration_input_block {
+    margin-bottom: 16px;
     display: flex;
     flex-direction: column;
     width: 100%;

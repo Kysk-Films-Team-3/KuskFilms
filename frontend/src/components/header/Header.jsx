@@ -133,7 +133,7 @@ export const Header = ({ user, onProfileClick }) => {
                         <nav className="header_nav">
                             <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
                             <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                            <NavLink to="/Login"><Trans i18nKey="header.nav.tvShows" /></NavLink>
+                            <NavLink to="/settings"><Trans i18nKey="header.nav.tvShows" /></NavLink>
                             <NavLink to="/new"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                             <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
                         </nav>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Підтвердження коду</title>
-    <link rel="stylesheet" href="css/confirm_code.css">
-    <script src="js/confirm_code.js" defer></script>
+    <link rel="stylesheet" href="${url.resourcesPath}/css/verify-email.css">
+<script src="${url.resourcesPath}/js/verify-email.js" defer></script>
 </head>
 <body class="confirm_code_page">
 <div class="confirm_code_page">

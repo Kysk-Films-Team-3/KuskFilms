@@ -28,6 +28,54 @@
             <div class="registration_input_block">
                 <input
                         type="text"
+                        id="firstName"
+                        name="firstName"
+                        placeholder=" "
+                        class="registration_input"
+                        autocomplete="given-name"
+                />
+                <label for="firstName">Ім'я</label>
+                <div class="registration_error_text" id="firstName-client-error" style="display:none;">
+                    <div class="registration_error_icon"></div>
+                    <span id="firstName-client-text"></span>
+                </div>
+            </div>
+
+            <div class="registration_input_block">
+                <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        placeholder=" "
+                        class="registration_input"
+                        autocomplete="family-name"
+                />
+                <label for="lastName">Прізвище</label>
+                <div class="registration_error_text" id="lastName-client-error" style="display:none;">
+                    <div class="registration_error_icon"></div>
+                    <span id="lastName-client-text"></span>
+                </div>
+            </div>
+
+            <div class="registration_input_block">
+                <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder=" "
+                        class="registration_input"
+                        autocomplete="email"
+                />
+                <label for="email">Ел. пошта</label>
+                <div class="registration_error_text" id="email-client-error" style="display:none;">
+                    <div class="registration_error_icon"></div>
+                    <span id="email-client-text"></span>
+                </div>
+            </div>
+
+            <div class="registration_input_block">
+                <input
+                        type="text"
                         id="username"
                         name="username"
                         placeholder=" "
@@ -35,7 +83,7 @@
                         value="${(username)!}"
                         autocomplete="username"
                 />
-                <label for="username">Адреса електронної пошти</label>
+                <label for="username">Ім'я користувача</label>
                 <div class="registration_error_text" id="username-client-error" style="display:none;">
                     <div class="registration_error_icon"></div>
                     <span id="username-client-text"></span>
@@ -69,6 +117,7 @@
                     <span id="password-confirm-client-text"></span>
                 </div>
             </div>
+
             <div class="registration_block">
                 <button type="submit" id="registerBtn" class="registration_button">
                     Почати
