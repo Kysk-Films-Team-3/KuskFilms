@@ -16,7 +16,7 @@ export const Logout = ({ onClose }) => {
 
     const handleLogout = () => {
         if (keycloak) {
-            keycloak.logout({ redirectUri: 'http://localhost:3000/' });
+            keycloak.logout({ redirectUri: 'http://localhost/' });
         }
         handleClose();
     };

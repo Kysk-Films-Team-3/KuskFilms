@@ -85,7 +85,7 @@ services:
 
   # ============ KEYCLOAK ============
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.2
+    image: quay.io/keycloak/keycloak:26.4
     container_name: ${COMPOSE_PROJECT_NAME}-keycloak
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}

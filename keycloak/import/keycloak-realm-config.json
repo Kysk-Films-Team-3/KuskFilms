@@ -3,8 +3,6 @@
   "enabled": true,
   "displayName": "KYSKFilms",
   "displayNameHtml": "<h2>KYSKFilms</h2>",
-
-
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -15,16 +13,17 @@
   "offlineSessionIdleTimeout": 2592000,
   "offlineSessionMaxLifespanEnabled": false,
   "offlineSessionMaxLifespan": 5184000,
-
   "loginTheme": "KYSKfilms",
-  "accountTheme": "KYSKfilms",
-  "adminTheme": "base",
-  "emailTheme": "base",
-
+  "accountTheme": "keycloak",
+  "adminTheme": "keycloak",
+  "emailTheme": "keycloak",
   "internationalizationEnabled": true,
-  "supportedLocales": ["en", "uk", "ru"],
+  "supportedLocales": [
+    "en",
+    "uk",
+    "ru"
+  ],
   "defaultLocale": "en",
-
   "registrationAllowed": true,
   "registrationEmailAsUsername": true,
   "rememberMe": true,
@@ -34,7 +33,6 @@
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
-
   "roles": {
     "realm": [
       {
@@ -51,7 +49,6 @@
       }
     ]
   },
-
   "clients": [
     {
       "clientId": "kyskfilms-frontend",
@@ -62,11 +59,13 @@
       "protocol": "openid-connect",
       "webOrigins": [
         "http://localhost",
-        "https://kyskfilms.com"
+        "https://kyskfilms.com",
+        "http://localhost:3000"
       ],
       "redirectUris": [
         "http://localhost/*",
-        "https://kyskfilms.com/*"
+        "https://kyskfilms.com/*",
+        "http://localhost:3000/*"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
@@ -80,8 +79,7 @@
         "client.secret.creation.allowed": "false",
         "backchannel.logout.session.required": "true",
         "access.token.format": "jwt",
-        "use.refresh.tokens": "true",
-        "post.logout.redirect.uris": "http://localhost/*, https://kyskfilms.com/*"
+        "use.refresh.tokens": "true"
       },
       "protocolMappers": [
         {
