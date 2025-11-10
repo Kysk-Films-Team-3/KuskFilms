@@ -26,7 +26,7 @@ class SecurityConfig(
     private lateinit var allowedOrigins: List<String>
 
 
-    @Value("\${keycloak.client-id}")
+    @Value("\${KEYCLOAK_CLIENT_ID}") // <-- ИЗМЕНЕНО: теперь берется из окружения
     private lateinit var keycloakClientId: String
 
     @Bean
@@ -36,7 +36,7 @@ class SecurityConfig(
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
-                "/actuator/**" // Разрешаем доступ ко всем actuator эндпоинтам
+                "/actuator/**"
             )
             .authorizeHttpRequests { auth -> auth.anyRequest().permitAll() }
             .csrf { it.disable() }
@@ -52,16 +52,12 @@ class SecurityConfig(
             .cors { it.configurationSource(corsConfigurationSource()) }
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            // Spring Boot автоматически настроит JWT, используя свойства из application.yml
             .oauth2ResourceServer { it.jwt { jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()) } }
             .addFilterAfter(jitUserProvisioningFilter, BasicAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
                 auth
-                    // Public
+                    .requestMatchers("/api/test/public").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/genres/**").permitAll()
-                    // Admin
-                    .requestMatchers("/api/admin/**", "/api/movies/**").hasRole("ADMIN")
-                    // Authenticated
                     .anyRequest().authenticated()
             }
         return http.build()
@@ -70,17 +66,13 @@ class SecurityConfig(
     @Bean
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
         val converter = JwtAuthenticationConverter()
-        // Используем ID клиента, полученный из application.yml
         converter.setJwtGrantedAuthoritiesConverter(KeycloakRoleConverter(keycloakClientId))
         return converter
     }
 
-    // БИН jwtDecoder() УДАЛЕН. Spring Boot создаст его сам.
-
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            // Берем разрешенные домены из application.yml
             allowedOriginPatterns = allowedOrigins
             allowedMethods = listOf("POST", "PUT", "DELETE", "GET", "OPTIONS", "PATCH")
             allowedHeaders = listOf("*")

@@ -12,20 +12,15 @@ class KeycloakRoleConverter(
     override fun convert(jwt: Jwt): Collection<GrantedAuthority> {
         val authorities = mutableSetOf<GrantedAuthority>()
 
-        // Извлекаем realm roles
         val realmRoles = extractRealmRoles(jwt)
         authorities.addAll(realmRoles.map { SimpleGrantedAuthority("ROLE_${it.uppercase()}") })
 
-        // Извлекаем client roles
         val clientRoles = extractClientRoles(jwt, clientId)
         authorities.addAll(clientRoles.map { SimpleGrantedAuthority("ROLE_${it.uppercase()}") })
 
         return authorities
     }
 
-    /**
-     * Извлекает роли на уровне realm из токена
-     */
     private fun extractRealmRoles(jwt: Jwt): Collection<String> {
         val realmAccess = jwt.getClaim<Map<String, Any>>("realm_access") ?: return emptyList()
 
@@ -35,9 +30,6 @@ class KeycloakRoleConverter(
         return roles
     }
 
-    /**
-     * Извлекает роли на уровне клиента из токена
-     */
     private fun extractClientRoles(jwt: Jwt, clientId: String): Collection<String> {
         val resourceAccess = jwt.getClaim<Map<String, Any>>("resource_access") ?: return emptyList()
 

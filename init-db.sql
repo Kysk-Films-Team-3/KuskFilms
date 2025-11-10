@@ -1,51 +1,27 @@
--- ============================================
--- KyskFilms - Database Initialization
--- Створює дві окремі бази даних
--- ============================================
-
--- ============================================
--- 1. KEYCLOAK DATABASE (keycloak_db)
--- ============================================
 SELECT 'Creating keycloak_db...' as status;
 
--- Створюємо базу даних для Keycloak (якщо не існує)
 SELECT 'CREATE DATABASE keycloak_db'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'keycloak_db')\gexec
 
--- Надаємо права користувачу
 GRANT ALL PRIVILEGES ON DATABASE keycloak_db TO kysk_user;
 
--- ============================================
--- 2. APPLICATION DATABASE (kyskfilms_db)
--- ============================================
 SELECT 'Creating kyskfilms_db...' as status;
 
--- Створюємо базу даних для застосунку (якщо не існує)
 SELECT 'CREATE DATABASE kyskfilms_db'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'kyskfilms_db')\gexec
 
--- Надаємо права користувачу
 GRANT ALL PRIVILEGES ON DATABASE kyskfilms_db TO kysk_user;
 
--- ============================================
--- 3. ПІДКЛЮЧАЄМОСЬ ДО kyskfilms_db
--- ============================================
 \c kyskfilms_db;
 
--- Розширення
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
--- ============================================
--- ТАБЛИЦІ ДЛЯ ЗАСТОСУНКУ
--- ============================================
-
--- Профілі користувачів (тільки Keycloak ID + метадані)
 CREATE TABLE IF NOT EXISTS user_profiles (
-    keycloak_id UUID PRIMARY KEY,  -- UUID з Keycloak
+    keycloak_id UUID PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    preferences JSONB DEFAULT '{}'::jsonb,  -- Налаштування користувача
+    preferences JSONB DEFAULT '{}'::jsonb,
     CONSTRAINT keycloak_id_not_empty CHECK (keycloak_id IS NOT NULL)
 );
 
@@ -53,7 +29,6 @@ COMMENT ON TABLE user_profiles IS 'Профілі користувачів (зб
 COMMENT ON COLUMN user_profiles.keycloak_id IS 'UUID користувача з Keycloak (Primary Key)';
 COMMENT ON COLUMN user_profiles.preferences IS 'JSON з налаштуваннями: {theme, language, notifications, etc}';
 
--- Жанри
 CREATE TABLE IF NOT EXISTS genres (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
@@ -61,7 +36,6 @@ CREATE TABLE IF NOT EXISTS genres (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Фільми
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -78,14 +52,12 @@ CREATE TABLE IF NOT EXISTS movies (
     CONSTRAINT valid_rating CHECK (rating >= 0 AND rating <= 10)
 );
 
--- Зв'язок фільм-жанр (Many-to-Many)
 CREATE TABLE IF NOT EXISTS movie_genres (
     movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
     genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
     PRIMARY KEY (movie_id, genre_id)
 );
 
--- Watchlist (Хочу подивитись)
 CREATE TABLE IF NOT EXISTS watchlist (
     keycloak_id UUID REFERENCES user_profiles(keycloak_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
@@ -95,7 +67,6 @@ CREATE TABLE IF NOT EXISTS watchlist (
 
 COMMENT ON TABLE watchlist IS 'Список фільмів "Хочу подивитись"';
 
--- Favorites (Улюблені)
 CREATE TABLE IF NOT EXISTS favorites (
     keycloak_id UUID REFERENCES user_profiles(keycloak_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
@@ -105,7 +76,6 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 COMMENT ON TABLE favorites IS 'Улюблені фільми користувача';
 
--- Ratings (Оцінки)
 CREATE TABLE IF NOT EXISTS user_ratings (
     keycloak_id UUID REFERENCES user_profiles(keycloak_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
@@ -117,7 +87,6 @@ CREATE TABLE IF NOT EXISTS user_ratings (
 
 COMMENT ON TABLE user_ratings IS 'Оцінки фільмів користувачами (1-10)';
 
--- Reviews (Рецензії)
 CREATE TABLE IF NOT EXISTS reviews (
     id SERIAL PRIMARY KEY,
     keycloak_id UUID REFERENCES user_profiles(keycloak_id) ON DELETE CASCADE,
@@ -131,39 +100,26 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 COMMENT ON TABLE reviews IS 'Рецензії користувачів на фільми';
 
--- ============================================
--- ІНДЕКСИ
--- ============================================
-
--- Профілі
 CREATE INDEX IF NOT EXISTS idx_user_profiles_created_at ON user_profiles(created_at DESC);
 
--- Фільми
 CREATE INDEX IF NOT EXISTS idx_movies_title ON movies USING gin(title gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS idx_movies_slug ON movies(slug);
 CREATE INDEX IF NOT EXISTS idx_movies_rating ON movies(rating DESC);
 CREATE INDEX IF NOT EXISTS idx_movies_release_date ON movies(release_date DESC);
 
--- Watchlist
 CREATE INDEX IF NOT EXISTS idx_watchlist_user ON watchlist(keycloak_id);
 CREATE INDEX IF NOT EXISTS idx_watchlist_movie ON watchlist(movie_id);
 CREATE INDEX IF NOT EXISTS idx_watchlist_added_at ON watchlist(added_at DESC);
 
--- Favorites
 CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(keycloak_id);
 CREATE INDEX IF NOT EXISTS idx_favorites_movie ON favorites(movie_id);
 
--- Ratings
 CREATE INDEX IF NOT EXISTS idx_ratings_user ON user_ratings(keycloak_id);
 CREATE INDEX IF NOT EXISTS idx_ratings_movie ON user_ratings(movie_id);
 
--- Reviews
 CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(keycloak_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_movie ON reviews(movie_id);
 
--- ============================================
--- ТРИГЕРИ ДЛЯ updated_at
--- ============================================
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -188,9 +144,6 @@ CREATE TRIGGER update_reviews_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- ============================================
--- ФУНКЦІЯ ДЛЯ ОНОВЛЕННЯ РЕЙТИНГУ ФІЛЬМУ
--- ============================================
 
 CREATE OR REPLACE FUNCTION update_movie_rating()
 RETURNS TRIGGER AS $$
@@ -222,11 +175,6 @@ CREATE TRIGGER update_movie_rating_on_delete
     FOR EACH ROW
     EXECUTE FUNCTION update_movie_rating();
 
--- ============================================
--- ТЕСТОВІ ДАНІ (опціонально)
--- ============================================
-
--- Жанри
 INSERT INTO genres (name, slug) VALUES
     ('Action', 'action'),
     ('Drama', 'drama'),
@@ -235,10 +183,6 @@ INSERT INTO genres (name, slug) VALUES
     ('Sci-Fi', 'sci-fi'),
     ('Horror', 'horror')
 ON CONFLICT (slug) DO NOTHING;
-
--- ============================================
--- SUMMARY
--- ============================================
 
 DO $$
 BEGIN

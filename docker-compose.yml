@@ -1,16 +1,12 @@
-# ============================================
-# KYSKFilms - Docker Compose (Final & Fixed)
-# ============================================
-
 services:
   # ============ NGINX ============
+
   nginx:
     image: nginx:1-alpine
     container_name: ${COMPOSE_PROJECT_NAME}-nginx-proxy
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      # Прямое монтирование файла - это самый надежный способ для одного файла
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - backend
@@ -21,6 +17,7 @@ services:
     restart: unless-stopped
 
   # ============ POSTGRES DATABASE ============
+
   postgres:
     image: postgres:16-alpine
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
@@ -33,7 +30,6 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # Прямое монтирование файла
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} && psql -U ${POSTGRES_USER} -lqt | cut -d '|' -f 1 | grep -qw ${POSTGRES_APP_DB} && psql -U ${POSTGRES_USER} -lqt | cut -d '|' -f 1 | grep -qw ${POSTGRES_KC_DB}"]
@@ -45,6 +41,7 @@ services:
     restart: unless-stopped
 
   # ============ MINIO (S3 Storage) ============
+
   minio:
     image: minio/minio:latest
     container_name: ${COMPOSE_PROJECT_NAME}-minio
@@ -67,6 +64,7 @@ services:
     restart: unless-stopped
 
   # ============ MINIO INIT ============
+
   minio-init:
     image: minio/mc:latest
     container_name: ${COMPOSE_PROJECT_NAME}-minio-init
@@ -84,6 +82,7 @@ services:
     restart: "no"
 
   # ============ KEYCLOAK ============
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.4
     container_name: ${COMPOSE_PROJECT_NAME}-keycloak
@@ -111,6 +110,7 @@ services:
     restart: unless-stopped
 
   # ============ KEYCLOAK INIT ============
+
   keycloak-init:
     image: alpine:latest
     container_name: ${COMPOSE_PROJECT_NAME}-keycloak-init
@@ -121,8 +121,10 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+    env_file:
+      - ./.env
     volumes:
-      # Прямое монтирование файла
+
       - ./keycloak/keycloak-init.sh:/app/init.sh:ro
       - keycloak_import_dir:/keycloak/import:ro
     entrypoint: /bin/sh
@@ -132,6 +134,7 @@ services:
     restart: "no"
 
   # ============ BACKEND (Spring Boot) ============
+
   backend:
     build:
       context: ./backend
@@ -144,14 +147,15 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
-      KEYCLOAK_ISSUER_URI: ${FRONTEND_PROXY_KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
-      KEYCLOAK_JWK_SET_URI: ${KEYCLOAK_INTERNAL_URL}/auth/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+      KEYCLOAK_CLIENT_ID: "kyskfilms-backend"
+      KEYCLOAK_ISSUER_URI: http://${DOMAIN}/auth/realms/${KEYCLOAK_REALM}
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/auth/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
       MINIO_URL: ${MINIO_INTERNAL_URL}
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET: ${MINIO_BUCKET}
       MINIO_REGION: ${MINIO_REGION}
+      APP_FRONTEND_ALLOWED_ORIGINS: ${FRONTEND_ALLOWED_ORIGINS}
     depends_on:
       postgres: { condition: service_healthy }
       minio-init: { condition: service_completed_successfully }
@@ -169,6 +173,7 @@ services:
       start_period: 60s
 
   # ============ FRONTEND (React) ============
+
   frontend:
     build:
       context: ./frontend
@@ -189,9 +194,8 @@ services:
       retries: 3
       start_period: 10s
 
-# ============================================
 # Volumes Definition
-# ============================================
+
 volumes:
   postgres_data:
     driver: local
@@ -200,7 +204,6 @@ volumes:
     driver: local
     name: ${COMPOSE_PROJECT_NAME}_minio_data
 
-  # Определения для ПАПОК оставляем здесь
   keycloak_import_dir:
     driver: local
     driver_opts: { type: 'none', o: 'bind', device: '${PWD}/keycloak/import' }
@@ -208,9 +211,8 @@ volumes:
     driver: local
     driver_opts: { type: 'none', o: 'bind', device: '${PWD}/backend/logs' }
 
-# ============================================
 # Networks Definition
-# ============================================
+
 networks:
   kyskfilms-network:
     driver: bridge

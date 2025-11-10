@@ -1,86 +1,115 @@
+# Файл: backend/src/main/resources/application.yml
+
+# ===================================================================
+# KYSKFilms Backend - application.yml (ФИНАЛЬНАЯ ЧИСТАЯ ВЕРСИЯ)
+# ===================================================================
+
+# -------------------------------------------
+# Spring Boot Core
+# -------------------------------------------
 spring:
   application:
     name: kyskfilms-backend
-
   liquibase:
-     enabled: false
+    enabled: false
+
+  # -------------------------------------------
+  # Database Configuration
+  # -------------------------------------------
   datasource:
-    # Значение по умолчанию теперь указывает на DNS-имя сервиса в Docker
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/kyskfilms_db}
-    username: ${SPRING_DATASOURCE_USERNAME:kysk_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:kyskfilms_secure_password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
       connection-timeout: 30000
 
+  # -------------------------------------------
+  # JPA & Hibernate Configuration
+  # -------------------------------------------
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}
-    show-sql: ${JPA_SHOW_SQL:false}
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  # -------------------------------------------
+  # Security Configuration (OAuth2 / JWT)
+  # -------------------------------------------
   security:
     oauth2:
       resourceserver:
         jwt:
-          # Значение по умолчанию теперь указывает на ПУБЛИЧНЫЙ адрес через Nginx
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost/auth/realms/kyskfilms}
-          # Значение по умолчанию теперь указывает на ВНУТРЕННИЙ адрес для прямого доступа
-          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://keycloak:8080/auth/realms/kyskfilms/protocol/openid-connect/certs}
+          # Внешний URL для браузеров (Swagger, Frontend)
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          # Внутренний URL, который бэкенд использует для проверки токенов
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
 
+# -------------------------------------------
+# Server Configuration
+# -------------------------------------------
 server:
-  port: ${SERVER_PORT:8081}
-  # Контекстный путь убран, так как Nginx уже добавляет /api
-  # servlet:
-  #   context-path: /
+  port: 8081
 
-# Секция keycloak: удалена, так как она избыточна и может вызвать путаницу.
-# Используйте стандартные свойства spring.security.oauth2.
-
-# MinIO configuration
+# -------------------------------------------
+# MinIO (S3 Storage) Configuration
+# -------------------------------------------
 minio:
-  # Значение по умолчанию теперь указывает на DNS-имя сервиса в Docker
-  url: ${MINIO_URL:http://minio:9000}
-  access-key: ${MINIO_ACCESS_KEY:minioadmin}
-  secret-key: ${MINIO_SECRET_KEY:minioadmin_secure}
-  bucket: ${MINIO_BUCKET:kyskfilms}
-  region: ${MINIO_REGION:us-east-1}
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+  region: ${MINIO_REGION}
 
-# Frontend configuration
+# -------------------------------------------
+# Application-specific Configuration
+# -------------------------------------------
 app:
   frontend:
-    allowed-origins: ${FRONTEND_ALLOWED_ORIGINS:http://localhost,http://localhost:3000,http://localhost:3001}
+    # Используем синтаксис YAML-списка
+    allowed-origins:
+      - http://localhost
+      - http://localhost:3000
 
-# Logging
+# -------------------------------------------
+# Logging Configuration
+# -------------------------------------------
 logging:
   level:
-    com.kyskfilms: ${LOG_LEVEL_APP:INFO}
-    org.springframework.security: ${LOG_LEVEL_SECURITY:INFO}
+    # Можно вернуть на INFO после того, как все заработает
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    com.kyskfilms: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
-# Swagger/OpenAPI
+# -------------------------------------------
+# Swagger / OpenAPI Configuration
+# -------------------------------------------
 springdoc:
-  api-docs:
-    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    # ВАЖНО: client-id для Swagger нужно указать явно или через переменную
     oauth:
-      client-id: ${KEYCLOAK_CLIENT_ID:kyskfilms-backend}
-      # realm не нужен, если issuer-uri полный
-      # realm: ${KEYCLOAK_REALM:kyskfilms}
+      # Используем отдельный клиент для Swagger
+      client-id: "kyskfilms-swagger"
+      use-pkce-with-authorization-code-grant: true
+  # Эти URL будут построены на основе issuer-uri из секции security
+  oauth2:
+    authorization-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/auth
+    token-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
 
-# Actuator
+# -------------------------------------------
+# Actuator Configuration
+# -------------------------------------------
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info
       base-path: /actuator
   endpoint:
     health:
