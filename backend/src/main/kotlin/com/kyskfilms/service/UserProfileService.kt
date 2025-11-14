@@ -26,4 +26,9 @@ class UserProfileService(
             userProfileRepository.save(newUserProfile)
         }
     }
+
+    @Transactional
+    fun updateUserProfile(userProfile: UserProfile): UserProfile {
+        return userProfileRepository.save(userProfile)
+    }
 }

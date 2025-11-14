@@ -21,19 +21,16 @@ FROM eclipse-temurin:21-jre
 LABEL maintainer="kyskfilms@example.com"
 LABEL description="KYSKFilms Backend"
 
-# Устанавливаем curl и netcat для healthcheck и wait
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl netcat-openbsd ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Создаём пользователя и папки
 RUN useradd -m -u 9999 appuser && \
     mkdir -p /app/logs && \
     chown -R appuser:appuser /app
 
-# Копируем JAR и entrypoint
 COPY --from=build --chown=appuser:appuser /app/build/libs/*.jar /app/app.jar
 COPY --chown=appuser:appuser docker-entrypoint.sh /app/docker-entrypoint.sh
 

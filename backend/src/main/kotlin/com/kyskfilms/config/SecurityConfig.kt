@@ -26,7 +26,7 @@ class SecurityConfig(
     private lateinit var allowedOrigins: List<String>
 
 
-    @Value("\${KEYCLOAK_CLIENT_ID}") // <-- ИЗМЕНЕНО: теперь берется из окружения
+    @Value("\${KEYCLOAK_CLIENT_ID}")
     private lateinit var keycloakClientId: String
 
     @Bean

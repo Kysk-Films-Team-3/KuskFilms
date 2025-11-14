@@ -29,6 +29,11 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123_change_me
+      MINIO_URL: ${MINIO_INTERNAL_URL}
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_PUBLIC_URL: ${MINIO_EXTERNAL_URL}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -72,7 +77,7 @@ services:
       - kyskfilms-network
     restart: unless-stopped
 
-  # ============ KEYCLOAK INIT (один раз при першому запуску) ============
+  # ============ KEYCLOAK INIT ============
   keycloak-init:
     image: curlimages/curl:latest
     container_name: kyskfilms-keycloak-init

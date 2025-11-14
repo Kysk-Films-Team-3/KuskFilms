@@ -8,7 +8,6 @@ echo "Profile: ${SPRING_PROFILES_ACTIVE:-prod}"
 echo "Java Opts: ${JAVA_OPTS}"
 echo "=================================================="
 
-# Ждём PostgreSQL (опционально)
 if [ "${WAIT_FOR_POSTGRES:-false}" = "true" ]; then
     echo "Waiting for PostgreSQL..."
     until nc -z postgres 5432 2>/dev/null; do
@@ -18,7 +17,6 @@ if [ "${WAIT_FOR_POSTGRES:-false}" = "true" ]; then
     echo "✓ PostgreSQL is ready"
 fi
 
-# Ждём Keycloak (опционально)
 if [ "${WAIT_FOR_KEYCLOAK:-false}" = "true" ]; then
     echo "Waiting for Keycloak..."
     until curl -sf http://keycloak:8080/health/ready > /dev/null 2>&1; do
@@ -28,7 +26,6 @@ if [ "${WAIT_FOR_KEYCLOAK:-false}" = "true" ]; then
     echo "✓ Keycloak is ready"
 fi
 
-# Проверяем что JAR существует
 if [ ! -f /app/app.jar ]; then
     echo "ERROR: app.jar not found!"
     ls -la /app/
@@ -38,7 +35,6 @@ fi
 echo "✓ Starting Spring Boot application..."
 echo "=================================================="
 
-# Запускаем приложение
 exec java \
     ${JAVA_OPTS} \
     -Djava.security.egd=file:/dev/./urandom \

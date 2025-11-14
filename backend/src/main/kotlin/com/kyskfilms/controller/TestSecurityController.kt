@@ -28,7 +28,7 @@ class TestSecurityController {
     @Operation(
         summary = "Приватный доступ",
         description = "Доступно любому залогиненному пользователю. Возвращает ID и имя пользователя из токена.",
-        security = [SecurityRequirement(name = "bearerAuth")] // Показывает замочек в Swagger
+        security = [SecurityRequirement(name = "bearerAuth")]
     )
     fun getPrivateData(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<Map<String, Any>> {
         val userInfo = mapOf(

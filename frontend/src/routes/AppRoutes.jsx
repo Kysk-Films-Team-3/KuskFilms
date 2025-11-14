@@ -9,11 +9,20 @@ import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
 
-export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal,     onOpenActorRecs,  isLoggedIn, user, onProfileClick }) => {
+// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
+// `user` переименован в `userProfile` для соответствия данным из App.js.
+// `isLoggedIn` убран, так как эта информация уже содержится в Keycloak и не нужна здесь.
+// Добавлен `onProfileUpdate`, который будет "проброшен" до компонента Settings.
+export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal, onOpenActorRecs, onProfileClick }) => {
+// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
     return (
         <Routes>
             <Route
-                element={<Layout onLoginClick={onLoginClick} isLoggedIn={isLoggedIn} user={user} onProfileClick={onProfileClick}/>}
+                // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
+                // Пропс `user` заменен на `userProfile` и передан в Layout.
+                // `isLoggedIn` убран, так как Header теперь определяет это сам.
+                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick}/>}
+                // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
                 <Route path="/catalog" element={<Catalog />} />
@@ -23,13 +32,18 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                 <Route
                     path="/settings"
                     element={
-                        <PrivateRoute isLoggedIn={isLoggedIn} onLoginClick={onLoginClick}>
+                        <PrivateRoute>
+                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
+                            {/* Пропс `user` заменен на `userProfile`. */}
+                            {/* `onProfileUpdate` теперь корректно передается в компонент Settings, чтобы он мог обновлять UI. */}
                             <Settings
                                 onOpenLogoutModal={onOpenLogoutModal}
                                 onPaymentClick={onPaymentClick}
                                 onDeviceClick={onDeviceClick}
-                                user={user}
+                                userProfile={userProfile}
+                                onProfileUpdate={onProfileUpdate}
                             />
+                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                         </PrivateRoute>
                     }
                 />
@@ -42,7 +56,6 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                         </PrivateRoute>
                     }
                 />
-
             </Route>
         </Routes>
     );

@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './Header.css';
-import { getPopularFilms, getPopularActors } from '../../services/api';
-import { useHasRole } from '../../services/useHasRole';
+import { getPopularFilms, getPopularActors } from 'services/api';
+import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 
-export const Header = ({ user, onProfileClick }) => {
+// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
+// Пропс 'user' заменен на 'userProfile', чтобы соответствовать данным, которые мы получаем с бэкенда.
+export const Header = ({ userProfile, onProfileClick }) => {
+// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const { keycloak } = useKeycloak();
@@ -20,7 +23,14 @@ export const Header = ({ user, onProfileClick }) => {
     const [popularFilms, setPopularFilms] = useState([]);
     const [popularActors, setPopularActors] = useState([]);
     const dropdownRef = useRef(null);
-    const isLoggedIn = keycloak?.authenticated || !!user;
+
+    // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
+    // 1. Проверка `!!user` убрана. Единственный источник правды об аутентификации - Keycloak.
+    // 2. Добавлены переменные `avatarUrl` и `username`, которые безопасно извлекаются из `userProfile`.
+    const isLoggedIn = keycloak?.authenticated;
+    const avatarUrl = userProfile?.avatarUrl;
+    const username = userProfile?.username || keycloak?.tokenParsed?.preferred_username;
+    // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
     useEffect(() => {
         const savedLang = localStorage.getItem('lang');
@@ -102,7 +112,6 @@ export const Header = ({ user, onProfileClick }) => {
         }
     };
 
-    // --- НАЧАЛО БЛОКА ДЛЯ ТЕСТИРОВАНИЯ API ---
     const fetchApi = async (endpoint) => {
         try {
             const headers = {
@@ -283,18 +292,44 @@ export const Header = ({ user, onProfileClick }) => {
                         <div className="header_profile">
                             <div onClick={toggleDropdown} className="header_profile_switch">
                                 <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? 'Закрити меню' : 'Відкрити меню'} />
-                                <div className="header_avatar" />
+
+                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
+                                {/* Статичный `div` заменен на `div` с условным рендерингом `img` внутри. */}
+                                <div className="header_avatar">
+                                    {avatarUrl && (
+                                        <img
+                                            src={avatarUrl}
+                                            alt="Avatar"
+                                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                        />
+                                    )}
+                                </div>
+                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                             </div>
 
                             {isDropdownOpen && (
                                 <div className="header_dropdown" ref={dropdownRef}>
                                     <div className="profile_info_block">
                                         <div className="profile_block">
-                                            <div className="header_avatar" />
+                                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
+                                            {/* Аналогичное изменение для аватара в выпадающем меню. */}
+                                            <div className="header_avatar">
+                                                {avatarUrl && (
+                                                    <img
+                                                        src={avatarUrl}
+                                                        alt="Avatar"
+                                                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                                    />
+                                                )}
+                                            </div>
+                                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             <div className="profile_text_block">
+                                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
+                                                {/* Старый способ получения имени заменен на новую переменную `username`. */}
                                                 <div className="profile_name">
-                                                    {keycloak?.tokenParsed?.preferred_username || user?.emailOrPhone?.split('@')[0] || 'User'}
+                                                    {username || 'User'}
                                                 </div>
+                                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             </div>
                                         </div>
                                         <div className="check_icon"></div>
@@ -341,7 +376,6 @@ export const Header = ({ user, onProfileClick }) => {
                                         )}
                                     </ul>
 
-                                    {/* --- НАЧАЛО БЛОКА КНОПОК ДЛЯ ТЕСТИРОВАНИЯ API --- */}
                                     <hr className="divider" />
                                     <div style={{ padding: '0 10px', backgroundColor: '#222', color: 'gray' }}>
                                         <p style={{ margin: '5px 0', fontWeight: 'bold' }}>API ТЕСТЫ</p>
@@ -368,7 +402,6 @@ export const Header = ({ user, onProfileClick }) => {
                                             )}
                                         </ul>
                                     </div>
-                                    {/* --- КОНЕЦ БЛОКА КНОПОК ДЛЯ ТЕСТИРОВАНИЯ API --- */}
 
                                 </div>
                             )}
