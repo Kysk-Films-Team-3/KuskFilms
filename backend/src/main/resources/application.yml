@@ -44,9 +44,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          # Внешний URL для браузеров (Swagger, Frontend)
           issuer-uri: ${KEYCLOAK_ISSUER_URI}
-          # Внутренний URL, который бэкенд использует для проверки токенов
           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
 
 # -------------------------------------------

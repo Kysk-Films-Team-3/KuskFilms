@@ -1,4 +1,4 @@
-package com.kyskfilms.model
+package com.kyskfilms.user.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp

@@ -1,7 +1,10 @@
 package com.kyskfilms.service
 
-import com.kyskfilms.model.UserProfile
+import com.kyskfilms.user.entity.UserProfile
 import com.kyskfilms.repository.UserProfileRepository
+import com.kyskfilms.video.service.MinioService
+
+
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service

@@ -1,7 +1,7 @@
 
 package com.kyskfilms.repository
 
-import com.kyskfilms.model.UserProfile
+import com.kyskfilms.user.entity.UserProfile
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID
