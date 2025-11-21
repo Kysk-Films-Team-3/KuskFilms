@@ -1,0 +1,508 @@
+.player-ui {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+}
+
+.video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.video-click-area {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+}
+
+.center-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 6;
+    pointer-events: auto;
+    width: 80px;
+    height: 88px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763678988/Vector_11_lkjycf.png");
+}
+
+.center-play:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763678989/Vector_12_axmqnc.png");
+}
+
+.progress-wrapper {
+    position: absolute;
+    bottom: 100px;
+    left: 20px;
+    right: 20px;
+    height: 6px;
+    z-index: 7;
+}
+
+.progress-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.25);
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    border-radius: 6px;
+    background: #4E55D4;
+    width: 0%;
+    pointer-events: none;
+}
+
+.progress-bar {
+    position: absolute;
+    top: -6px;
+    left: -4px;
+    width: 100%;
+    height: 14px;
+    background: transparent;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.progress-wrapper:hover .progress-bar::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+.progress-bar::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.progress-wrapper:hover .progress-bar::-moz-range-thumb {
+    opacity: 1;
+}
+
+.controls-panel {
+    position: absolute;
+    bottom: 15px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    color: white;
+    z-index: 8;
+}
+
+.player-uix::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 200px;
+    background: linear-gradient(
+            to top,
+            rgba(0,0,0,0.55) 0%,
+            rgba(0,0,0,0.3) 30%,
+            rgba(0,0,0,0.15) 55%,
+            rgba(0,0,0,0.05) 80%,
+            rgba(0,0,0,0) 100%
+    );
+    pointer-events: none;
+    z-index: 6;
+}
+
+.player-uix::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 160px;
+    background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.55) 0%,
+            rgba(0,0,0,0.35) 30%,
+            rgba(0,0,0,0.2) 55%,
+            rgba(0,0,0,0.1) 80%,
+            rgba(0,0,0,0) 100%
+    );
+    pointer-events: none;
+    z-index: 6;
+}
+
+
+.controls-left {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.control-btn {
+    width: 52px;
+    height: 52px;
+    border: none;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.control-btn.play {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763311856/Component_71_1_slazaj.png");
+}
+
+.control-btn.play:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763311855/Component_71_2_cnujag.png");
+}
+.control-btn.pause {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763311856/Component_71_vtnwvt.png");
+}
+
+.control-btn.pause:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763311855/Component_71_3_kasj1w.png");
+}
+
+.time {
+    font-family: "inter", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    width: 70px;
+    display: flex;
+    white-space: nowrap;
+}
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-wrapper {
+    position: relative;
+    width: 125px;
+    height: 6px;
+}
+
+.volume-icon {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.volume-icon.high {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763480576/Property_1_Full_Property_2_Default_ozeuff.png");
+}
+
+.volume-icon.high:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763691756/Property_1_Full_Property_2_Hover_ar17oe.png");
+}
+
+.volume-icon.low {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763480551/Property_1_Half_Property_2_Default_arxohr.png");
+}
+
+.volume-icon.low:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763691756/Property_1_Half_Property_2_Hover_bsnviw.png");
+}
+
+.volume-icon.mute {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763480551/Property_1_Off_Property_2_Default_vhofxx.png");
+}
+
+.volume-icon.mute:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763691756/Property_1_Off_Property_2_Hover_xidb4l.png");
+}
+
+.volume-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.volume-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    border-radius: 6px;
+    background: #4E55D4;
+    width: 0%;
+    pointer-events: none;
+}
+
+.volume-bar {
+    position: absolute;
+    top: -6px;
+    left: -2px;
+    width: 100%;
+    height: 14px;
+    appearance: none;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.volume-wrapper:hover .volume-bar::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+.volume-bar::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.volume-wrapper:hover .volume-bar::-moz-range-thumb {
+    opacity: 1;
+}
+
+.settings-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763686398/Property_1_Default_hpjieh.png");
+}
+
+.settings-btn:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763691830/Property_1_Default_1_vgmpnd.png");
+}
+
+.settings-menu {
+    position: absolute;
+    align-items: center;
+    bottom: 70px;
+    right: 55px;
+    background: #262630;
+    border-radius: 16px;
+    color: white;
+    width: 240px;
+    font-size: 16px;
+    overflow: hidden;
+    font-family: "inter", sans-serif;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-list2{
+    display: flex;
+    flex-direction: column;
+}
+
+.grap{
+    gap: 100px;
+}
+
+.settings_title{
+    margin-left: 10px;
+}
+
+.blocki{
+    display: flex;
+    align-items: center;
+}
+
+.settings-row,
+.settings-option,
+.back-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+.settings-row:hover,
+.settings-option:hover,
+.back-row:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.settings-row{
+    align-items: center;
+    padding: 10px;
+}
+
+.arrow {
+    opacity: 0.6;
+    margin-left: 5px;
+}
+
+.value {
+    opacity: 0.7;
+}
+
+.back-row {
+    font-size: 18px;
+    font-weight: 400;
+    gap: 4px;
+}
+
+.settings-option.active {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+}
+
+.settings-option.active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 70%;
+    background: #4E55D4;
+    border-radius: 2px;
+}
+
+.settings_sub_list {
+    display: flex;
+    flex-direction: column;
+}
+
+.back_sub_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 17px;
+    transition: background .15s ease;
+}
+
+.back_sub_row:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.arrow_sub_back {
+    width: 25px;
+    height: 25px;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756430597/Arrow_Grey.png");
+    transform: rotate(180deg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+}
+
+.settings_sub_option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+    color: rgba(255,255,255,0.8);
+    transition: background .15s ease, color .15s ease;
+}
+
+.settings_sub_option:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.settings_sub_option.active {
+    color: #fff;
+    font-weight: 600;
+    position: relative;
+}
+
+.settings_sub_option.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: #4E55D4;
+    border-radius: 0 3px 3px 0;
+}
+
+.arrow {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.7;
+}
+
+.arrow-right {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756430597/Arrow_Grey.png");
+}
+
+.arrow-back {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756430597/Arrow_Grey.png");
+    transform: rotate(180deg);
+    opacity: 0.9;
+    margin-right: 6px;
+}
+
+.fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763395181/Full_alt_1_uksidu.png");
+}
+
+.fullscreen-btn:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763395181/Full_alt_npdwqr.png");
+}

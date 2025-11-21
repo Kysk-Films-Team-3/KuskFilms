@@ -1,0 +1,534 @@
+
+.settings_page {
+    color: #F8F8FE;
+    background-color: #262630;
+    padding: 130px 0 0 60px;
+    z-index: 1001;
+    font-family: 'Raleway', sans-serif;
+    box-sizing: border-box;
+}
+
+.settings_header {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.settings_back_button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #F8F8FE;
+    font-size: 24px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.settings_back_icon {
+    width: 24px;
+    height: 24px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1755900281/Back.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.settings_back_button:hover {
+    color: #4E55D4;
+}
+
+.settings_back_button:hover .settings_back_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1755993970/Back_hover.png');
+}
+
+.settings_container {
+    display: flex;
+    margin-top: 60px;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+
+.settings_sidebar {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings_profile_block {
+    background-color: #34353F;
+    height: 120px;
+    width: 543px;
+    border-radius: 15px;
+    padding: 0 20px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.settings_profile_block:hover {
+    background-color: #414250;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.settings_profile_details {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+}
+
+.settings_profile_info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.settings_profile_avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756423042/Avatar_Settings.png');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 0 10px rgba(78, 85, 212, 0.5);
+    flex-shrink: 0;
+}
+
+.settings_profile_email {
+    font-size: 20px;
+    font-weight: 400;
+    color: #F8F8FE;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.settings_arrow_email_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419824/Arrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.settings_arrow_email_icon:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.settings_arrow_pay_icon,
+.settings_arrow_device_icon {
+    margin-top: -105px;
+}
+
+.settings_block_title {
+    font-size: 32px;
+    margin-top: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.settings_subscriptions_block {
+    background-color: #34353F;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    height: 88px;
+    width: 543px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+
+.settings_subscriptions_block:hover .settings_arrow_premium_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419824/Arrow.png');
+}
+
+.settings_subscriptions_block:hover .settings_manage_button {
+    color: #F8F8FE;
+}
+
+.settings_subscriptions_block:hover {
+    background-color: #414250;
+}
+
+.settings_subscription_content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.settings_subscription_status {
+    padding: 10px 15px;
+    margin: 20px;
+    font-size: 24px;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #282C6E, #4E55D4);
+    font-weight: 500;
+    color: #F8F8FE;
+    flex-shrink: 0;
+}
+
+.settings_premium_link {
+    text-decoration: none;
+}
+
+.settings_right_group {
+    display: flex;
+    margin: 20px;
+    align-items: center;
+}
+
+.settings_right_group {
+    display: flex;
+    margin: 20px;
+    align-items: center;
+    gap: 2px;
+}
+
+.settings_manage_button {
+    background: none;
+    border: none;
+    color: #9999A1;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.settings_arrow_premium_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756430597/Arrow_Grey.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+.settings_right_group:hover .settings_manage_button {
+    color: #4E55D4;
+}
+
+.settings_right_group:hover .settings_arrow_premium_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.settings_main_content {
+    flex-grow: 1;
+    margin-left: 120px;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings_row {
+    display: flex;
+    width: 1137px;
+    gap: 20px;
+}
+
+.settings_card {
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    height: 171px;
+    padding: 20px;
+    align-items: center;
+    background-color: #34353F;
+    border-radius: 15px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.settings_card_icons{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.settings_card:hover {
+    background-color: #414250;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.settings_card_icon_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+
+.settings_card_content {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings_arrow_pay_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419824/Arrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.settings_arrow_pay_icon:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.settings_arrow_device_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419824/Arrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.settings_arrow_device_icon:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.settings_arrow_pay_icon,
+.settings_arrow_device_icon {
+    margin-left: auto;
+}
+
+.settings_card_icon {
+    background-size: contain;
+}
+
+.settings_payment_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756423948/Payment.png');
+}
+
+.settings_devices_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756423886/Device.png');
+}
+
+.settings_card_title {
+    margin-top: 30px;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.settings_card_subtitle {
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 20px;
+    color: #8e90a0;
+}
+
+.settings_section, .settings_child_protection_section, .settings_sport_section {
+    background-color: #34353F;
+    width: 1137px;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-sizing: border-box;
+}
+.settings_child_protection_section{
+    height: 235px;
+}
+
+.settings_sport_section{
+    height: 130px;
+}
+
+.settings_section:hover,
+.settings_child_protection_section:hover,
+.settings_sport_section:hover {
+    background-color: #414250;
+}
+
+.settings_sport_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 15px;
+    margin-top: 30px;
+}
+
+.settings_section_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings_section_title {
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.settings_section_subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    color: #F8F8FE;
+}
+
+.settings_toggle_switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+}
+
+.settings_toggle_switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #9999A1;
+    border-radius: 34px;
+    transition: background-color 0.4s;
+}
+
+.settings_slider:before {
+    position: absolute;
+    content: "";
+    height: 30px;
+    width: 30px;
+    left: 3px;
+    top: 1px;
+    background-color: #202588;
+    border-radius: 50%;
+    transition: transform 0.4s;
+}
+
+.settings_toggle_switch input:checked + .settings_slider {
+    background-color: #3D4DF5;
+}
+
+.settings_toggle_switch input:checked + .settings_slider:before {
+    transform: translateX(26px);
+}
+
+.settings_child_warning {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 30px;
+    margin-left: 10px;
+    border-radius: 15px;
+    gap: 30px;
+}
+
+.settings_child_warning_icon {
+    width: 109px;
+    height: 133px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    flex-shrink: 0;
+}
+
+.settings_child_protection_warning_block {
+    display: flex;
+    align-items: flex-start;
+    border-radius: 15px;
+}
+
+.settings_child_protection_warning_icon {
+    width: 116px;
+    height: 148px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.settings_child_warning_text_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.settings_child_warning_title {
+    font-weight: 300;
+    font-size: 20px;
+    margin-top: 40px;
+    color: #F8F8FE;
+}
+
+.settings_child_warning_subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: #8e90a0;
+    margin-top: 10px;
+    line-height: 1.2;
+}
+
+.settings_logout_block {
+    display: flex;
+    align-items: center;
+    width: 1137px;
+    background-color: #34353F;
+    height: 64px;
+    border-radius: 15px;
+}
+
+.settings_logout_block:hover {
+    background-color: #414250;
+}
+
+.settings_logout_icon {
+    margin-left: 20px;
+    margin-right: 15px;
+    width: 24px;
+    height: 24px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756422933/Logout.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.settings_logout_link {
+    color: #DD5254;
+    text-decoration: none;
+    font-size: 24px;
+    margin-top: 30px;
+    font-weight: 500;
+}
+
+@media (min-width: 1920px) {
+
+    .settings_back_icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .settings_back_button {
+        margin-left: 90px;
+        font-size: 32px;
+    }
+
+    .settings_container {
+        width: 1920px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .settings_header {
+        margin-left: 300px;
+    }
+
+    .settings_main_content,
+    .settings_sidebar {
+        margin-left: 120px;
+    }
+
+    .settings_divider {
+        margin-top: 380px;
+    }
+
+}
