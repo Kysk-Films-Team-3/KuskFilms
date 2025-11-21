@@ -232,9 +232,14 @@
 .home_film_card img {
     width: 100%;
     height: 100%;
+    opacity: 1;
     object-fit: cover;
     border-radius: 16px;
     -webkit-user-drag: none;
+}
+
+.home_film_card img:hover {
+    opacity: 0.2;
 }
 
 .home_film_header {

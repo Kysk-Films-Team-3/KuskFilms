@@ -8,6 +8,8 @@ import { Catalog } from '../pages/Catalog';
 import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
+import { MoviePage } from '../pages/MoviePage';
+
 
 export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal,     onOpenActorRecs,  isLoggedIn, user, onProfileClick }) => {
     return (
@@ -19,6 +21,9 @@ export const AppRoutes = ({ onLoginClick, onDeviceClick, onPaymentClick, onOpenL
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
+                <Route path="/movie" element={<MoviePage />} />
+                <Route path="/film/:id" element={<MoviePage />} />
+
 
                 <Route
                     path="/settings"

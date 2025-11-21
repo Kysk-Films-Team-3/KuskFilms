@@ -63,8 +63,15 @@
         </form>
 
         <div class="login_forgot_block">
-            <button type="button" class="login_forgot_link"  onclick="window.location.href='${url.resourcesPath}/forgot.html'">Забув пароль?</button>
+            <button
+                    type="button"
+                    class="login_forgot_link"
+                    onclick="window.location.href='${url.loginResetCredentialsUrl}'"
+            >
+                Забув пароль?
+            </button>
         </div>
+
 
         <div class="login_remember_block">
             <label class="login_remember_wrapper">

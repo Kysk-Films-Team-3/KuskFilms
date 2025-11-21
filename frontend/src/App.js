@@ -5,6 +5,7 @@ import { Profile } from './components/modal/Profile';
 import { Device } from './components/modal/Device';
 import { Payment } from './components/modal/Payment';
 import { Logout } from './components/modal/Logout';
+import PlayerOverlay from "./components/player/PlayerOverlay";
 import { ActorRecommendations } from './components/modal/ActorRecommendations';
 import { RegistrationComplete } from './components/modal/RegistrationComplete';
 import { ForgotComplete } from './components/modal/ForgotComplete';
@@ -73,6 +74,7 @@ const AppContent = () => {
             {activeModal === 'payment' && <Payment isOpen onClose={closeModal} />}
             {activeModal === 'logout' && <Logout isOpen onClose={closeModal} />}
             {activeModal === 'profile' && <Profile isOpen onClose={closeModal} />}
+            {activeModal === 'PlayerOverlay' && <PlayerOverlay isOpen onClose={closeModal} />}
             {activeModal?.type === 'actorRecs' && (
                 <ActorRecommendations actor={activeModal.actor} onClose={closeModal} />
             )}

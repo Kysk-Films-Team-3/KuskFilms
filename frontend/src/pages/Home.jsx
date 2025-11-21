@@ -382,13 +382,31 @@ export const Home = ({ onOpenActorRecs }) => {
 
                                     <div className="home_films">
                                         {sub.films.map(film => (
-                                            <div key={film.id} className="home_film_card" onMouseEnter={() => setSelectedItemId(film.id)} onMouseLeave={() => setSelectedItemId(null)}>
-                                                <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
+                                            <Link
+                                                to={`/film/${film.id}`}
+                                                state={{ filmId: film.id }}
+                                                key={film.id}
+                                                className="home_film_card"
+                                                onClickCapture={(e) => {
+                                                    if (e.target.closest(".home_film_action")) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                            >
+                                                <img
+                                                    src={selectedItemId === film.id ? film.hoverImage : film.image}
+                                                    alt={film.title}
+                                                    className="film_img"
+                                                />
+
                                                 <div className="home_film_header">
                                                     <div
                                                         className={`home_film_save home_film_action ${favorites.some(f => f.id === film.id) ? "active" : ""}`}
                                                         data-tooltip={t('tooltip.watch')}
-                                                        onClick={() =>
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+
                                                             toggleFavorite({
                                                                 id: film.id,
                                                                 image: film.image,
@@ -399,26 +417,34 @@ export const Home = ({ onOpenActorRecs }) => {
                                                                 line2: film.line2 ? `films.${film.id}.line2` : undefined,
                                                                 season: film.season ? `films.${film.id}.season` : undefined,
                                                                 source: 'home',
-                                                            })
-                                                        }
+                                                            });
+                                                        }}
                                                     />
 
-                                                    <div className="home_film_repost home_film_action" data-tooltip={t('tooltip.share')}/>
-                                                    <div className="home_film_remuve home_film_action" data-tooltip={t('tooltip.dislike')}/>
+                                                    <div className="home_film_repost home_film_action" data-tooltip={t('tooltip.share')}
+                                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                                    />
+
+                                                    <div className="home_film_remuve home_film_action" data-tooltip={t('tooltip.dislike')}
+                                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                                    />
                                                 </div>
 
                                                 <div className="home_film_text">
                                                     <div className="home_film_rating">{film.rating}</div>
                                                     <div className="home_film_line">
-                                                        <div className="home_film_line1"><span className="home_film_date"><Trans i18nKey={`films.${film.id}.linedate`} /></span>      <Trans i18nKey={`films.${film.id}.line1`} /></div>
+                                                        <div className="home_film_line1">
+                                                            <span className="home_film_date"><Trans i18nKey={`films.${film.id}.linedate`} /></span>
+                                                            <Trans i18nKey={`films.${film.id}.line1`} />
+                                                        </div>
                                                         <div className="home_film_line2"><Trans i18nKey={`films.${film.id}.line2`} /></div>
                                                     </div>
                                                     <div className="home_film_season"><Trans i18nKey={`films.${film.id}.season`} /></div>
                                                 </div>
-                                            </div>
-
+                                            </Link>
                                         ))}
                                     </div>
+
                                 </div>
                             </div>
                         ))

@@ -102,35 +102,6 @@ export const Header = ({ user, onProfileClick }) => {
         }
     };
 
-    // --- НАЧАЛО БЛОКА ДЛЯ ТЕСТИРОВАНИЯ API ---
-    const fetchApi = async (endpoint) => {
-        try {
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-            if (keycloak.authenticated && endpoint !== '/api/test/public') {
-                headers['Authorization'] = `Bearer ${keycloak.token}`;
-            }
-
-            const response = await fetch(`http://localhost/api/test${endpoint.replace('/api/test', '')}`, { headers });
-
-            const data = await response.text();
-
-            if (response.ok) {
-                try {
-                    const jsonData = JSON.parse(data);
-                    alert(`УСПЕХ:\n\nEndpoint: ${endpoint}\n\nResponse:\n${JSON.stringify(jsonData, null, 2)}`);
-                } catch (e) {
-                    alert(`УСПЕХ:\n\nEndpoint: ${endpoint}\n\nResponse:\n${data}`);
-                }
-            } else {
-                alert(`ОШИБКА (Статус: ${response.status}):\n\nEndpoint: ${endpoint}\n\nResponse:\n${data}`);
-            }
-        } catch (error) {
-            console.error("Ошибка при вызове API:", error);
-            alert(`КРИТИЧЕСКАЯ ОШИБКА:\n\nНе удалось подключиться к API. Смотрите консоль (F12).`);
-        }
-    };
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -162,9 +133,9 @@ export const Header = ({ user, onProfileClick }) => {
                         <nav className="header_nav">
                             <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
                             <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                            <NavLink to="/settings"><Trans i18nKey="header.nav.tvShows" /></NavLink>
-                            <NavLink to="/new"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
+                            <NavLink to="/"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                             <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
+                            <NavLink to="/movie">Плеер(временно)</NavLink>
                         </nav>
                     )}
 
@@ -327,49 +298,14 @@ export const Header = ({ user, onProfileClick }) => {
                                             </button>
                                         </li>
                                         {hasAdminRole && (
-                                            <li>
-                                                <Link
-                                                    to="/admin"
-                                                    onClick={handleMenuItemClick}
-                                                    className="dropdown_link"
-                                                    style={{ color: '#00ffaa', fontWeight: 'bold' }}
-                                                >
-                                                  <div className="dropdown_icon settings_icon"></div>
-                                                    Адмін-панель
-                                                </Link>
-                                            </li>
+                                            <Link
+                                                to="/admin"
+                                                style={{ color: '#00ffaa', fontWeight: 'bold' }}
+                                            >
+                                                Адмін-панель
+                                            </Link>
                                         )}
                                     </ul>
-
-                                    {/* --- НАЧАЛО БЛОКА КНОПОК ДЛЯ ТЕСТИРОВАНИЯ API --- */}
-                                    <hr className="divider" />
-                                    <div style={{ padding: '0 10px', backgroundColor: '#222', color: 'gray' }}>
-                                        <p style={{ margin: '5px 0', fontWeight: 'bold' }}>API ТЕСТЫ</p>
-                                        <ul>
-                                            <li>
-                                                <button onClick={() => fetchApi('/api/test/public')} className="dropdown_link">
-                                                    <div className="dropdown_icon settings_icon"></div>
-                                                    Тест: Public
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button onClick={() => fetchApi('/api/test/private')} className="dropdown_link">
-                                                    <div className="dropdown_icon manage_icon"></div>
-                                                    Тест: Private (JIT Trigger)
-                                                </button>
-                                            </li>
-                                            {hasAdminRole && (
-                                                <li>
-                                                    <button onClick={() => fetchApi('/api/test/admin')} className="dropdown_link" style={{color: '#00ffaa'}}>
-                                                        <div className="dropdown_icon manage_icon"></div>
-                                                        Тест: Admin
-                                                    </button>
-                                                </li>
-                                            )}
-                                        </ul>
-                                    </div>
-                                    {/* --- КОНЕЦ БЛОКА КНОПОК ДЛЯ ТЕСТИРОВАНИЯ API --- */}
-
                                 </div>
                             )}
                         </div>
