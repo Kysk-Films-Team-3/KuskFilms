@@ -18,16 +18,13 @@ class VideoProcessingService(
     private val log = LoggerFactory.getLogger(javaClass)
 
     @Async
-    fun processAndUpload(videoFileId: Int, fileBytes: ByteArray) {
+    fun processAndUpload(videoFileId: Int, inputFile: File) {
         val uniqueFolderName = UUID.randomUUID().toString()
-        val tempDir = Files.createTempDirectory("video-processing-").toFile()
-        val inputFile = File(tempDir, "$uniqueFolderName.mp4")
-        val outputDir = File(tempDir, uniqueFolderName)
-        outputDir.mkdir()
+        val outputDir = Files.createTempDirectory("video-processing-").toFile()
+
 
         try {
             log.info("Starting video processing for videoFileId: $videoFileId")
-            inputFile.writeBytes(fileBytes)
 
             val process = ProcessBuilder(
                 "ffmpeg", "-i", inputFile.absolutePath,
@@ -41,12 +38,12 @@ class VideoProcessingService(
 
             process.inputStream.bufferedReader().forEachLine { log.info("FFMPEG: $it") }
 
-            val finished = process.waitFor(30, TimeUnit.MINUTES)
+            val finished = process.waitFor(60, TimeUnit.MINUTES)
             if (!finished || process.exitValue() != 0) {
                 throw RuntimeException("FFmpeg failed or timed out. Exit code: ${process.exitValue()}")
             }
 
-            log.info("FFmpeg conversion successful for videoFileId: $videoFileId. Uploading to MinIO...")
+            log.info("FFmpeg conversion successful. Uploading to MinIO...")
 
             outputDir.listFiles()?.forEach { segmentFile ->
                 minioService.uploadHlsFile(segmentFile, uniqueFolderName)
@@ -54,14 +51,18 @@ class VideoProcessingService(
 
             val manifestObjectName = "$uniqueFolderName/master.m3u8"
             videoFileRepository.updateOnSuccess(videoFileId, manifestObjectName)
-            log.info("Video processing and upload finished for videoFileId: $videoFileId")
+            log.info("Finished videoFileId: $videoFileId")
 
         } catch (e: Exception) {
             log.error("Error processing videoFileId: $videoFileId", e)
             videoFileRepository.updateOnError(videoFileId, e.message ?: "Unknown error")
         } finally {
-            tempDir.deleteRecursively()
-            log.info("Cleaned up temp directory: ${tempDir.absolutePath}")
+
+            outputDir.deleteRecursively()
+            if (inputFile.exists()) {
+                inputFile.delete()
+            }
+            log.info("Cleaned up temp files")
         }
     }
 }

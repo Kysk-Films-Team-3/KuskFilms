@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -e pipefail
 
 echo "Installing dependencies (curl, jq, bash, netcat, getent)..."
 apk add --no-cache curl jq bash netcat-openbsd libc-utils

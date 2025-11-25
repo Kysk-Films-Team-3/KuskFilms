@@ -34,6 +34,10 @@ RUN useradd -m -u 9999 appuser && \
 COPY --from=build --chown=appuser:appuser /app/build/libs/*.jar /app/app.jar
 COPY --chown=appuser:appuser docker-entrypoint.sh /app/docker-entrypoint.sh
 
+# --- ВОТ ЭТА КОМАНДА ЛЕЧИТ ОШИБКУ ---
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh
+# ------------------------------------
+
 RUN chmod +x /app/docker-entrypoint.sh
 
 USER appuser

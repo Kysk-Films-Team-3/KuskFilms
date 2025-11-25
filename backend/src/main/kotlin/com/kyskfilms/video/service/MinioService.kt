@@ -28,7 +28,7 @@ class MinioService(private val minioClient: MinioClient) {
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(bucketName)
-                    .`object`(objectName) // Используем обратные кавычки
+                    .`object`(objectName)
                     .stream(file.inputStream, file.size, -1)
                     .contentType(file.contentType)
                     .build()
@@ -47,15 +47,17 @@ class MinioService(private val minioClient: MinioClient) {
         try {
             val objectName = "$targetDirectory/${file.name}"
 
-            minioClient.putObject(
-                PutObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName) // Используем обратные кавычки
-                    .stream(FileInputStream(file), file.length(), -1)
-                    .build()
-            )
+            file.inputStream().use { stream ->
+                minioClient.putObject(
+                    PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .`object`(objectName)
+                        .stream(stream, file.length(), -1)
+                        .build()
+                )
+            }
 
-            log.debug("HLS file {} uploaded successfully to {}/{}", file.name, bucketName, objectName)
+            log.debug("HLS file {} uploaded successfully...", file.name)
             return objectName
         } catch (e: Exception) {
             log.error("Error uploading HLS file {} to MinIO", file.name, e)

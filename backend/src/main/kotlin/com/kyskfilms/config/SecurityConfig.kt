@@ -26,7 +26,7 @@ class SecurityConfig(
     private lateinit var allowedOrigins: List<String>
 
 
-    @Value("\${KEYCLOAK_CLIENT_ID}")
+    @Value("\${KEYCLOAK_CLIENT_ID}") // <-- ИЗМЕНЕНО: теперь берется из окружения
     private lateinit var keycloakClientId: String
 
     @Bean
@@ -56,6 +56,7 @@ class SecurityConfig(
             .addFilterAfter(jitUserProvisioningFilter, BasicAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers("/api/test/public").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/genres/**").permitAll()
                     .anyRequest().authenticated()

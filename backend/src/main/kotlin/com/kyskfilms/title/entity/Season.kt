@@ -18,7 +18,7 @@ class Season(
     @Column(nullable = false)
     var seasonNumber: Int,
 
-    var seasonTitle: String? = null, // В БД у вас просто title, но это может конфликтовать, лучше переименовать
+    var seasonTitle: String? = null,
     var releaseDate: LocalDate? = null,
     var posterUrl: String? = null,
 
