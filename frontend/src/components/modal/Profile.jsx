@@ -1,31 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import './Profile.css';
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// `api` больше не используется напрямую.
-// Вместо этого мы импортируем конкретные функции для работы с профилем.
 import { fetchUserProfile, uploadAvatar } from '../../services/api';
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 import { useKeycloak } from '@react-keycloak/web';
 
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// Пропсы переименованы для соответствия App.js (`userProfile`).
-// Добавлен пропс `onProfileUpdate` для обновления UI после загрузки аватара.
 export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
+
     const profileRef = useRef(null);
     const { t } = useTranslation();
     const { keycloak } = useKeycloak();
-
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [nickname, setNickname] = useState('');
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-    // Добавлена логика для загрузки аватара, аналогичная `Settings.jsx`.
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -45,7 +34,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
             setIsUploading(false);
         }
     };
-    // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
     useEffect(() => {
         if (!isOpen) return;
@@ -61,14 +49,8 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setLoading(true);
                 setError(null);
 
-                // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-                // Старый вызов `api.get('/users/me')` заменен на `fetchUserProfile()`.
-                // Это гарантирует, что мы используем правильный URL `/api/users/profile/me`.
                 const response = await fetchUserProfile();
-                // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
-                // Используем `firstName` и `lastName` из бэкенда, если они там будут.
-                // `username` теперь основное поле для никнейма.
                 setName(response.firstName || '');
                 setLastName(response.lastName || '');
                 setNickname(response.username || '');
@@ -77,7 +59,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 console.error("Ошибка загрузки профиля:", err.response || err);
                 setError("Не удалось загрузить данные.");
 
-                // Фоллбэк на данные из токена, если запрос не удался
                 setName(keycloak.tokenParsed?.given_name || '');
                 setLastName(keycloak.tokenParsed?.family_name || '');
                 setNickname(keycloak.tokenParsed?.preferred_username || '');
@@ -101,12 +82,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
             const updatedProfile = { name, lastName, nickname };
 
-            // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-            // URL для `put` запроса также исправлен.
-            // Внимание: Этот эндпоинт (PUT /api/users/profile/me) вам еще предстоит создать на бэкенде.
-            // await api.put('/users/profile/me', updatedProfile);
             console.log("Сохранение профиля (пока не реализовано на бэкенде):", updatedProfile);
-            // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
             onClose();
         } catch (err) {
@@ -148,8 +124,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                     {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
                     {!loading && (
                         <>
-                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                            {/* Добавлен невидимый input и интерактивность для аватара. */}
                             <input
                                 type="file"
                                 ref={fileInputRef}
@@ -171,7 +145,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                     />
                                 )}
                             </div>
-                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                             <div className="profile_inputs_wrapper">
                                 <div className="profile_input_block">
                                     <input

@@ -1,0 +1,88 @@
+.dist_page {
+    background: #262630;
+    padding: 80px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    position: relative;
+}
+
+.dist_page::before {
+    content: "";
+    position: absolute;
+    top: -140px;
+    left: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(78,85,212,0.35), transparent 70%);
+    filter: blur(60px);
+    z-index: 0;
+}
+
+.dist_title {
+    font-size: 48px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+.dist_top_line {
+    width: 100%;
+    height: 2px;
+    margin: 12px 0 50px 0;
+    background:
+            linear-gradient(to right, #4E55D4 120px, transparent 120px) top/100% 2px no-repeat,
+            linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom/100% 1px no-repeat;
+    position: relative;
+    z-index: 2;
+}
+
+.dist_section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 2;
+}
+
+.dist_line {
+    width: 3px;
+    height: 70px;
+    background: linear-gradient(to bottom, #4E55D4, transparent);
+    border-radius: 5px;
+    filter: drop-shadow(0 0 6px rgba(78,85,212,0.45));
+}
+
+.dist_text {
+    max-width: 700px;
+}
+
+.dist_heading {
+    font-size: 28px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.dist_desc {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #d0d0d7;
+}
+
+.dist_mail_btn {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 12px 22px;
+    background: #4E55D4;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.25s;
+}
+
+.dist_mail_btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}

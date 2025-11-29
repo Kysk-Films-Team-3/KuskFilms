@@ -6,10 +6,8 @@ import { getPopularFilms, getPopularActors } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// Пропс 'user' заменен на 'userProfile', чтобы соответствовать данным, которые мы получаем с бэкенда.
-export const Header = ({ userProfile, onProfileClick }) => {
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
+export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
+
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const { keycloak } = useKeycloak();
@@ -24,13 +22,9 @@ export const Header = ({ userProfile, onProfileClick }) => {
     const [popularActors, setPopularActors] = useState([]);
     const dropdownRef = useRef(null);
 
-    // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-    // 1. Проверка `!!user` убрана. Единственный источник правды об аутентификации - Keycloak.
-    // 2. Добавлены переменные `avatarUrl` и `username`, которые безопасно извлекаются из `userProfile`.
     const isLoggedIn = keycloak?.authenticated;
     const avatarUrl = userProfile?.avatarUrl;
     const username = userProfile?.username || keycloak?.tokenParsed?.preferred_username;
-    // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
     useEffect(() => {
         const savedLang = localStorage.getItem('lang');
@@ -171,9 +165,9 @@ export const Header = ({ userProfile, onProfileClick }) => {
                         <nav className="header_nav">
                             <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
                             <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                            <NavLink to="/settings"><Trans i18nKey="header.nav.tvShows" /></NavLink>
-                            <NavLink to="/new"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
+                            <NavLink to="/"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                             <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
+                            <NavLink to="/movie">Плеер(временно)</NavLink>
                         </nav>
                     )}
 
@@ -283,7 +277,7 @@ export const Header = ({ userProfile, onProfileClick }) => {
                         <Link to="/Premium" className="header_premium"><Trans i18nKey="header.premium" /></Link>
                     )}
 
-                    <div className="header_promo">
+                    <div className="header_promo" onClick={onPromoInputClick}>
                         <div className="header_promo_icon" />
                         <span className="header_promo_text"><Trans i18nKey="header.promo" /></span>
                     </div>

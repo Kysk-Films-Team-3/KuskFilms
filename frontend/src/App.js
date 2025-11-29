@@ -10,6 +10,9 @@ import { RegistrationComplete } from './components/modal/RegistrationComplete';
 import { ForgotComplete } from './components/modal/ForgotComplete';
 import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import { keycloak } from 'services/keycloak';
+import PlayerOverlay  from "./components/player/PlayerOverlay";
+import {PromoInput} from "./components/modal/PromoInput";
+import {CommentModal} from "./components/modal/CommentModal";
 import { ModalsProvider, useModals } from './context/ModalsContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { SettingsProvider } from './context/SettingsContext';
@@ -75,17 +78,18 @@ const AppContent = () => {
                 onProfileUpdate={setUserProfile}
                 onLoginClick={() => openModal('login')}
                 isLoggedIn={keycloak.authenticated}
+                onPromoInputClick={() => openModal('PromoInput')}
+                onCommentModalClick={() => openModal('CommentModal')}
+                onPlayerOverlayClick={() => openModal('PlayerOverlay')}
                 onDeviceClick={() => openModal('device')}
-                // ========= НАЧАЛО ИСПРАВЛЕНИЯ ==========
-                // БЫЛО: onPaymentClick={() => openmodal('payment')}  <-- ОПЕЧАТКА
-                // СТАЛО: onPaymentClick={() => openModal('payment')} <-- ИСПРАВЛЕНО
                 onPaymentClick={() => openModal('payment')}
-                // ========= КОНЕЦ ИСПРАВЛЕНИЯ ============
                 onOpenLogoutModal={() => openModal('logout')}
                 onOpenActorRecs={(actor) => openModal({ type: 'actorRecs', actor })}
                 onProfileClick={() => openModal('profile')}
             />
-
+            {activeModal === 'PlayerOverlay' && <PlayerOverlay isOpen onClose={closeModal} />}
+            {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
+            {activeModal === 'CommentModal' && <CommentModal isOpen onClose={closeModal} />}
             {activeModal === 'device' && <Device isOpen onClose={closeModal} />}
             {activeModal === 'payment' && <Payment isOpen onClose={closeModal} />}
             {activeModal === 'logout' && <Logout isOpen onClose={closeModal} />}

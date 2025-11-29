@@ -2,22 +2,14 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './Settings.css';
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// Добавлен импорт функции `uploadAvatar` из вашего файла `services/api.js`.
 import { uploadAvatar } from 'services/api';
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// Пропс `user` заменен на `userProfile`, чтобы соответствовать данным из App.js.
-// Добавлен колбэк `onProfileUpdate`, который будет обновлять UI после загрузки.
 export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDeviceClick, onOpenLogoutModal }) => {
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
+
     useTranslation();
     const [isChildProtectionEnabled, setIsChildProtectionEnabled] = useState(false);
     const [isSportResultsEnabled, setIsSportResultsEnabled] = useState(false);
 
-    // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-    // Добавлена вся логика, необходимая для загрузки нового аватара.
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -28,7 +20,7 @@ export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDevic
         setIsUploading(true);
         try {
             const updatedProfile = await uploadAvatar(file);
-            onProfileUpdate(updatedProfile); // <--- Эта строка обновляет UI во всем приложении
+            onProfileUpdate(updatedProfile);
         } catch (error) {
             console.error("Ошибка при загрузке аватара:", error);
             alert("Не удалось загрузить аватар. Пожалуйста, попробуйте еще раз.");
@@ -36,7 +28,6 @@ export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDevic
             setIsUploading(false);
         }
     };
-    // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
 
     return (
         <div className="settings_pages">
@@ -53,8 +44,7 @@ export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDevic
                         <div className="settings_profile_block">
                             <div className="settings_profile_info">
                                 <div className="settings_profile_details">
-                                    {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                    {/* 1. Добавлен невидимый input для выбора файлов. */}
+
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -63,7 +53,6 @@ export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDevic
                                         accept="image/png, image/jpeg"
                                         disabled={isUploading}
                                     />
-                                    {/* 2. `div` аватара теперь кликабельный и отображает реальное изображение. */}
                                     <div
                                         className="settings_profile_avatar"
                                         onClick={() => !isUploading && fileInputRef.current.click()}
@@ -77,9 +66,7 @@ export const Settings = ({ userProfile, onProfileUpdate, onPaymentClick, onDevic
                                             />
                                         )}
                                     </div>
-                                    {/* 3. Имя/email пользователя теперь берется из `userProfile`. */}
                                     <div className="settings_profile_email">{userProfile?.username || '...'}</div>
-                                    {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                 </div>
                                 <div className="settings_arrow_email_icon"></div>
                             </div>

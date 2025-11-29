@@ -5,37 +5,47 @@ import { Settings } from '../pages/Settings';
 import { Premium } from '../pages/Premium';
 import { Favorites } from '../pages/Favorites';
 import { Catalog } from '../pages/Catalog';
+import { MoviePage } from '../pages/MoviePage';
+import {AboutPage} from "../pages/AboutPage";
+import {CareerPage} from "../pages/CareerPage";
+import {AgentsPage} from "../pages/AgentsPage";
+import {PromotionsPage} from "../pages/PromotionsPage";
+import {FaqPage} from "../pages/FaqPage";
+import {DevicesPage} from "../pages/DevicesPage";
+import {DistributorsPage} from "../pages/DistributorsPage";
+import {ContactsPage} from "../pages/ContactsPage";
+import {ErrorPage} from "../pages/ErrorPage";
 import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
 
-// ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-// `user` переименован в `userProfile` для соответствия данным из App.js.
-// `isLoggedIn` убран, так как эта информация уже содержится в Keycloak и не нужна здесь.
-// Добавлен `onProfileUpdate`, который будет "проброшен" до компонента Settings.
-export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal, onOpenActorRecs, onProfileClick }) => {
-// ========= КОНЕЦ ИЗМЕНЕНИЙ ============
+export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal, onOpenActorRecs, onProfileClick, onPromoInputClick, onCommentModalClick }) => {
+
     return (
         <Routes>
             <Route
-                // ========= НАЧАЛО ИЗМЕНЕНИЙ ==========
-                // Пропс `user` заменен на `userProfile` и передан в Layout.
-                // `isLoggedIn` убран, так как Header теперь определяет это сам.
-                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick}/>}
-                // ========= КОНЕЦ ИЗМЕНЕНИЙ ============
+                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick}/>}
+
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
-
+                <Route path="/movie" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/careers" element={<CareerPage />} />
+                <Route path="/agents" element={<AgentsPage />} />
+                <Route path="/offers" element={<PromotionsPage />} />
+                <Route path="/faq" element={<FaqPage />} />
+                <Route path="/devices" element={<DevicesPage />} />
+                <Route path="/distributors" element={<DistributorsPage />} />
+                <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/error" element={<ErrorPage />} />
                 <Route
                     path="/settings"
                     element={
                         <PrivateRoute>
-                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                            {/* Пропс `user` заменен на `userProfile`. */}
-                            {/* `onProfileUpdate` теперь корректно передается в компонент Settings, чтобы он мог обновлять UI. */}
+
                             <Settings
                                 onOpenLogoutModal={onOpenLogoutModal}
                                 onPaymentClick={onPaymentClick}
@@ -43,7 +53,7 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                                 userProfile={userProfile}
                                 onProfileUpdate={onProfileUpdate}
                             />
-                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
+
                         </PrivateRoute>
                     }
                 />

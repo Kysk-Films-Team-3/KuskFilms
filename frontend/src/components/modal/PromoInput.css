@@ -1,0 +1,98 @@
+.promo_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.promo_modal_block {
+    background: #2E2F3A;
+    padding: 40px 50px;
+    border-radius: 22px;
+    width: 90%;
+    max-width: 760px;
+    color: white;
+    position: relative;
+    animation: fadeIn 0.25s ease;
+    font-family: "Inter", sans-serif;
+}
+
+.promo_modal_close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.promo_title {
+    font-size: 28px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.promo_input_row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.promo_input {
+    flex: 1;
+    padding: 16px 20px;
+    font-size: 18px;
+    background: transparent;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.promo_input::placeholder {
+    color: #9292A0;
+}
+
+.promo_input:focus {
+    border-color: #4E55D4;
+}
+
+.promo_btn {
+    padding: 16px 28px;
+    background: #4E55D4;
+    border-radius: 14px;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.promo_btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.promo_hint {
+    margin-top: 18px;
+    font-size: 15px;
+    color: #B9B9C5;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

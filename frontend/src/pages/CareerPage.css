@@ -1,0 +1,126 @@
+.career_page {
+    background: #262630;
+    padding: 120px 60px 80px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+.career_header {
+    max-width: 900px;
+    margin-bottom: 60px;
+}
+
+.career_title {
+    font-size: 42px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+}
+
+.career_line {
+    width: 100%;
+    height: 2px;
+    margin: 12px 0 24px 0;
+    background:
+            linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
+            linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
+}
+
+.career_line.small {
+    width: 70%;
+}
+
+.career_intro {
+    font-size: 20px;
+    line-height: 1.7;
+    color: #d4d4dc;
+}
+
+.career_section {
+    margin-bottom: 60px;
+    max-width: 900px;
+}
+
+.career_subtitle {
+    font-size: 30px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.career_list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.career_list li {
+    font-size: 20px;
+    padding: 6px 0;
+    color: #d4d4dc;
+}
+
+.career_list li::before {
+    content: "•";
+    color: #4E55D4;
+    font-size: 24px;
+    margin-right: 8px;
+}
+
+.career_jobs {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.job_card {
+    padding: 20px;
+    background: #34353F;
+    border-radius: 12px;
+}
+
+.job_title {
+    font-size: 24px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.job_desc {
+    color: #bfbfc7;
+    margin: 10px 0 20px 0;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.resume_btn {
+    background: #4E55D4;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.25s ease;
+}
+
+.resume_btn:hover {
+    opacity: 0.85;
+}
+
+.career_mail_btn {
+    display: inline-block;
+    background: #4E55D4;
+    color: white;
+    font-size: 20px;
+    font-family: "Inter", sans-serif;
+    padding: 14px 26px;
+    border-radius: 14px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: 0.25s ease;
+}
+
+.career_mail_btn:hover {
+    transform: scale(1.03);
+    opacity: 0.9;
+}

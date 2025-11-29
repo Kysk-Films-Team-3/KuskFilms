@@ -103,6 +103,7 @@
     width: 216px;
     height: 43px;
     border: none;
+    text-decoration: none;
     border-radius: 10px;
     background: linear-gradient(90deg, #4E55D4 0%, #3429B0 100%);
     color: #F8F8FE;
@@ -119,6 +120,13 @@
 
 .footer_help button:hover {
     background: linear-gradient(90deg, #3429b0, #202588);
+}
+
+
+.footer_help,
+.footer_help button,
+.footer_help:hover {
+    text-decoration: none !important;
 }
 
 .footer_columns {

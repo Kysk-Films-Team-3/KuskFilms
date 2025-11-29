@@ -1,0 +1,163 @@
+.promo_page {
+    background: #262630;
+    padding: 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.promo_page::before {
+    content: "";
+    position: absolute;
+    top: -200px;
+    left: -150px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(78,85,212,0.45), transparent 60%);
+    filter: blur(40px);
+    z-index: 0;
+}
+
+.promo_page::after {
+    content: "";
+    position: absolute;
+    bottom: -150px;
+    right: -150px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 60%);
+    filter: blur(80px);
+    z-index: 0;
+}
+
+.hero_no_block {
+    padding: 60px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.hero_title {
+    font-size: 54px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.hero_subtitle {
+    font-size: 22px;
+    color: #d7d7e2;
+    max-width: 600px;
+}
+
+.promo_banner_row {
+    display: flex;
+    gap: 30px;
+    position: relative;
+    z-index: 2;
+    margin-top: 40px;
+}
+
+.promo_banner {
+    background: linear-gradient(135deg, #4E55D4 0%, #2F3041 55%, #262630 100%);
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.35);
+    position: relative;
+    z-index: 2;
+}
+
+.promo_banner.medium {
+    margin-top: 50px;
+}
+
+.promo_banner.small {
+    flex: 1;
+    height: 180px;
+}
+
+.banner_title_small {
+    font-size: 30px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 700;
+}
+
+.banner_text_small {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #dedee7;
+}
+
+.banner_title_xs {
+    font-size: 26px;
+    font-family: "inter", sans-serif;
+    font-weight: 600;
+}
+
+.banner_text_xs {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #d0d0d6;
+}
+
+.banner_btn {
+    margin-top: 20px;
+    background: white;
+    color: #1d1d24;
+    text-decoration: none;
+    display: inline-block;
+    padding: 12px 26px;
+    border-radius: 14px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.banner_btn:hover {
+    transform: scale(1.05);
+}
+
+.banner_btn_sm {
+    margin-top: 14px;
+    background: white;
+    color: #1d1d24;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.banner_btn_sm:hover {
+    transform: scale(1.05);
+}
+
+.promo_card {
+    position: relative;
+    overflow: visible;
+}
+
+.copy_inside {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    background: #4E55D4;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: "Inter", sans-serif;
+    box-shadow: 0 0 10px rgba(78, 85, 212, 0.5);
+
+    animation: fadeInOutInside 1.3s ease forwards;
+}
+
+@keyframes fadeInOutInside {
+    0% { opacity: 0; transform: translateY(-6px); }
+    15% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-6px); }
+}

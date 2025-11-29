@@ -1,0 +1,294 @@
+.movie_page {
+    padding-top: 100px;
+    background: #262630;
+}
+
+.movie_page_poster {
+    position: relative;
+    display: inline-block;
+}
+
+.movie_poster {
+    width: 100%;
+    display: block;
+}
+.movie_postername{
+    width:541px;
+    height:300px;
+}
+
+.movie_poster_content {
+    position: absolute;
+    padding-top: 200px;
+    padding-left: 60px;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.movie_poster_rate_line{
+    display: flex;
+    text-align: center;
+    gap: 10px;
+}
+
+.movie_poster_rating{
+    padding: 3px 5px;
+    border-radius: 5px;
+    background-color: #12B77C;
+    font-size: 24px;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_date{
+    font-size: 24px;
+    color: white;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_genre{
+    font-size: 24px;
+    color: white;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_time{
+    font-size: 24px;
+    color: white;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_end{
+    font-size: 24px;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_details_line{
+    font-size: 24px;
+    color: white;
+    font-weight: 300;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_details_line{
+    font-size: 24px;
+    color: white;
+    font-weight: 300;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_direct{
+    font-size: 24px;
+    color: white;
+    font-weight: 300;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_actor{
+    font-size: 24px;
+    color: white;
+    font-weight: 300;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_details_line{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 24px;
+    color: white;
+    font-weight: 300;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_submit_price{
+    font-size: 24px;
+    color: white;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_submit_subtitle{
+    font-size: 24px;
+    color: white;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+.movie_poster_description{
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.movie_poster_watch{
+    display: flex;
+    gap: 10px;
+}
+.movie_watch_button{
+background-color: #4E55D4;
+color: #F8F8FE;
+border: none;
+text-align: center;
+text-decoration: none;
+box-sizing: border-box;
+border-radius: 15px;
+padding: 15px;
+font-size: 20px;
+font-weight: 400;
+cursor: pointer;
+transition: transform 0.3s ease;
+}
+
+.movie_trailer_button{
+    background-color: #34353F;
+    color: #F8F8FE;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.movie_save_button{
+    width: 59px;
+    height: 59px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1763840065/Component_119_y5yclj.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease;
+}
+
+.movie_description_block{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.movie_overview{
+    padding-left: 60px;
+    padding-right: 60px;
+    display: flex;
+}
+
+.movie_description_title{
+    font-size: 30px;
+    color: white;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.movie_description_title_line {
+    width: 100%;
+    height: 2px;
+    background:
+            linear-gradient(to right, #4E55D4 100px, transparent 100px) top / 100% 2px no-repeat,
+            linear-gradient(to right, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)) bottom / 100% 1px no-repeat;
+}
+
+.movie_description_text {
+    color: #cfcfcf;
+    line-height: 1.55;
+    overflow: hidden;
+    width: 1000px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+
+    transition: all .35s ease;
+    max-height: 4.8em;
+}
+
+.movie_description_text.open {
+    -webkit-line-clamp: unset;
+    max-height: 600px;
+    margin-bottom: 30px;
+}
+
+.movie_description_block_toggle {
+    margin-top: 6px;
+    background: none;
+    border: none;
+    color: #6E77F4;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.movie_description_block_toggle:hover {
+    opacity: 0.8;
+}
+
+.movie_mark_block{
+    margin-left: auto;
+    padding: 20px;
+    width: 580px;
+    height: 174px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: none;
+    background-color: #34353F;
+    margin-top: 20px;
+}
+
+.movie_mark_block_text{
+    font-size: 24px;
+    color: white;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.movie_mark_block_subtext{
+    font-size: 20px;
+    color: #9999A1;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.movie_reviews_block{
+    padding-left: 60px;
+    padding-right: 60px;
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.movie_reviews_title{
+    font-size: 30px;
+    color: white;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+}
+
+.movie_reviews_button{
+    background-color: #4E55D4;
+    color: #F8F8FE;
+    border: none;
+    text-align: center;
+    width: 300px;
+    height: 60px;
+    text-decoration: none;
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}

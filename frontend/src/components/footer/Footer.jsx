@@ -14,16 +14,30 @@ export const Footer = () => {
                     <div className="footer_top">
                         <div className="footer_left">
                             <div className="footer_icons">
-                                <div className="footer_telegram_icon"></div>
-                                <div className="footer_facebook_icon"></div>
-                                <div className="footer_instagram_icon"></div>
-                                <div className="footer_x_icon"></div>
+                                <a href="https://t.me" target="_blank" rel="noopener noreferrer">
+                                    <div className="footer_telegram_icon"></div>
+                                </a>
+
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                                    <div className="footer_facebook_icon"></div>
+                                </a>
+
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                                    <div className="footer_instagram_icon"></div>
+                                </a>
+
+                                <a href="https://x.com" target="_blank" rel="noopener noreferrer">
+                                    <div className="footer_x_icon"></div>
+                                </a>
+
                             </div>
 
-                            <div className="footer_help">
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=kyskfilms@gmail.com"
+                                               className="footer_help"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
                                 <button><Trans i18nKey="footer.needHelp" /></button>
-                            </div>
-
+                            </a>
                         </div>
 
                         <div className="footer_columns">

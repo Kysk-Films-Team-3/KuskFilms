@@ -1,0 +1,50 @@
+.no-layout header,
+.no-layout .footer {
+    display: none !important;
+}
+
+.error_page {
+    background: #262630;
+    height: 91vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.error_image {
+    width: 260px;
+    height: 260px;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763916596/Search_q3bwsh.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-bottom: 30px;
+
+    position: relative;
+    z-index: 2;
+}
+
+.error_title {
+    font-size: 38px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 700;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+.error_text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #cfd0d7;
+    max-width: 500px;
+    position: relative;
+    z-index: 2;
+}
