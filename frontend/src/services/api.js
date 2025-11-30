@@ -25,15 +25,25 @@ api.interceptors.request.use(async (config) => {
     return Promise.reject(error);
 });
 
+export const fetchTitles = async (page = 0) => {
+    const response = await api.get(`/api/titles?page=${page}`);
+    return response.data;
+};
+
+export const fetchTitleById = async (id) => {
+    const response = await api.get(`/api/titles/${id}`);
+    return response.data;
+};
+
 export const fetchUserProfile = async () => {
-    const response = await api.get('/users/profile/me');
+    const response = await api.get('/api/users/profile/me');
     return response.data;
 };
 
 export const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post('/users/profile/avatar', formData, {
+    const response = await api.post('/api/users/profile/avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;

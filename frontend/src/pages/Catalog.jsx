@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../services/api';
+import { fetchTitles } from '../services/api';
 import './Catalog.css';
 
 export const Catalog = () => {
@@ -12,16 +12,15 @@ export const Catalog = () => {
             try {
                 setLoading(true);
 
-                const response = await api.get('/movies/popular');
+                const data = await fetchTitles(0);
 
-                if (response.data && Array.isArray(response.data.content)) {
-                    setMovies(response.data.content);
+                if (data && Array.isArray(data.content)) {
+                    setMovies(data.content);
+                    setError(null);
                 } else {
-                    console.error("API повернул невідомі данні:", response.data);
+                    console.error("API повернул невідомі данні:", data);
                     setError("Формат данних от сервера невідомий.");
                 }
-
-                setError(null);
             } catch (err) {
                 console.error("API не відповів:", err);
                 setError("Не вдалось загрузити данні з сервера.");
@@ -44,7 +43,7 @@ export const Catalog = () => {
                 {movies.map(movie => (
                     <div key={movie.id} style={{ border: '1px solid #333', padding: '10px', width: '200px' }}>
                         <img
-                            src={movie.poster || 'https://via.placeholder.com/200x300?text=Poster'}
+                            src={movie.posterUrl || 'https://via.placeholder.com/200x300?text=Poster'}
                             alt={movie.title}
                             style={{ width: '100%' }}
                         />

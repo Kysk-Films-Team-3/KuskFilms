@@ -26,7 +26,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
         setError(null);
         try {
             const updatedProfile = await uploadAvatar(file);
-            onProfileUpdate(updatedProfile); // Обновляем UI во всем приложении
+            onProfileUpdate(updatedProfile);
         } catch (err) {
             console.error("Ошибка при загрузке аватара:", err);
             setError("Не удалось загрузить аватар.");
@@ -50,10 +50,11 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setError(null);
 
                 const response = await fetchUserProfile();
+                onProfileUpdate(response);
 
-                setName(response.firstName || '');
-                setLastName(response.lastName || '');
-                setNickname(response.username || '');
+                setName(keycloak.tokenParsed?.given_name || '');
+                setLastName(keycloak.tokenParsed?.family_name || '');
+                setNickname(response.username || keycloak.tokenParsed?.preferred_username || '');
 
             } catch (err) {
                 console.error("Ошибка загрузки профиля:", err.response || err);

@@ -31,7 +31,7 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
-                <Route path="/movie" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
+                <Route path="/movie/:id" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/careers" element={<CareerPage />} />
                 <Route path="/agents" element={<AgentsPage />} />
