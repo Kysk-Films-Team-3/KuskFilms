@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileInputStream
 import java.util.*
 
 @Service
@@ -18,11 +17,15 @@ class MinioService(private val minioClient: MinioClient) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-
+    /**
+     * Загрузка изображений (Аватарки, Постеры)
+     */
     fun uploadImage(file: MultipartFile, targetDirectory: String): String {
         try {
-            val extension = file.originalFilename?.substringAfterLast('.', "")
+            // Генерируем уникальное имя
+            val extension = file.originalFilename?.substringAfterLast('.', "") ?: "jpg"
             val uniqueFileName = "${UUID.randomUUID()}.$extension"
+            // Формируем путь: avatars/uuid.jpg
             val objectName = "$targetDirectory/$uniqueFileName"
 
             minioClient.putObject(
@@ -30,7 +33,7 @@ class MinioService(private val minioClient: MinioClient) {
                     .bucket(bucketName)
                     .`object`(objectName)
                     .stream(file.inputStream, file.size, -1)
-                    .contentType(file.contentType)
+                    .contentType(file.contentType ?: "image/jpeg")
                     .build()
             )
 
@@ -42,7 +45,9 @@ class MinioService(private val minioClient: MinioClient) {
         }
     }
 
-
+    /**
+     * Загрузка HLS сегментов (видео)
+     */
     fun uploadHlsFile(file: File, targetDirectory: String): String {
         try {
             val objectName = "$targetDirectory/${file.name}"

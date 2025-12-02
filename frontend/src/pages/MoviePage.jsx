@@ -4,7 +4,7 @@ import PlayerOverlay from "../components/player/PlayerOverlay";
 import { fetchTitleById } from "../services/api";
 import "./MoviePage.css";
 
-export const MoviePage = ({onCommentModalClick}) => {
+export const MoviePage = ({ onCommentModalClick }) => {
     const { id } = useParams();
     const [isPlayerOpen, setIsPlayerOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -36,10 +36,9 @@ export const MoviePage = ({onCommentModalClick}) => {
         loadMovie();
     }, [id]);
 
-
     if (loading) {
         return (
-            <div className="movie_page" style={{ padding: '20px', textAlign: 'center' }}>
+            <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
                 <p>Завантаження...</p>
             </div>
         );
@@ -47,15 +46,25 @@ export const MoviePage = ({onCommentModalClick}) => {
 
     if (error || !movie) {
         return (
-            <div className="movie_page" style={{ padding: '20px', textAlign: 'center' }}>
+            <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
                 <p style={{ color: 'red' }}>{error || "Фільм не знайдено"}</p>
             </div>
         );
     }
 
-    const videoUrl = movie.videoUrl || movie.streamUrl;
+    // Получаем ссылку на поток. Бэкенд возвращает streamUrl для M3U8
+    const videoUrl = movie.streamUrl;
+
     const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
     const genres = movie.genres && movie.genres.length > 0 ? movie.genres.join(", ") : null;
+
+    const handleWatchClick = () => {
+        if (videoUrl) {
+            setIsPlayerOpen(true);
+        } else {
+            alert("Відео ще обробляється або недоступне.");
+        }
+    };
 
     return (
         <div className="movie_page">
@@ -64,16 +73,16 @@ export const MoviePage = ({onCommentModalClick}) => {
                 <div className="movie_poster_content">
                     <div className="movie_postername">{movie.title}</div>
                     <div className="movie_poster_description">
-                    <div className="movie_poster_rate_line">
-                        {movie.rating && <div className="movie_poster_rating">{movie.rating}</div>}
-                        {releaseYear && <div className="movie_poster_date">{releaseYear}</div>}
-                        {releaseYear && genres && <div className="movie_poster_end">•</div>}
-                        {genres && <div className="movie_poster_genre">{genres}</div>}
-                    </div>
+                        <div className="movie_poster_rate_line">
+                            {movie.rating && <div className="movie_poster_rating">{movie.rating}</div>}
+                            {releaseYear && <div className="movie_poster_date">{releaseYear}</div>}
+                            {releaseYear && genres && <div className="movie_poster_end">•</div>}
+                            {genres && <div className="movie_poster_genre">{genres}</div>}
+                        </div>
                         <div className="movie_poster_details">
-                        {movie.description && (
-                            <div className="movie_details_line">{movie.description.split('\n')[0]}</div>
-                        )}
+                            {movie.description && (
+                                <div className="movie_details_line">{movie.description.split('\n')[0]}</div>
+                            )}
                         </div>
                         <div className="movie_poster_info">
                             {movie.seasons && movie.seasons.length > 0 && (
@@ -85,16 +94,24 @@ export const MoviePage = ({onCommentModalClick}) => {
                             <div className="movie_submit_subtitle">у підписці Kysk</div>
                         </div>
                     </div>
+
                     <div className="movie_poster_watch">
-                    {videoUrl && (
-                        <button className="movie_watch_button" onClick={() => setIsPlayerOpen(true)}>Дивитися</button>
-                    )}
-                    <button className="movie_trailer_button" onClick={() => setIsPlayerOpen(true)}>Трейлер</button>
-                    <div className="movie_save_button" onClick={() => setIsPlayerOpen(true)}></div>
+                        {/* Кнопка "Дивитися" активна, если есть ссылка */}
+                        <button
+                            className="movie_watch_button"
+                            onClick={handleWatchClick}
+                            style={{ opacity: videoUrl ? 1 : 0.6, cursor: videoUrl ? 'pointer' : 'not-allowed' }}
+                        >
+                            Дивитися
+                        </button>
+
+                        <button className="movie_trailer_button" onClick={() => alert("Трейлер пока не доступен")}>Трейлер</button>
+                        <div className="movie_save_button"></div>
                     </div>
                 </div>
             </div>
 
+            {/* Плеер открывается только если есть URL */}
             {isPlayerOpen && videoUrl && (
                 <PlayerOverlay
                     open={isPlayerOpen}
@@ -104,7 +121,7 @@ export const MoviePage = ({onCommentModalClick}) => {
             )}
 
             <div className="movie_description_block">
-            <div className="movie_description_title">Опис</div>
+                <div className="movie_description_title">Опис</div>
                 <div className="movie_description_title_line"></div>
             </div>
             <div className="movie_overview">
@@ -113,7 +130,6 @@ export const MoviePage = ({onCommentModalClick}) => {
                         <p className={`movie_description_text ${expanded ? "open" : ""}`}>
                             {movie.description}
                         </p>
-
                         <div className="movie_description_block_toggle" onClick={() => setExpanded(!expanded)}>
                             {expanded ? "Згорнути" : "Детальний опис"}
                         </div>
@@ -122,9 +138,10 @@ export const MoviePage = ({onCommentModalClick}) => {
                 <div className="movie_mark_block">
                     <div className="movie_mark_block_text">Поставте оцінку</div>
                     <div className="movie_mark_block_subtext">Оцінки покращують ваші рекомендації</div>
-                        <div className="movie_marks"></div>
-                    </div>
+                    <div className="movie_marks"></div>
+                </div>
             </div>
+
             {movie.seasons && movie.seasons.length > 0 && (
                 <div className="movie_seasons_block">
                     <div className="movie_seasons_title">Сезони</div>
@@ -138,6 +155,7 @@ export const MoviePage = ({onCommentModalClick}) => {
                     ))}
                 </div>
             )}
+
             <div className="movie_reviews_block">
                 <div className="movie_reviews_title">Відгуки</div>
                 <button className="movie_reviews_button" onClick={onCommentModalClick}>Написати коментар</button>

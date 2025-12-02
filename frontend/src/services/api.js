@@ -1,11 +1,22 @@
 import axios from "axios";
 import { keycloak } from "./keycloak";
 import { API_URL } from "./config";
-import { fakeSlides, fakeCategories, fakeContent, getPopularFilms, getPopularActors, getMenuItems, getWatchModeItems, getStarsActors} from "./mockdata";
+import {
+    fakeSlides,
+    fakeCategories,
+    fakeContent,
+    getPopularFilms,
+    getPopularActors,
+    getMenuItems,
+    getWatchModeItems,
+    getStarsActors
+} from "./mockdata";
+
 export { fakeSlides, fakeCategories, fakeContent, getPopularFilms, getPopularActors, getMenuItems, getWatchModeItems, getStarsActors };
 
+// === НАСТРОЙКА AXIOS ===
 export const api = axios.create({
-    baseURL: API_URL,
+    baseURL: API_URL || "", // Используем прокси Nginx если URL пустой
     headers: { "Content-Type": "application/json" },
 });
 
@@ -13,33 +24,91 @@ api.interceptors.request.use(async (config) => {
     if (keycloak.authenticated && keycloak.token) {
         try {
             await keycloak.updateToken(30);
+            config.headers.Authorization = `Bearer ${keycloak.token}`;
         } catch (error) {
             console.error('Failed to refresh token. Initiating Keycloak logout.', error);
             keycloak.logout();
             return Promise.reject('Token refresh failed, logging out.');
         }
-        config.headers.Authorization = `Bearer ${keycloak.token}`;
     }
     return config;
 }, (error) => {
     return Promise.reject(error);
 });
 
+// =========================================================
+// НОВЫЙ ФУНКЦИОНАЛ (СВЯЗЬ С БЭКЕНДОМ ДЛЯ ВИДЕО)
+// =========================================================
+
+// 1. Главная функция для Home.jsx (преобразует данные бэка в формат фронта)
+export const getHomeContent = async () => {
+    try {
+        // Запрашиваем список фильмов с реального бэкенда
+        const response = await api.get('/api/public/titles');
+        const titles = response.data;
+
+        // Превращаем плоский список в структуру категорий для Home.jsx
+        const mappedContent = [
+            {
+                category: "Главная",
+                subcategories: [
+                    {
+                        id: 'new-series',
+                        title: 'Новинки KyskFilms',
+                        films: titles.map(t => ({
+                            id: t.id,
+                            title: t.title,
+                            image: t.posterUrl || 'https://via.placeholder.com/300x450?text=No+Poster',
+                            hoverImage: t.posterUrl || 'https://via.placeholder.com/300x450?text=Watch',
+                            rating: t.rating || 0,
+                            linedate: t.releaseDate ? t.releaseDate.substring(0, 4) : "2025",
+                            line1: t.genres ? t.genres.join(", ") : "Кино",
+                            line2: "Дивитися зараз",
+                            season: t.type === 'SERIES' ? "1 Сезон" : ""
+                        }))
+                    }
+                ]
+            }
+        ];
+        return mappedContent;
+    } catch (error) {
+        console.error("Помилка завантаження контенту:", error);
+        return [];
+    }
+};
+
+// 2. Получение списка (пагинация)
 export const fetchTitles = async (page = 0) => {
-    const response = await api.get(`/api/titles?page=${page}`);
+    const response = await api.get(`/api/public/titles?page=${page}`);
     return response.data;
 };
 
+// 3. Получение одного фильма (с ссылкой на видео)
 export const fetchTitleById = async (id) => {
-    const response = await api.get(`/api/titles/${id}`);
+    const response = await api.get(`/api/public/titles/${id}`);
     return response.data;
 };
 
+// 4. Профиль (Гибрид: Keycloak или Бэк)
 export const fetchUserProfile = async () => {
-    const response = await api.get('/api/users/profile/me');
-    return response.data;
+    // Попытка взять с бэка
+    try {
+        // const response = await api.get('/api/users/profile/me');
+        // return response.data;
+    } catch (e) { /* игнор */ }
+
+    // Фолбэк на Keycloak
+    if (keycloak.tokenParsed) {
+        return {
+            username: keycloak.tokenParsed.preferred_username,
+            email: keycloak.tokenParsed.email,
+            avatarUrl: null
+        };
+    }
+    return null;
 };
 
+// 5. Загрузка аватара
 export const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -48,6 +117,10 @@ export const uploadAvatar = async (file) => {
     });
     return response.data;
 };
+
+// =========================================================
+// СТАРЫЙ ФУНКЦИОНАЛ (AUTH MOCK, VERIFICATION, LOGIN)
+// =========================================================
 
 const loadUsers = () => {
     try { return JSON.parse(localStorage.getItem('mockUsers') || '[]'); }

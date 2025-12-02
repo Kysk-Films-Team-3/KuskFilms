@@ -7,7 +7,7 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
       - frontend
@@ -94,10 +94,21 @@ services:
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
       KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME: ${DOMAIN}
-      KC_HTTP_RELATIVE_PATH: /auth
+
+      # === ВАЖНЫЕ ИЗМЕНЕНИЯ ДЛЯ SWAGGER И CSS ===
+      # Указываем внешний путь, по которому браузер видит Keycloak
+      KC_HOSTNAME_URL: http://localhost/auth
+      KC_HOSTNAME_ADMIN_URL: http://localhost/auth
+
+      # Отключаем строгие проверки хоста (помогает при разработке локально)
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
+
+      # Говорим, что мы за прокси (Nginx)
       KC_PROXY: "edge"
-      KC_HOSTNAME_ADMIN_URL: http://${DOMAIN}/admin/keycloak
+      # ==========================================
+
+      KC_HTTP_RELATIVE_PATH: /auth
 
 
     command: start-dev --hostname-strict=false

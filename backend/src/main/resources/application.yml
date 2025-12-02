@@ -52,6 +52,7 @@ spring:
 # -------------------------------------------
 server:
   port: 8081
+  forward-headers-strategy: framework
 
 # -------------------------------------------
 # MinIO (S3 Storage) Configuration
@@ -94,13 +95,12 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     oauth:
-      # Используем отдельный клиент для Swagger
       client-id: "kyskfilms-swagger"
       use-pkce-with-authorization-code-grant: true
-  # Эти URL будут построены на основе issuer-uri из секции security
+  # Явно указываем внешние ссылки (localhost), чтобы браузер мог по ним пройти
   oauth2:
-    authorization-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/auth
-    token-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
+    authorization-url: http://localhost/auth/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth
+    token-url: http://localhost/auth/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
 
 # -------------------------------------------
 # Actuator Configuration
