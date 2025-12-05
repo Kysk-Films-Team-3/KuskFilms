@@ -6,7 +6,7 @@ import { getPopularFilms, getPopularActors } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 
-export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
+export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal}) => {
 
     const { t, i18n } = useTranslation();
     const location = useLocation();
@@ -167,7 +167,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                             <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
                             <NavLink to="/"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                             <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
-                            <NavLink to="/movie">Плеер(временно)</NavLink>
                         </nav>
                     )}
 
@@ -287,8 +286,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                             <div onClick={toggleDropdown} className="header_profile_switch">
                                 <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? 'Закрити меню' : 'Відкрити меню'} />
 
-                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                {/* Статичный `div` заменен на `div` с условным рендерингом `img` внутри. */}
                                 <div className="header_avatar">
                                     {avatarUrl && (
                                         <img
@@ -298,15 +295,12 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                         />
                                     )}
                                 </div>
-                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                             </div>
 
                             {isDropdownOpen && (
                                 <div className="header_dropdown" ref={dropdownRef}>
                                     <div className="profile_info_block">
                                         <div className="profile_block">
-                                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                            {/* Аналогичное изменение для аватара в выпадающем меню. */}
                                             <div className="header_avatar">
                                                 {avatarUrl && (
                                                     <img
@@ -316,14 +310,10 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                     />
                                                 )}
                                             </div>
-                                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             <div className="profile_text_block">
-                                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                                {/* Старый способ получения имени заменен на новую переменную `username`. */}
                                                 <div className="profile_name">
                                                     {username || 'User'}
                                                 </div>
-                                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             </div>
                                         </div>
                                         <div className="check_icon"></div>
@@ -336,12 +326,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                 <Trans i18nKey="header.dropdown.manageProfile" />
                                             </button>
                                         </li>
-                                        <li>
-                                            <Link to="/settings" onClick={handleMenuItemClick} className="dropdown_link">
-                                                <div className="dropdown_icon settings_icon"></div>
-                                                <Trans i18nKey="header.dropdown.settings" />
-                                            </Link>
-                                        </li>
+
                                         <li>
                                             <button
                                                 className="dropdown_link language_switch"
@@ -354,6 +339,20 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                 <div className="dropdown_icon language_icon"></div>
                                                 {i18n.language === 'ua' ? 'English' : 'Українська'}
                                             </button>
+                                        </li>
+                                        <li className="header_dropdown_logout">
+                                            <Link
+                                                to="/"
+                                                className="settings_logout_link dropdown_link"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleMenuItemClick();
+                                                    onOpenLogoutModal();
+                                                }}
+                                            >
+                                                <div className="dropdown_icon logout_icon"></div>
+                                                <Trans i18nKey="settings.logout" />
+                                            </Link>
                                         </li>
                                         {hasAdminRole && (
                                             <li>
@@ -370,13 +369,12 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                         )}
                                     </ul>
 
-                                    <hr className="divider" />
-                                    <div style={{ padding: '0 10px', backgroundColor: '#222', color: 'gray' }}>
+                                    <div style={{ padding: '10px 10px', color: 'gray' }}>
                                         <p style={{ margin: '5px 0', fontWeight: 'bold' }}>API ТЕСТЫ</p>
                                         <ul>
                                             <li>
                                                 <button onClick={() => fetchApi('/api/test/public')} className="dropdown_link">
-                                                    <div className="dropdown_icon settings_icon"></div>
+                                                    <div className="dropdown_icon language_icon"></div>
                                                     Тест: Public
                                                 </button>
                                             </li>

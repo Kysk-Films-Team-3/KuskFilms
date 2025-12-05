@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Home } from '../pages/Home';
-import { Settings } from '../pages/Settings';
 import { Premium } from '../pages/Premium';
 import { Favorites } from '../pages/Favorites';
 import { Catalog } from '../pages/Catalog';
@@ -24,7 +23,7 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
     return (
         <Routes>
             <Route
-                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick}/>}
+                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick} onOpenLogoutModal={onOpenLogoutModal}/>}
 
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
@@ -41,22 +40,6 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/distributors" element={<DistributorsPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/error" element={<ErrorPage />} />
-                <Route
-                    path="/settings"
-                    element={
-                        <PrivateRoute>
-
-                            <Settings
-                                onOpenLogoutModal={onOpenLogoutModal}
-                                onPaymentClick={onPaymentClick}
-                                onDeviceClick={onDeviceClick}
-                                userProfile={userProfile}
-                                onProfileUpdate={onProfileUpdate}
-                            />
-
-                        </PrivateRoute>
-                    }
-                />
 
                 <Route
                     path="/admin"

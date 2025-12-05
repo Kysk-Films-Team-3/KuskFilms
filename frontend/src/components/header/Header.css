@@ -401,8 +401,6 @@
     padding: 10px 0;
     z-index: 1000;
     margin-top: 8px;
-    width: 303px;
-    height: 230px;
     transition: transform 0.3s ease;
 }
 
@@ -447,6 +445,7 @@
 .check_icon {
     width: 30px;
     height: 30px;
+    margin-left: 5px;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756263887/Done.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -526,22 +525,47 @@
     color: #4E55D4;
 }
 
+.header_dropdown li.header_dropdown_logout:hover a {
+    color: #DD5254;
+}
+
+.header_dropdown li.header_dropdown_logout:hover .dropdown_link {
+    color: #DD5254;
+}
+
+.header_dropdown li.header_dropdown_logout .settings_logout_link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    color: #F8F8FE;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 8px;
+    margin-top: 0;
+}
+
+.header_dropdown li.header_dropdown_logout:hover .settings_logout_link {
+    color: #DD5254;
+}
+
 .manage_icon {
     transition: transform 0.3s ease;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264600/Edit.png');
 }
 
-.settings_icon {
+.logout_icon {
     transition: transform 0.3s ease;
-    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264534/Setting.png');
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1764952716/Sign_in_squre_light_tm8jld.png');
 }
 
 .header_dropdown li:hover .manage_icon {
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264602/Edit_hover.png');
 }
 
-.header_dropdown li:hover .settings_icon {
-    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264532/Setting_hover.png');
+.header_dropdown li:hover .logout_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756422933/Logout.png');
 }
 
 .header_dropdown a,
