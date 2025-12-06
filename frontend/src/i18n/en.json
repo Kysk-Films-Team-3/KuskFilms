@@ -433,6 +433,90 @@
   "favorites": {
     "title": "Favorite",
     "empty": "There is no favorite yet"
+  },
+
+  "termsPage": {
+    "title": "User Agreement",
+    "section1": {
+      "title": "1. General Provisions",
+      "content": "This User Agreement (hereinafter - \"Agreement\") governs the relationship between Kysk LLC (hereinafter - \"Service\", \"We\", \"Us\") and the user (hereinafter - \"User\", \"You\") regarding the use of the KyskFilms information resource. By using our service, you automatically agree to the terms of this Agreement."
+    },
+    "section2": {
+      "title": "2. Registration and Account",
+      "content": "To access the full functionality of the service, you must create an account. You agree to provide accurate and up-to-date information during registration. You are responsible for maintaining the confidentiality of your password and for all actions taken under your account."
+    },
+    "section3": {
+      "title": "3. Use of the Service",
+      "content": "The service is provided \"as is\" for personal, non-commercial use. It is prohibited to use the service for illegal purposes, copyright infringement, or any activity that may harm the service or other users."
+    },
+    "section4": {
+      "title": "4. Subscriptions and Payment",
+      "content": "Some services may require payment. Subscription and payment terms are described separately. We reserve the right to change prices and subscription terms with prior notice to users."
+    },
+    "section5": {
+      "title": "5. Intellectual Property",
+      "content": "All content available on the platform, including movies, series, images, logos, and other materials, is the property of their respective owners and protected by copyright laws. Any unauthorized use is prohibited."
+    },
+    "section6": {
+      "title": "6. Changes to the Agreement",
+      "content": "We reserve the right to make changes to this Agreement. We will notify users of significant changes through our service or email. By continuing to use the service after changes, you agree to the new terms."
+    }
+  },
+
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "section1": {
+      "title": "1. Information Collection",
+      "content": "We collect information that you provide to us directly (name, email, phone number), as well as technical information about your device and service usage (IP address, browser type, viewed movies) to improve service quality."
+    },
+    "section2": {
+      "title": "2. Use of Information",
+      "content": "The collected information is used to provide and improve services, personalize viewing experience, process payments, communicate with users, and ensure service security."
+    },
+    "section3": {
+      "title": "3. Data Protection",
+      "content": "We take technical and organizational measures to protect your personal data from unauthorized access, loss, or destruction. However, no method of transmission over the internet is absolutely secure."
+    },
+    "section4": {
+      "title": "4. Disclosure to Third Parties",
+      "content": "We do not sell or transfer your personal data to third parties, except when necessary to provide services, comply with legal requirements, or with your consent."
+    },
+    "section5": {
+      "title": "5. Cookies and Similar Technologies",
+      "content": "We use cookies and similar technologies to save your settings, analyze service usage, and personalize content. You can configure your browser to refuse cookies, but this may affect service functionality."
+    },
+    "section6": {
+      "title": "6. Your Rights",
+      "content": "You have the right to access, correct, delete, or restrict the processing of your personal data. To exercise these rights, contact us through the contact information provided on the website."
+    }
+  },
+
+  "rulesPage": {
+    "title": "Rules for Application of Recommendation Technologies",
+    "section1": {
+      "title": "1. General Provisions",
+      "content": "The KyskFilms information resource applies recommendation technologies in accordance with the Rules approved by the legislation of Ukraine. These technologies are designed to personalize content and improve user experience."
+    },
+    "section2": {
+      "title": "2. Principles of Recommendation Systems",
+      "content": "Recommendation technologies analyze your viewing history, preferences, ratings, and other behavioral data to generate personalized recommendations. The system takes into account genres, actors, directors, and other characteristics of the content you watch."
+    },
+    "section3": {
+      "title": "3. Data Usage",
+      "content": "For the operation of recommendation systems, we use anonymized data about your activity on the platform: viewed movies and series, added to favorites, ratings, and other interactions with content. This data is processed automatically and is not transferred to third parties."
+    },
+    "section4": {
+      "title": "4. Algorithm Transparency",
+      "content": "We strive to ensure transparency in the operation of recommendation systems. Users have the opportunity to see why certain movies or series are recommended to them and influence the formation of recommendations through their actions on the platform."
+    },
+    "section5": {
+      "title": "5. User Control",
+      "content": "You can influence recommendations by adding content to favorites, giving ratings, and viewing diverse content. You also have the option to clear viewing history or reset recommendation settings in the profile settings section."
+    },
+    "section6": {
+      "title": "6. Responsibility",
+      "content": "Recommendations are generated automatically based on algorithms and are not a guarantee that the content will meet your expectations. We are not responsible for the content of recommended material, but we constantly work to improve the accuracy of recommendations."
+    }
   }
 
 }
