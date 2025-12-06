@@ -1,0 +1,55 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import './TermsPage.css';
+
+export const TermsPage = () => {
+    const { t } = useTranslation();
+
+    return (
+        <div className="terms_page">
+            <div className="terms_block">
+                <h1 className="terms_title">{t('termsPage.title')}</h1>
+
+                <div className="terms_content">
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section1.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section1.content')}</p>
+                    </div>
+
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section2.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section2.content')}</p>
+                    </div>
+
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section3.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section3.content')}</p>
+                    </div>
+
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section4.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section4.content')}</p>
+                    </div>
+
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section5.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section5.content')}</p>
+                    </div>
+
+                    <div className="terms_section">
+                        <h2 className="terms_subtitle">{t('termsPage.section6.title')}</h2>
+                        <div className="terms_line small"></div>
+                        <p className="terms_text">{t('termsPage.section6.content')}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+

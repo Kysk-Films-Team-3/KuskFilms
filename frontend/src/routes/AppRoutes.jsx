@@ -10,6 +10,9 @@ import {CareerPage} from "../pages/CareerPage";
 import {AgentsPage} from "../pages/AgentsPage";
 import {PromotionsPage} from "../pages/PromotionsPage";
 import {FaqPage} from "../pages/FaqPage";
+import {TermsPage} from "../pages/TermsPage";
+import {PrivacyPage} from "../pages/PrivacyPage";
+import {RulesPage} from "../pages/RulesPage";
 import {DevicesPage} from "../pages/DevicesPage";
 import {DistributorsPage} from "../pages/DistributorsPage";
 import {ContactsPage} from "../pages/ContactsPage";
@@ -39,6 +42,9 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/devices" element={<DevicesPage />} />
                 <Route path="/distributors" element={<DistributorsPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/rules" element={<RulesPage />} />
                 <Route path="/error" element={<ErrorPage />} />
 
                 <Route

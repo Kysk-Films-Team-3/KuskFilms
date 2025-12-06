@@ -682,3 +682,135 @@
 
     }
 }
+
+@media (max-width: 1280px) {
+    .header {
+        height: 70px;
+    }
+
+    .header_logo {
+        width: 110px;
+    }
+
+    .header_container {
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .header_nav {
+        margin-left: 40px;
+        gap: 30px;
+        display: flex;
+    }
+
+    .header_nav a {
+        color: #F8F8FE;
+        text-decoration: none;
+        font-weight: 400;
+        font-size: 17px;
+        transition: color 0.3s ease;
+    }
+
+    .header_right {
+        gap: 30px;
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+    }
+
+    .header_search_right_icon,
+    .header_search_left_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .header_search_right_icon.open{
+        width: 30px;
+        height: 30px;
+    }
+
+    .header_search_box {
+        position: relative;
+        min-width: 700px;
+    }
+
+    .header_search_bar {
+        margin-left: 30px;
+        padding: 5px 10px;
+    }
+
+    .header_premium {
+        width: 150px;
+        height: 35px;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .header_promo_icon {
+        width: 33px;
+        height: 33px;
+        background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756410489/Promocode.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        transition: transform 0.3s ease;
+    }
+
+    .header_promo_text {
+        display: none;
+    }
+
+    .log_button_icon {
+        width: 20px;
+        height: 20px;
+        background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756263787/User.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .header_log_button {
+        width: 100px;
+        height: 35px;
+    }
+
+    .header_search_results {
+        top: 70px;
+    }
+
+    .header_avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header_arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header_search_bar input {
+        font-size: 16px;
+    }
+
+    .header_search_bar {
+        font-size: 16px;
+        padding: 5px 14px;
+    }
+
+    .header_search_right_icon.open{
+        width: 32px;
+        height: 32px;
+        margin-left: 10px;
+    }
+
+    .header_search_results .header_films_preview {
+        width: 220px;
+    }
+
+    .header_actor_preview{
+        width: 140px;
+    }
+
+}

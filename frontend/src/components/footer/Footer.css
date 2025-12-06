@@ -288,3 +288,45 @@
         margin-left: 800px;
     }
 }
+
+@media (max-width: 1280px) {
+
+    .footer_telegram_icon, .footer_facebook_icon,  .footer_instagram_icon, .footer_x_icon {
+        width: 27px;
+        height: 27px;
+    }
+
+    .footer_logo {
+        width: 158px;
+        height: 56px;
+    }
+
+    .footer_help button {
+        width: 170px;
+        height: 35px;
+        font-size: 15px;
+    }
+
+    .footer_columns {
+        margin-left: 120px;
+        gap: 150px;
+    }
+
+    .footer_col_link, .footer_col_title {
+        font-size: 18px;
+    }
+
+    .footer_logo {
+        width: 120px;
+        height: 50px;
+    }
+
+    .footer_main_text {
+        font-size: 18px;
+    }
+
+    .footer_link {
+        font-size: 18px;
+    }
+
+}
