@@ -1,0 +1,422 @@
+.share_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.share_modal {
+    position: relative;
+    background: #34353F;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    color: #F8F8FE;
+    box-sizing: border-box;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.share_close {
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    cursor: pointer;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756244998/Close.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+}
+
+.share_close:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756245190/Close_light_hover.png');
+}
+
+.share_title {
+    font-weight: 600;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #F8F8FE;
+    text-align: center;
+}
+
+.share_content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.share_url_block {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.share_url_input {
+    flex: 1;
+    padding: 12px 15px;
+    background: #262630;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #F8F8FE;
+    font-size: 16px;
+    outline: none;
+}
+
+.share_url_input:focus {
+    border-color: #4E55D4;
+}
+
+.share_copy_btn {
+    padding: 12px 24px;
+    background: #4E55D4;
+    border: none;
+    border-radius: 10px;
+    color: #F8F8FE;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.share_copy_btn:hover {
+    background: #3429B0;
+}
+
+.share_copy_btn.copied {
+    background: #00C853;
+}
+
+.share_social_title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #F8F8FE;
+    margin-bottom: 10px;
+}
+
+.share_social_buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.share_social_btn {
+    flex: 1;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #262630;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #F8F8FE;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.share_social_btn:hover {
+    background: #2E2F3A;
+    border-color: #4E55D4;
+    transform: translateY(-2px);
+}
+
+.share_social_icon {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.facebook_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335008/Facebook.png');
+    transition: background-image 0.3s ease;
+}
+
+.share_social_btn.facebook:hover .facebook_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335008/Facebook_hover.png');
+}
+
+.twitter_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335011/X.png');
+    transition: background-image 0.3s ease;
+}
+
+.share_social_btn.twitter:hover .twitter_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335012/X_hover.png');
+}
+
+.telegram_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335010/Telegram.png');
+    transition: background-image 0.3s ease;
+}
+
+.share_social_btn.telegram:hover .telegram_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756335010/Telegram_hover.png');
+}
+
+@media (max-width: 1920px) {
+    .share_modal {
+        max-width: 580px;
+        padding: 35px;
+    }
+
+    .share_close {
+        width: 28px;
+        height: 28px;
+    }
+
+    .share_title {
+        font-size: 30px;
+        margin-bottom: 28px;
+    }
+
+    .share_url_input {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+
+    .share_copy_btn {
+        padding: 14px 22px;
+        font-size: 15px;
+    }
+
+    .share_social_title {
+        font-size: 19px;
+    }
+
+    .share_social_btn {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 1680px) {
+    .share_modal {
+        max-width: 550px;
+        padding: 35px;
+    }
+
+    .share_close {
+        width: 27px;
+        height: 27px;
+    }
+
+    .share_title {
+        font-size: 28px;
+        margin-bottom: 26px;
+    }
+
+    .share_content {
+        gap: 26px;
+    }
+
+    .share_url_input {
+        padding: 13px 17px;
+        font-size: 15px;
+    }
+
+    .share_copy_btn {
+        padding: 13px 20px;
+        font-size: 15px;
+    }
+
+    .share_social_title {
+        font-size: 18px;
+    }
+
+    .share_social_btn {
+        padding: 13px 17px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .share_modal {
+        max-width: 520px;
+        padding: 32px;
+    }
+
+    .share_close {
+        width: 26px;
+        height: 26px;
+    }
+
+    .share_title {
+        font-size: 26px;
+        margin-bottom: 24px;
+    }
+
+    .share_content {
+        gap: 24px;
+    }
+
+    .share_url_input {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .share_copy_btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .share_social_title {
+        font-size: 17px;
+    }
+
+    .share_social_btn {
+        min-width: 110px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .share_social_icon {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .share_modal {
+        max-width: 480px;
+        padding: 30px;
+    }
+
+    .share_close {
+        width: 25px;
+        height: 25px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .share_title {
+        font-size: 24px;
+        margin-bottom: 22px;
+    }
+
+    .share_content {
+        gap: 22px;
+    }
+
+    .share_url_block {
+        gap: 8px;
+    }
+
+    .share_url_input {
+        padding: 11px 15px;
+        font-size: 14px;
+    }
+
+    .share_copy_btn {
+        padding: 11px 18px;
+        font-size: 14px;
+    }
+
+    .share_social_title {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .share_social_buttons {
+        gap: 12px;
+    }
+
+    .share_social_btn {
+        min-width: 100px;
+        padding: 11px 15px;
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .share_social_icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .share_overlay {
+        padding: 15px;
+    }
+
+    .share_modal {
+        max-width: 100%;
+        padding: 25px;
+        border-radius: 12px;
+    }
+
+    .share_close {
+        width: 24px;
+        height: 24px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .share_title {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .share_content {
+        gap: 20px;
+    }
+
+    .share_url_block {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .share_url_input {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .share_copy_btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .share_social_title {
+        font-size: 15px;
+    }
+
+    .share_social_buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .share_social_btn {
+        width: 100%;
+        min-width: unset;
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
+

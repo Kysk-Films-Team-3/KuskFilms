@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { Trans } from "react-i18next";
 import { VideoPlayer } from "./VideoPlayer";
 import "./CustomPlayer.css";
 
@@ -26,7 +27,7 @@ export default function CustomPlayer({ src }) {
                 !menuRef.current.contains(e.target)
             ) {
                 setShowSettings(false);
-                setMenu("root"); // ← возвращаемся в корень
+                setMenu("root");
             }
         }
 
@@ -268,7 +269,7 @@ export default function CustomPlayer({ src }) {
                                 <div className="settings-list">
 
                                     <div className="settings-row" onClick={() => setMenu("speed")}>
-                                        <span className="settings_title">Швидкість</span>
+                                        <span className="settings_title"><Trans i18nKey="player.speed" /></span>
                                         <div className="blocki">
                                         <span className="value">{playbackRate}</span>
                                         <span className="arrow arrow-right"></span>
@@ -276,20 +277,20 @@ export default function CustomPlayer({ src }) {
                                     </div>
 
                                     <div className="settings-row" onClick={() => setMenu("subtitles")}>
-                                        <span className="settings_title">Субтитри</span>
+                                        <span className="settings_title"><Trans i18nKey="player.subtitles" /></span>
                                         <div className="blocki">
                                         <span className="value">
                         {subtitleLang === "off"
-                            ? "Вимкн."
+                            ? <Trans i18nKey="player.off" />
                             : subtitleLang === "uk"
-                                ? "Укр"
-                                : "Eng"}
+                                ? <Trans i18nKey="player.uk" />
+                                : <Trans i18nKey="player.eng" />}
                     </span>
                                         <span className="arrow arrow-right"></span>
                                         </div>
                                     </div>
                                     <div className="settings-row" onClick={() => setMenu("quality")}>
-                                        <span className="settings_title">Якість</span>
+                                        <span className="settings_title"><Trans i18nKey="player.quality" /></span>
                                         <div className="blocki">
                                         <span className="value">{quality}</span>
                                         <span className="arrow arrow-right"></span>
@@ -303,7 +304,7 @@ export default function CustomPlayer({ src }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        Швидкість
+                                        <Trans i18nKey="player.speed" />
                                     </div>
 
                                     {[0.25, 0.5, 0.75, 1, 1.25, 1.75, 2].map((rate) => (
@@ -327,7 +328,7 @@ export default function CustomPlayer({ src }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        Субтитри
+                                        <Trans i18nKey="player.subtitles" />
                                     </div>
 
                                     <div
@@ -336,7 +337,7 @@ export default function CustomPlayer({ src }) {
                                         }`}
                                         onClick={() => setSubtitleLang("uk")}
                                     >
-                                        Українські
+                                        <Trans i18nKey="player.ukrainian" />
                                     </div>
 
                                     <div
@@ -345,7 +346,7 @@ export default function CustomPlayer({ src }) {
                                         }`}
                                         onClick={() => setSubtitleLang("eng")}
                                     >
-                                        Англійські
+                                        <Trans i18nKey="player.english" />
                                     </div>
 
                                     <div
@@ -354,7 +355,7 @@ export default function CustomPlayer({ src }) {
                                         }`}
                                         onClick={() => setSubtitleLang("off")}
                                     >
-                                        Вимкнути
+                                        <Trans i18nKey="player.turnOff" />
                                     </div>
                                 </div>
                             )}
@@ -363,7 +364,7 @@ export default function CustomPlayer({ src }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        Якість
+                                        <Trans i18nKey="player.quality" />
                                     </div>
                                 <div className="grap">
                                     {["144p","240p","360p","480p","720p","1080p"].map((q) => (

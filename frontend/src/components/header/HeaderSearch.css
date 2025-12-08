@@ -45,6 +45,12 @@
     top: 50%;
     transform: translateY(-50%);
     display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.header_search_section:hover .header_search_scroll_btn:not(.hidden) {
+    opacity: 1;
 }
 
 @media (min-width: 1440px) {
@@ -174,4 +180,5 @@
         margin-top: -30px;
     }
 }
+
 

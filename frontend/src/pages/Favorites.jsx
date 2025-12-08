@@ -8,7 +8,7 @@ export function Favorites() {
     const homeFilms = favorites.filter(f => f.source === 'home');
     const recFilms = favorites.filter(f => f.source === 'recommendation');
     const otherFilms = favorites.filter(f => f.source !== 'home' && f.source !== 'recommendation');
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
 
 
     return (
@@ -73,6 +73,7 @@ export function Favorites() {
 
 function FavoriteCard({ film, toggleFavorite }) {
     const [hovered, setHovered] = useState(false);
+    const { t } = useTranslation();
 
     if (!film) return null;
 
@@ -94,7 +95,7 @@ function FavoriteCard({ film, toggleFavorite }) {
                         className={`favorite_actor_card_save favorite_actor_film_action ${
                             film.saved ? 'active' : ''
                         }`}
-                        data-tooltip="Remove from favorites"
+                        data-tooltip={t("favorites.removeFromFavorites")}
                         onClick={() => toggleFavorite(film)}
                     />
                 </div>

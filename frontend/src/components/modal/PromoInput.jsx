@@ -1,9 +1,11 @@
 import "./PromoInput.css";
 import { useState, useEffect, useRef } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 export const PromoInput = ({ isOpen, onClose }) => {
     const [code, setCode] = useState("");
     const promoRef = useRef(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (!isOpen) return;
@@ -30,23 +32,23 @@ export const PromoInput = ({ isOpen, onClose }) => {
             <div className="promo_modal_block" ref={promoRef}>
                 <div onClick={onClose} className="promo_modal_close"></div>
 
-                <h2 className="promo_title">Введіть промокод</h2>
+                <h2 className="promo_title"><Trans i18nKey="promoInput.title" /></h2>
 
                 <div className="promo_input_row">
                     <input
                         className="promo_input"
-                        placeholder="Наприклад: KYSK30"
+                        placeholder={t("promoInput.placeholder")}
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
                     />
 
                     <button className="promo_btn">
-                        Застосувати
+                        <Trans i18nKey="promoInput.button" />
                     </button>
                 </div>
 
                 <p className="promo_hint">
-                    Промокоди дають знижки або бонуси на підписку Kysk.
+                    <Trans i18nKey="promoInput.hint" />
                 </p>
 
             </div>

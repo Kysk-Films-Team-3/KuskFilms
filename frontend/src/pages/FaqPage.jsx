@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./FaqPage.css";
+import { Trans } from "react-i18next";
 
 export const FaqPage = () => {
     const [open, setOpen] = useState(null);
@@ -10,28 +11,28 @@ export const FaqPage = () => {
 
     const data = [
         {
-            q: "Що таке Kysk?",
-            a: "Kysk — це сучасний український стримінговий сервіс для перегляду фільмів і серіалів у зручному та якісному форматі."
+            q: "faqPage.q1",
+            a: "faqPage.a1"
         },
         {
-            q: "Як оформити підписку?",
-            a: "Перейдіть у розділ «Преміум», оберіть тариф та виконайте оплату. Підписка активується миттєво."
+            q: "faqPage.q2",
+            a: "faqPage.a2"
         },
         {
-            q: "Чи можна використовувати Kysk без підписки?",
-            a: "Так, частина контенту доступна безкоштовно. Але преміум-підписка відкриває додаткові можливості, ексклюзиви та перегляд без реклами."
+            q: "faqPage.q3",
+            a: "faqPage.a3"
         },
         {
-            q: "Чи безпечно зберігати платіжні дані в Kysk?",
-            a: "Так. Дані шифруються, не зберігаються у відкритому вигляді та обробляються виключно сертифікованими міжнародними платіжними системами."
+            q: "faqPage.q4",
+            a: "faqPage.a4"
         },
         {
-            q: "Чи є субтитри та різні звукові доріжки?",
-            a: "Так. У багатьох фільмів доступні українські та оригінальні звукові доріжки, а також субтитри. Ми постійно розширюємо доступність контенту."
+            q: "faqPage.q5",
+            a: "faqPage.a5"
         },
         {
-            q: "Як скасувати підписку?",
-            a: "У вашому профілі є розділ «Керування підпискою», де можна вимкнути автоматичне продовження в будь-який момент."
+            q: "faqPage.q6",
+            a: "faqPage.a6"
         }
     ];
 
@@ -39,19 +40,19 @@ export const FaqPage = () => {
     return (
         <div className="faq_page">
 
-            <h1 className="faq_title">Запитання та відповіді</h1>
+            <h1 className="faq_title"><Trans i18nKey="faqPage.title" /></h1>
             <div className="faq_line"></div>
 
             <div className="faq_list">
                 {data.map((item, i) => (
                     <div className="faq_item" key={i}>
                         <div className="faq_question" onClick={() => toggle(i)}>
-                            <span>{item.q}</span>
+                            <span><Trans i18nKey={item.q} /></span>
                             <div className={`faq_icon ${open === i ? "open" : ""}`}></div>
                         </div>
 
                         <div className={`faq_answer ${open === i ? "show" : ""}`}>
-                            {item.a}
+                            <Trans i18nKey={item.a} />
                         </div>
                     </div>
                 ))}

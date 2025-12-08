@@ -93,6 +93,12 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.home_block:hover .home_block_arrow {
+    opacity: 1;
 }
 
 .home_block_header {
@@ -182,6 +188,12 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.home_block:hover .films_scroll_btn:not(.hidden) {
+    opacity: 1;
 }
 
 .films_scroll_btn {
@@ -598,6 +610,12 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.home_stars_choice_block:hover .home_stars_choice_arrow {
+    opacity: 1;
 }
 
 .home_stars_header:hover .home_stars_choice_title{

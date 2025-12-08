@@ -1,25 +1,26 @@
 import "./DevicesPage.css";
+import { Trans } from "react-i18next";
 
 export const DevicesPage = () => {
     const devices = [
         {
-            title: "Смартфони",
-            desc: "Платформа підтримує сучасні смартфони на iOS та Android."
+            titleKey: "devicesPage.smartphones",
+            descKey: "devicesPage.smartphonesDesc"
         },
         {
-            title: "Комп'ютери та ноутбуки",
-            desc: "Працює у будь-якому сучасному браузері: Windows, macOS, Linux."
+            titleKey: "devicesPage.computers",
+            descKey: "devicesPage.computersDesc"
         },
         {
-            title: "Smart TV",
-            desc: "Підтримуються телевізори з браузером або Android TV."
+            titleKey: "devicesPage.smartTV",
+            descKey: "devicesPage.smartTVDesc"
         }
     ];
 
     return (
         <div className="devices_page">
 
-            <h1 className="devices_title">Список пристроїв</h1>
+            <h1 className="devices_title"><Trans i18nKey="devicesPage.title" /></h1>
             <div className="devices_top_line"></div>
 
             <div className="devices_list">
@@ -28,8 +29,8 @@ export const DevicesPage = () => {
                         <div className="device_side_line"></div>
 
                         <div className="device_text">
-                            <h3 className="device_name">{d.title}</h3>
-                            <p className="device_desc">{d.desc}</p>
+                            <h3 className="device_name"><Trans i18nKey={d.titleKey} /></h3>
+                            <p className="device_desc"><Trans i18nKey={d.descKey} /></p>
                         </div>
                     </div>
                 ))}

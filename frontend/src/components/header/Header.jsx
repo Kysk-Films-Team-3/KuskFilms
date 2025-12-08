@@ -310,7 +310,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     {isLoggedIn ? (
                         <div className="header_profile">
                             <div onClick={toggleDropdown} className="header_profile_switch">
-                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? 'Закрити меню' : 'Відкрити меню'} />
+                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? t("header.dropdown.closeMenu") : t("header.dropdown.openMenu")} />
 
                                 <div className="header_avatar">
                                     {avatarUrl && (
@@ -363,7 +363,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 }}
                                             >
                                                 <div className="dropdown_icon language_icon"></div>
-                                                {i18n.language === 'ua' ? 'English' : 'Українська'}
+                                                {i18n.language === 'ua' ? <Trans i18nKey="header.dropdown.switchToEnglish" /> : <Trans i18nKey="header.dropdown.switchToUkrainian" />}
                                             </button>
                                         </li>
                                         <li className="header_dropdown_logout">

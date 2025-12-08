@@ -19,54 +19,54 @@ export const PromotionsPage = () => {
         <div className="promo_page">
 
             <div className="hero_no_block">
-                <h1 className="hero_title">Акції та пропозиції</h1>
+                <h1 className="hero_title"><Trans i18nKey="promotionsPage.title" /></h1>
                 <p className="hero_subtitle">
-                    Вигідні преміум пропозиції та ексклюзивні промокоди.
+                    <Trans i18nKey="promotionsPage.subtitle" />
                 </p>
             </div>
 
             <div className="promo_banner medium">
-                <h2 className="banner_title_small">Преміум зі знижкою</h2>
+                <h2 className="banner_title_small"><Trans i18nKey="promotionsPage.premiumTitle" /></h2>
 
                 <p className="banner_text_small">
-                    Повний доступ до каталогу, 4K та перегляду без реклами.
+                    <Trans i18nKey="promotionsPage.premiumText" />
                 </p>
-                <Link to="/Premium" className="banner_btn">Придбати преміум</Link>
+                <Link to="/Premium" className="banner_btn"><Trans i18nKey="promotionsPage.buyPremium" /></Link>
             </div>
 
             <div className="promo_banner_row">
 
                 <div className="promo_banner small promo_card">
                     {copied === "KYSK30" && (
-                        <div className="copy_inside">Скопійовано ✔</div>
+                        <div className="copy_inside"><Trans i18nKey="promotionsPage.copied" /></div>
                     )}
 
-                    <h3 className="banner_title_xs">Промокод KYSK25</h3>
-                    <p className="banner_text_xs">-30% для нових користувачів</p>
+                    <h3 className="banner_title_xs"><Trans i18nKey="promotionsPage.promo1" /></h3>
+                    <p className="banner_text_xs"><Trans i18nKey="promotionsPage.promo1Desc" /></p>
 
                     <button
                         className="banner_btn_sm"
                         onClick={() => copyCode("KYSK30")}
                     >
-                        Скопіювати
+                        <Trans i18nKey="promotionsPage.copy" />
                     </button>
                 </div>
 
                 <div className="promo_banner small promo_card">
                     {copied === "FREEWEEK" && (
-                        <div className="copy_inside">Скопійовано ✔</div>
+                        <div className="copy_inside"><Trans i18nKey="promotionsPage.copied" /></div>
                     )}
 
-                    <h3 className="banner_title_xs">Промокод FREEWEEK</h3>
+                    <h3 className="banner_title_xs"><Trans i18nKey="promotionsPage.promo2" /></h3>
                     <p className="banner_text_xs">
-                        7 днів безкоштовного преміуму
+                        <Trans i18nKey="promotionsPage.promo2Desc" />
                     </p>
 
                     <button
                         className="banner_btn_sm"
                         onClick={() => copyCode("FREEWEEK")}
                     >
-                        Скопіювати
+                        <Trans i18nKey="promotionsPage.copy" />
                     </button>
                 </div>
 

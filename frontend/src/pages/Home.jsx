@@ -5,6 +5,7 @@ import { fakeCategories, fakeContent, fakeSlides, getMenuItems, getWatchModeItem
 import { useFavorites } from '../context/FavoritesContext';
 import {Trans, useTranslation} from 'react-i18next';
 import '../i18n/i18n';
+import { ShareModal } from '../components/modal/ShareModal';
 
 export const Home = ({ onOpenActorRecs }) => {
     const [currentSlide, setCurrentSlide] = useState(1);
@@ -41,6 +42,7 @@ export const Home = ({ onOpenActorRecs }) => {
     const [menuItems, setMenuItems] = useState([]);
     const [watchModeItems, setWatchModeItems] = useState([]);
     const [starsActors, setStarsActors] = useState([]);
+    const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
     const { t } = useTranslation();
     const { favorites, toggleFavorite } = useFavorites();
     const location = useLocation();
@@ -466,7 +468,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     <div 
                                                         className="home_film_repost home_film_action" 
                                                         data-tooltip={t('tooltip.share')}
-                                                        onClick={(e) => e.stopPropagation()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShareModal({ isOpen: true, film: film });
+                                                        }}
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
@@ -575,7 +580,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                             <div 
                                                                 className="home_film_repost home_film_action" 
                                                                 data-tooltip={t('tooltip.share')}
-                                                                onClick={(e) => e.stopPropagation()}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setShareModal({ isOpen: true, film: film });
+                                                                }}
                                                             />
                                                             <div 
                                                                 className="home_film_remuve home_film_action" 
@@ -693,7 +701,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     <div 
                                                         className="home_film_repost home_film_action" 
                                                         data-tooltip={t('tooltip.share')}
-                                                        onClick={(e) => e.stopPropagation()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShareModal({ isOpen: true, film: film });
+                                                        }}
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
@@ -719,6 +730,13 @@ export const Home = ({ onOpenActorRecs }) => {
                 )}
 
             </div>
+            <ShareModal
+                isOpen={shareModal.isOpen}
+                onClose={() => setShareModal({ isOpen: false, film: null })}
+                filmTitle={shareModal.film?.title || null}
+                filmTitleKey={shareModal.film?.line1 ? `films.${shareModal.film.id}.line1` : null}
+                filmId={shareModal.film?.id}
+            />
         </div>
     );
 };

@@ -29,7 +29,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
             onProfileUpdate(updatedProfile);
         } catch (err) {
             console.error("Ошибка при загрузке аватара:", err);
-            setError("Не удалось загрузить аватар.");
+            setError(t("profile.errorAvatar"));
         } finally {
             setIsUploading(false);
         }
@@ -40,7 +40,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
         const fetchProfileData = async () => {
             if (!keycloak.authenticated) {
-                setError("Пользователь не авторизован.");
+                setError(t("profile.errorAuth"));
                 setLoading(false);
                 return;
             }
@@ -58,7 +58,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
             } catch (err) {
                 console.error("Ошибка загрузки профиля:", err.response || err);
-                setError("Не удалось загрузить данные.");
+                setError(t("profile.errorLoad"));
 
                 setName(keycloak.tokenParsed?.given_name || '');
                 setLastName(keycloak.tokenParsed?.family_name || '');
@@ -88,7 +88,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
             onClose();
         } catch (err) {
             console.error("Ошибка сохранения профиля:", err);
-            setError("Не удалось сохранить. Попробуйте еще раз.");
+            setError(t("profile.errorSave"));
         } finally {
             setLoading(false);
         }
@@ -121,7 +121,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 </div>
 
                 <div className="profile_content">
-                    {loading && <p style={{ textAlign: 'center' }}>Загрузка...</p>}
+                    {loading && <p style={{ textAlign: 'center' }}><Trans i18nKey="profile.loading" /></p>}
                     {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
                     {!loading && (
                         <>
