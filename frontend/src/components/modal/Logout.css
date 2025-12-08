@@ -102,3 +102,71 @@
     white-space: pre-line;
     text-align: center;
 }
+
+@media (max-width: 1440px) {
+
+    .logout_modal {
+        width: 950px;
+        height: 400px;
+        padding: 40px;
+    }
+
+    .logout_close {
+        width: 28px;
+        height: 28px;
+    }
+
+    .logout_title {
+        font-size: 27px;
+    }
+
+    .logout_description {
+        font-size: 19px;
+    }
+
+    .logout_buttons button {
+        width: 470px;
+        height: 55px;
+        font-size: 19px;
+    }
+
+
+
+
+
+
+}
+
+@media (max-width: 1280px) {
+
+    .logout_modal {
+        width: 900px;
+        height: 380px;
+        padding: 40px;
+    }
+
+    .logout_close {
+        width: 26px;
+        height: 26px;
+    }
+
+    .logout_title {
+        font-size: 25px;
+    }
+
+    .logout_description {
+        font-size: 18px;
+    }
+
+    .logout_buttons button {
+        width: 470px;
+        height: 50px;
+        font-size: 18px;
+    }
+
+
+
+
+
+
+}

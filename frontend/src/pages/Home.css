@@ -4,7 +4,7 @@
     color: #F8F8FE;
     display: flex;
     font-family: "Raleway", sans-serif;
-    padding-top: 80px;
+    padding-top: 70px;
     flex-direction: column;
 }
 
@@ -83,7 +83,7 @@
 }
 
 .home_block_arrow:hover {
-    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png'); /* для стрелки */
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
 }
 
 .home_block_arrow{
@@ -115,6 +115,10 @@
     position: relative;
     width: 100%;
     overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
 }
 
 .home_films {
@@ -125,7 +129,8 @@
     scrollbar-width: none;
     user-select: none;
     -webkit-user-select: none;
-    padding: 0 60px;
+    padding: 10px 60px;
+    align-items: flex-start;
 }
 
 .home_films_wrapper::-webkit-scrollbar {
@@ -179,6 +184,10 @@
     background-position: center;
 }
 
+.films_scroll_btn {
+    margin-top: 40px;
+}
+
 .films_scroll_btn.left {
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
     width: 119px;
@@ -221,12 +230,17 @@
     flex-shrink: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     z-index: 1;
+    transform-origin: center center;
+    will-change: transform;
+    pointer-events: auto;
+    margin: 3px 0;
 }
 
 .home_film_card:hover {
     opacity: 1;
     transform: scale(1.02);
     z-index: 2;
+    margin: 0;
 }
 
 .home_film_card img {
@@ -235,6 +249,8 @@
     object-fit: cover;
     border-radius: 16px;
     -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
 }
 
 .home_film_header {
@@ -369,6 +385,8 @@
     position: relative;
     overflow: visible;
     padding: 15px 0;
+    max-width: 100%;
+    width: 100%;
 }
 
 .home_carousel_track {
@@ -700,6 +718,8 @@
     align-items: center;
     margin-top: 60px;
     box-sizing: border-box;
+    position: relative;
+    overflow: visible;
 }
 
 .home_ad{
@@ -713,11 +733,13 @@
     background-position: center;
     box-sizing: border-box;
     transition: transform 0.5s ease-in-out;
+    position: relative;
+    display: inline-block;
 }
 
 .home_ad:hover {
-    box-shadow: 0 0 70px rgba(78, 85, 212, 0.25);
     transform: scale(1.02);
+    filter: drop-shadow(0 0 70px rgba(78, 85, 212, 0.25));
 }
 
 .home_ad_new_block {
@@ -828,7 +850,6 @@
     background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724377/Save_ad_active_hover.png");
 }
 
-
 @media (min-width: 1920px) {
 
     .home_carousel_slide {
@@ -842,3 +863,674 @@
     }
 
 }
+
+@media (max-width: 1680px) {
+
+    .home {
+        padding-top: 50px;
+    }
+
+    .home_carousel_slide {
+        min-width: 900px;
+        min-height: 400px;
+    }
+
+    .home_slide_new_title {
+        font-size: 22px;
+        font-weight: 300;
+    }
+
+    .home_slide_film_name{
+        margin-top: 380px;
+        font-size: 35px;
+        font-weight: 600;
+    }
+
+    .home_slide_watch {
+        font-size: 15px;
+        font-weight: 300;
+        margin-bottom: 2px;
+    }
+    .home_slide_film_name{
+        margin-top: 410px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .home_slide_line_block{
+        font-size: 19px;
+    }
+
+    .home_categories {
+        margin-top: 10px;
+    }
+
+    .home_categories_button {
+        font-size: 20px;
+    }
+
+
+    .home_button_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .home_ad{
+        padding: 60px;
+        width: 100%;
+        max-width: 1550px;
+        height: 500px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .home_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .home_ad_block{
+        margin-top: 0;
+        padding: 0 10px;
+    }
+
+
+    .home_ad_new_block {
+        font-size: 23px;
+    }
+
+    .home_ad_title{
+        margin-top: 100px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .home_ad_line_block{
+        font-size: 17px;
+    }
+
+    .home_ad_subtitle{
+        font-size: 17px;
+        margin-top: 25px;
+    }
+
+    .home_ad_button{
+        margin-top: 26px;
+    }
+
+    .home_categories {
+        gap: 22px;
+    }
+
+    .home_block_header {
+        gap: 5px;
+    }
+
+    .home_block_title{
+        font-size: 27px;
+    }
+
+    .home_block_arrow{
+        width: 36px;
+        height: 36px;
+    }
+
+    .home_films {
+        margin: 12px 0;
+    }
+
+    .home_film_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .films_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .home_film_rating{
+        font-size: 27px;
+    }
+
+    .home_film_line1{
+        font-size: 16px;
+    }
+
+    .home_film_line2{
+        font-size: 15px;
+    }
+
+    .home_film_season{
+        font-size: 15px;
+    }
+
+    .home_film_save{
+        width: 36px;
+        height: 36px;
+    }
+
+    .home_film_repost{
+        width: 37px;
+        height: 37px;
+    }
+
+    .home_film_remuve{
+        width: 34px;
+        height: 34px;
+    }
+
+    .home_film_action::after {
+        font-size: 16px;
+    }
+
+    .home_ad_premium_button{
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .home_ad_info_button{
+        width: 45px;
+        height: 45px;
+    }
+
+    .home_ad_save_button{
+        width: 45px;
+        height: 45px;
+    }
+
+    .home_stars_choice_block{
+        margin-top: 40px;
+    }
+
+    .home_stars_choice_title{
+        font-size: 26px;
+    }
+
+    .home_stars_choice_arrow{
+        width: 40px;
+        height: 40px;
+    }
+
+    .home_stars_actor_statham, .home_stars_actor_garfield, .home_stars_actor_cage, .home_stars_actor_downey{
+        width: 280px;
+        height: 280px;
+
+    }
+
+    .home_stars_actor{
+        margin-top: 25px;
+    }
+
+    .home_stars_collection{
+        width: 85px;
+        height: 22px;
+    }
+
+    .home_stars_collection_title{
+        font-size: 16px;
+    }
+
+    .home_stars_collection_watch{
+        margin-top: 10px;
+        margin-left: 20px;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    .home_stars_collection_watch_actor{
+        font-size: 19px;
+    }
+
+
+
+}
+
+@media (max-width: 1440px) {
+
+    .home {
+        padding-top: 40px;
+    }
+
+    .home_carousel_slide {
+        min-width: 900px;
+        min-height: 200px;
+    }
+
+    .home_slide_new_title {
+        font-size: 22px;
+        font-weight: 300;
+    }
+
+    .home_slide_film_name{
+        margin-top: 380px;
+        font-size: 35px;
+        font-weight: 600;
+    }
+
+    .home_slide_watch {
+        font-size: 15px;
+        font-weight: 300;
+        margin-bottom: 2px;
+    }
+    .home_slide_film_name{
+        margin-top: 410px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .home_slide_line_block{
+        font-size: 19px;
+    }
+
+    .home_categories {
+        margin-top: 10px;
+    }
+
+    .home_categories_button {
+        font-size: 20px;
+    }
+
+
+    .home_button_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .home_ad{
+        padding: 60px;
+        width: 100%;
+        max-width: 1330px;
+        height: 500px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .home_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .home_ad_block{
+        margin-top: 0;
+        padding: 0 10px;
+    }
+
+
+    .home_ad_new_block {
+        font-size: 23px;
+    }
+
+    .home_ad_title{
+        margin-top: 70px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .home_ad_line_block{
+        font-size: 17px;
+    }
+
+    .home_ad_subtitle{
+        font-size: 17px;
+        margin-top: 20px;
+    }
+
+    .home_ad_button{
+        margin-top: 25px;
+    }
+
+    .home_categories {
+        gap: 22px;
+    }
+
+    .home_block_header {
+        gap: 5px;
+    }
+
+    .home_block_title{
+        font-size: 27px;
+    }
+
+    .home_block_arrow{
+        width: 36px;
+        height: 36px;
+    }
+
+    .home_films {
+        margin: 12px 0;
+    }
+
+    .home_film_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .films_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .home_film_rating{
+        font-size: 27px;
+    }
+
+    .home_film_line1{
+        font-size: 16px;
+    }
+
+    .home_film_line2{
+        font-size: 15px;
+    }
+
+    .home_film_season{
+        font-size: 15px;
+    }
+
+    .home_film_save{
+        width: 34px;
+        height: 34px;
+    }
+
+    .home_film_repost{
+        width: 34px;
+        height: 34px;
+    }
+
+    .home_film_remuve{
+        width: 34px;
+        height: 34px;
+    }
+
+    .home_film_action::after {
+        font-size: 14px;
+    }
+
+    .home_ad_premium_button{
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .home_ad_info_button{
+        width: 45px;
+        height: 45px;
+    }
+
+    .home_ad_save_button{
+        width: 45px;
+        height: 45px;
+    }
+
+    .home_stars_choice_block{
+        margin-top: 40px;
+    }
+
+    .home_stars_choice_title{
+        font-size: 26px;
+    }
+
+    .home_stars_choice_arrow{
+        width: 36px;
+        height: 36px;
+    }
+
+    .home_stars_actor_statham, .home_stars_actor_garfield, .home_stars_actor_cage, .home_stars_actor_downey{
+        width: 280px;
+        height: 280px;
+
+    }
+
+    .home_stars_actor{
+        margin-top: 25px;
+    }
+
+    .home_stars_collection{
+        width: 85px;
+        height: 22px;
+    }
+
+    .home_stars_collection_title{
+        font-size: 16px;
+    }
+
+    .home_stars_collection_watch{
+        margin-top: 10px;
+        margin-left: 20px;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    .home_stars_collection_watch_actor{
+        font-size: 19px;
+    }
+
+
+
+}
+
+@media (max-width: 1280px) {
+
+    .home {
+        padding-top: 50px;
+    }
+
+    .home_carousel_slide {
+        min-width: 800px;
+        min-height: 200px;
+    }
+
+    .home_slide_new_title {
+        font-size: 20px;
+        font-weight: 300;
+    }
+
+    .home_slide_film_name{
+        margin-top: 430px;
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+    .home_slide_watch {
+        font-size: 12px;
+        font-weight: 300;
+        margin-bottom: 2px;
+    }
+    .home_slide_film_name{
+        margin-top: 410px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .home_slide_line_block{
+        font-size: 17px;
+    }
+
+    .home_categories {
+        margin-top: 0;
+    }
+
+    .home_categories_button {
+        font-size: 18px;
+    }
+
+
+    .home_button_icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .home_ad{
+        padding: 60px;
+        width: 100%;
+        max-width: 1200px;
+        height: 450px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .home_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+    
+    .home_ad_block{
+        margin-top: 0;
+    }
+
+
+    .home_ad_new_block {
+        font-size: 21px;
+    }
+
+    .home_ad_title{
+        margin-top: 70px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .home_ad_line_block{
+        font-size: 15px;
+    }
+
+    .home_ad_subtitle{
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .home_ad_button{
+        margin-top: 20px;
+    }
+
+    .home_categories {
+        gap: 20px;
+    }
+
+    .home_block_header {
+        gap: 3px;
+    }
+
+    .home_block_title{
+        font-size: 25px;
+    }
+
+    .home_block_arrow{
+        width: 35px;
+        height: 35px;
+    }
+
+    .home_films {
+        margin: 10px 0;
+    }
+
+    .home_film_card {
+        width: 170px;
+        height: 240px;
+    }
+
+    .films_scroll_btn {
+        margin-top: 5px;
+    }
+
+    .home_film_rating{
+        font-size: 25px;
+    }
+
+    .home_film_line1{
+        font-size: 14px;
+    }
+
+    .home_film_line2{
+        font-size: 14px;
+    }
+
+    .home_film_season{
+        font-size: 14px;
+    }
+
+    .home_film_save{
+        width: 30px;
+        height: 30px;
+    }
+
+    .home_film_repost{
+        width: 30px;
+        height: 30px;
+    }
+
+    .home_film_remuve{
+        width: 30px;
+        height: 30px;
+    }
+
+    .home_film_action::after {
+        font-size: 12px;
+    }
+
+    .home_ad_premium_button{
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    .home_ad_info_button{
+        width: 40px;
+        height: 40px;
+    }
+
+    .home_ad_save_button{
+        width: 40px;
+        height: 40px;
+    }
+
+    .home_stars_choice_block{
+        margin-top: 30px;
+    }
+
+    .home_stars_choice_title{
+        font-size: 25px;
+    }
+
+    .home_stars_choice_arrow{
+        width: 35px;
+        height: 35px;
+    }
+
+    .home_stars_actor_statham, .home_stars_actor_garfield, .home_stars_actor_cage, .home_stars_actor_downey{
+        width: 250px;
+        height: 250px;
+
+    }
+
+    .home_stars_actor{
+        margin-top: 20px;
+    }
+
+    .home_stars_collection{
+        width: 75px;
+        height: 19px;
+    }
+
+    .home_stars_collection_title{
+        font-size: 14px;
+    }
+
+    .home_stars_collection_watch{
+        margin-top: 10px;
+        margin-left: 20px;
+        font-size: 15px;
+        font-weight: 300;
+    }
+
+    .home_stars_collection_watch_actor{
+        font-size: 16px;
+    }
+
+
+
+}
+
+
+
+
+
+

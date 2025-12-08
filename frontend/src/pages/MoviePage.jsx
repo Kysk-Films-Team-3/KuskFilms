@@ -52,7 +52,6 @@ export const MoviePage = ({ onCommentModalClick }) => {
         );
     }
 
-    // Получаем ссылку на поток. Бэкенд возвращает streamUrl для M3U8
     const videoUrl = movie.streamUrl;
 
     const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
@@ -96,7 +95,6 @@ export const MoviePage = ({ onCommentModalClick }) => {
                     </div>
 
                     <div className="movie_poster_watch">
-                        {/* Кнопка "Дивитися" активна, если есть ссылка */}
                         <button
                             className="movie_watch_button"
                             onClick={handleWatchClick}
@@ -111,7 +109,6 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 </div>
             </div>
 
-            {/* Плеер открывается только если есть URL */}
             {isPlayerOpen && videoUrl && (
                 <PlayerOverlay
                     open={isPlayerOpen}

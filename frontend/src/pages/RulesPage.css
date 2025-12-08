@@ -11,7 +11,7 @@
 }
 
 .rules_title {
-    font-size: 42px;
+    font-size: 43px;
     font-weight: 700;
     font-family: "Raleway", sans-serif;
     margin-bottom: 12px;
@@ -22,8 +22,8 @@
     height: 2px;
     margin: 12px 0 24px 0;
     background:
-            linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
-            linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
+    linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
+    linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
 }
 
 .rules_line.small {
@@ -41,24 +41,81 @@
 }
 
 .rules_subtitle {
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 600;
-    font-family: "Raleway", sans-serif;
+    font-family: "Inter", sans-serif;
     margin-bottom: 12px;
 }
 
 .rules_text {
-    font-size: 20px;
+    font-size: 22px;
     color: #d4d4dc;
     line-height: 1.7;
     max-width: 900px;
     margin-top: 24px;
 }
 
+@media (max-width: 1920px) {
+
+    .rules_title {
+        font-size: 33px;
+    }
+
+    .rules_subtitle {
+        font-size: 29px;
+    }
+
+    .rules_text {
+        font-size: 22px;
+    }
+
+    .rules_page {
+        padding: 80px 60px 80px 60px;
+    }
+
+}
+@media (max-width: 1680px) {
+
+    .rules_title {
+        font-size: 32px;
+    }
+
+    .rules_subtitle {
+        font-size: 28px;
+    }
+
+    .rules_text {
+        font-size: 20px;
+    }
+
+    .rules_page {
+        padding: 80px 60px 80px 60px;
+    }
+
+}
+@media (max-width: 1440px) {
+
+    .rules_title {
+        font-size: 29px;
+    }
+
+    .rules_subtitle {
+        font-size: 24px;
+    }
+
+    .rules_text {
+        font-size: 17px;
+    }
+
+    .rules_page {
+        padding: 80px 60px;
+    }
+
+}
 @media (max-width: 1280px) {
 
     .rules_title {
-        font-size: 25px;
+        font-size: 28px;
     }
 
     .rules_subtitle {
@@ -70,7 +127,7 @@
     }
 
     .rules_page {
-        padding: 80px 60px 80px 60px;
+        padding: 70px 60px;
     }
 
 }

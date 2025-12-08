@@ -13,7 +13,7 @@
     padding: 40px 50px;
     border-radius: 22px;
     width: 90%;
-    max-width: 760px;
+    max-width: 850px;
     color: white;
     position: relative;
     animation: fadeIn 0.25s ease;
@@ -21,18 +21,27 @@
 }
 
 .promo_modal_close {
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
     position: absolute;
-    top: 18px;
-    right: 18px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 28px;
     cursor: pointer;
+    z-index: 1000;
+    pointer-events: auto;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756244998/Close.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+}
+
+.promo_modal_close:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756245190/Close_light_hover.png');
 }
 
 .promo_title {
-    font-size: 28px;
+    font-size: 32px;
     font-family: "Raleway", sans-serif;
     font-weight: 600;
     margin-bottom: 25px;
@@ -46,8 +55,8 @@
 
 .promo_input {
     flex: 1;
-    padding: 16px 20px;
-    font-size: 18px;
+    padding: 18px 20px;
+    font-size: 20px;
     background: transparent;
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.25);
@@ -65,7 +74,7 @@
 }
 
 .promo_btn {
-    padding: 16px 28px;
+    padding: 18px 28px;
     background: #4E55D4;
     border-radius: 14px;
     border: none;
@@ -82,7 +91,7 @@
 
 .promo_hint {
     margin-top: 18px;
-    font-size: 15px;
+    font-size: 18px;
     color: #B9B9C5;
 }
 
@@ -95,4 +104,142 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@media (max-width: 1920px) {
+
+    .promo_modal_block {
+        padding: 30px 40px;
+        max-width: 800px;
+
+    }
+
+    .promo_modal_close {
+        width: 30px;
+        height: 30px;
+    }
+
+    .promo_title {
+        font-size: 30px;
+    }
+
+    .promo_input {
+        flex: 1;
+        padding: 20px 20px;
+        font-size: 18px;
+    }
+
+    .promo_btn {
+        padding: 20px 26px;
+    }
+
+    .promo_hint {
+        font-size: 17px;
+    }
+
+
+
+}
+
+@media (max-width: 1680px) {
+
+    .promo_modal_block {
+        padding: 30px 40px;
+        max-width: 750px;
+
+    }
+
+    .promo_modal_close {
+        width: 27px;
+        height: 27px;
+    }
+
+    .promo_title {
+        font-size: 27px;
+    }
+
+    .promo_input {
+        flex: 1;
+        padding: 17px 20px;
+        font-size: 17px;
+    }
+
+    .promo_btn {
+        padding: 16px 26px;
+    }
+
+    .promo_hint {
+        font-size: 16px;
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .promo_modal_block {
+        padding: 30px 40px;
+        max-width: 700px;
+
+    }
+
+    .promo_modal_close {
+        width: 26px;
+        height: 26px;
+    }
+
+    .promo_title {
+        font-size: 26px;
+    }
+
+    .promo_input {
+        flex: 1;
+        padding: 16px 19px;
+        font-size: 16px;
+    }
+
+    .promo_btn {
+        padding: 16px 26px;
+    }
+
+    .promo_hint {
+        font-size: 15px;
+    }
+
+
+
+}
+
+@media (max-width: 1280px) {
+
+    .promo_modal_block {
+        padding: 30px 40px;
+        max-width: 660px;
+
+    }
+
+    .promo_modal_close {
+        width: 25px;
+        height: 25px;
+    }
+
+    .promo_title {
+        font-size: 25px;
+    }
+
+    .promo_input {
+        flex: 1;
+        padding: 15px 18px;
+        font-size: 16px;
+    }
+
+    .promo_btn {
+        padding: 15px 25px;
+    }
+
+    .promo_hint {
+        font-size: 14px;
+    }
+
+
+
 }

@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./CommentModal.css";
 
 export const CommentModal = ({ isOpen, onClose }) => {
-
+    const commentRef = useRef(null);
     const [rating, setRating] = useState(null);
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
+
+    useEffect(() => {
+        if (!isOpen) return;
+        
+        const handleClickOutside = (event) => {
+            if (commentRef.current && !commentRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.body.style.overflow = '';
+        };
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
     return (
         <div className="comment_overlay">
-            <div className="comment_modal">
+            <div className="comment_modal" ref={commentRef}>
 
                 <button className="comment_close" onClick={onClose}>×</button>
 

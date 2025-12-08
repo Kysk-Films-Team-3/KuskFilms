@@ -92,7 +92,7 @@
     border-radius: 15px;
     color: #F8F8FE;
     font-family: "Inter", sans-serif;
-    font-weight: 200;
+    font-weight: 300;
     font-size: 16px;
     outline: none;
     width: 100%;
@@ -190,4 +190,76 @@
 .profile_button_exit:hover {
     border-color: #4E55D4;
     background: #34353F;
+}
+
+@media (max-width: 1440px) {
+
+    .profile_modal {
+        font-family: "Raleway", sans-serif;
+        position: relative;
+        background: #262630;
+        border-radius: 20px;
+        width: 1001px;
+        padding: 30px 60px;
+        box-sizing: border-box;
+        color: #F8F8FE;
+        line-height: 1.45;
+        cursor: default;
+        text-align: center;
+        justify-content: center;
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+    .profile_modal {
+        width: 900px;
+        padding: 30px 60px;
+    }
+
+    .profile_close_icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .profile_title {
+        font-weight: 600;
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .profile_avatar{
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile_input {
+        font-weight: 300;
+        font-size: 16px;
+        height: 45px;
+    }
+
+    .profile_input_block label {
+        top: 12px;
+
+    }
+
+    .profile_button_save {
+        width: 182px;
+        height: 50px;
+        font-size: 18px;
+        font-weight: 400;
+    }
+
+    .profile_button_exit {
+        width: 182px;
+        height: 50px;
+        font-size: 18px;
+        font-weight: 400;
+
+    }
+
+
+
 }

@@ -23,3 +23,33 @@ html, body {
   cursor: default;
   image-rendering: auto;
 }
+
+body.search-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none !important;
+}
+
+body.search-open .layout-main,
+body.search-open .layout-main *,
+body.search-open footer,
+body.search-open footer * {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+body.search-open .header,
+body.search-open .header *,
+body.search-open .header_search_overlay,
+body.search-open .header_search_box,
+body.search-open .header_search_box *,
+body.search-open .header_search_results,
+body.search-open .header_search_results * {
+  pointer-events: auto !important;
+  user-select: auto !important;
+}

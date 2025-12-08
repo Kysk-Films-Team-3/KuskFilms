@@ -1,16 +1,34 @@
 import "./PromoInput.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const PromoInput = ({ isOpen, onClose }) => {
     const [code, setCode] = useState("");
+    const promoRef = useRef(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        
+        const handleClickOutside = (event) => {
+            if (promoRef.current && !promoRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.body.style.overflow = '';
+        };
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
     return (
         <div className="promo_overlay">
-            <div className="promo_modal_block">
-
-                <button onClick={onClose} className="promo_modal_close">×</button>
+            <div className="promo_modal_block" ref={promoRef}>
+                <div onClick={onClose} className="promo_modal_close"></div>
 
                 <h2 className="promo_title">Введіть промокод</h2>
 
@@ -30,6 +48,7 @@ export const PromoInput = ({ isOpen, onClose }) => {
                 <p className="promo_hint">
                     Промокоди дають знижки або бонуси на підписку Kysk.
                 </p>
+
             </div>
         </div>
     );

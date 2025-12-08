@@ -236,17 +236,63 @@ export const Home = ({ onOpenActorRecs }) => {
             const track = carouselTrackRef.current;
             const wrapper = carouselWrapperRef.current;
             if (track && wrapper && slides.length > 0) {
-                const slideWidth = 900;
+                const firstSlide = track.querySelector('.home_carousel_slide');
+                if (!firstSlide) return;
+                
+                const slideWidth = firstSlide.offsetWidth;
                 const gap = 20;
                 const wrapperWidth = wrapper.offsetWidth;
-                const centerOffset = (wrapperWidth - slideWidth) / 2;
-                const slideOffset = currentSlide * (slideWidth + gap);
-                track.style.transform = `translateX(${centerOffset - slideOffset}px)`;
+                
+                if (slideWidth <= 0 || wrapperWidth <= 0) return;
+                
+                const slideLeftPosition = currentSlide * (slideWidth + gap);
+                
+                const wrapperCenter = wrapperWidth / 2;
+                const slideCenter = slideLeftPosition + slideWidth / 2;
+                const offset = wrapperCenter - slideCenter;
+                
+                track.style.transform = `translateX(${offset}px)`;
             }
         };
+        
         updatePosition();
-        const timeoutId = setTimeout(updatePosition, 50);
-        return () => clearTimeout(timeoutId);
+        const timeoutId1 = setTimeout(updatePosition, 10);
+        const timeoutId2 = setTimeout(updatePosition, 50);
+        
+        let resizeTimeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updatePosition();
+            }, 50);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        
+        let resizeObserver = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => {
+                requestAnimationFrame(updatePosition);
+            });
+            
+            const wrapper = carouselWrapperRef.current;
+            const track = carouselTrackRef.current;
+            if (wrapper) resizeObserver.observe(wrapper);
+            if (track) {
+                const firstSlide = track.querySelector('.home_carousel_slide');
+                if (firstSlide) resizeObserver.observe(firstSlide);
+            }
+        }
+        
+        return () => {
+            clearTimeout(timeoutId1);
+            clearTimeout(timeoutId2);
+            clearTimeout(resizeTimeout);
+            window.removeEventListener('resize', handleResize);
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+        };
     }, [currentSlide, slides.length]);
 
     useEffect(() => {

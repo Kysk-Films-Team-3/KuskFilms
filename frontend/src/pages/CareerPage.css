@@ -21,8 +21,8 @@
     height: 2px;
     margin: 12px 0 24px 0;
     background:
-            linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
-            linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
+    linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
+    linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
 }
 
 .career_line.small {
@@ -91,22 +91,6 @@
     line-height: 1.5;
 }
 
-.resume_btn {
-    background: #4E55D4;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 14px;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: 0.25s ease;
-}
-
-.resume_btn:hover {
-    opacity: 0.85;
-}
-
 .career_mail_btn {
     display: inline-block;
     background: #4E55D4;
@@ -123,4 +107,100 @@
 .career_mail_btn:hover {
     transform: scale(1.03);
     opacity: 0.9;
+}
+
+@media (max-width: 1680px) {
+
+    .career_title {
+        font-size: 45px;
+    }
+
+    .career_intro {
+        font-size: 20px;
+    }
+
+    .career_subtitle {
+        font-size: 29px;
+    }
+
+    .career_list li {
+        font-size: 19px;
+    }
+
+    .job_title {
+        font-size: 23px;
+    }
+
+    .job_desc {
+        font-size: 17px;
+    }
+
+    .career_mail_btn {
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .career_title {
+        font-size: 38px;
+    }
+
+    .career_intro {
+        font-size: 18px;
+    }
+
+    .career_subtitle {
+        font-size: 29px;
+    }
+
+    .career_list li {
+        font-size: 19px;
+    }
+
+    .job_title {
+        font-size: 21px;
+    }
+
+    .job_desc {
+        font-size: 17px;
+    }
+
+    .career_mail_btn {
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+    .career_title {
+        font-size: 35px;
+    }
+
+    .career_intro {
+        font-size: 17px;
+    }
+
+    .career_subtitle {
+        font-size: 28px;
+    }
+
+    .career_list li {
+        font-size: 18px;
+    }
+
+    .job_title {
+        font-size: 20px;
+    }
+
+    .job_desc {
+        font-size: 16px;
+    }
+
+    .career_mail_btn {
+        font-size: 17px;
+    }
+
 }

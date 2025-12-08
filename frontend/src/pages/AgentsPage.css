@@ -21,8 +21,8 @@
     height: 2px;
     margin: 12px 0 24px 0;
     background:
-            linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
-            linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
+    linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
+    linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
 }
 
 .agents_line.small {
@@ -89,4 +89,107 @@
 .agents_btn:hover {
     transform: scale(1.03);
     opacity: .9;
+}
+
+@media (max-width: 1680px) {
+
+    .agents_page {
+        padding: 90px 60px 80px 60px;
+    }
+
+    .agents_title {
+        font-size: 39px;
+    }
+
+    .agents_intro,
+    .agents_text {
+        font-size: 19px;
+    }
+
+    .agents_subtitle {
+        font-size: 30px;
+    }
+
+    .agent_title {
+        font-size: 23px;
+    }
+
+    .agent_desc {
+        font-size: 18px;
+    }
+
+    .agents_btn {
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .agents_page {
+        padding: 90px 60px 80px 60px;
+    }
+
+    .agents_title {
+        font-size: 38px;
+    }
+
+    .agents_intro,
+    .agents_text {
+        font-size: 18px;
+    }
+
+    .agents_subtitle {
+        font-size: 29px;
+    }
+
+    .agent_title {
+        font-size: 22px;
+    }
+
+    .agent_desc {
+        font-size: 17px;
+    }
+
+    .agents_btn {
+        font-size: 17px;
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+    .agents_page {
+        padding: 90px 60px 80px 60px;
+    }
+
+    .agents_title {
+        font-size: 35px;
+    }
+
+    .agents_intro,
+    .agents_text {
+        font-size: 17px;
+    }
+
+    .agents_subtitle {
+        font-size: 28px;
+    }
+
+    .agent_title {
+        font-size: 20px;
+    }
+
+    .agent_desc {
+        font-size: 16px;
+    }
+
+    .agents_btn {
+        font-size: 16px;
+    }
+
+
+
+
+
 }
