@@ -1,0 +1,1704 @@
+.popular_page {
+    background: #262630;
+    padding: 120px 60px 80px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    min-height: calc(100vh - 200px);
+}
+
+
+.popular_page_title {
+    font-size: 43px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+    margin-bottom: 12px;
+}
+
+.popular_ad_block{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: visible;
+}
+
+.popular_wensday_ad{
+    padding:60px;
+    width: 2560px;
+    height: 550px;
+    border-radius: 15px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756707227/Wednesday.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out;
+    position: relative;
+    display: inline-block;
+}
+
+.popular_superman_ad {
+    padding: 60px;
+    width: 2440px;
+    height: 550px;
+    border-radius: 15px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765285353/Component_120_uci430.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out;
+    position: relative;
+    display: inline-block;
+}
+
+
+.popular_wensday_ad:hover {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 70px rgba(78, 85, 212, 0.25));
+}
+
+.popular_superman_ad:hover {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 70px rgba(78, 85, 212, 0.25));
+}
+
+.popular_ad_new_block {
+    background-color: #4E55D4;
+    font-size: 28px;
+    font-weight: 600;
+    color: #F8F8FE;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+    display: inline-block;
+    width: auto;
+    border-radius: 5px;
+    padding: 3px 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.popular_ad_title{
+    margin-top: 120px;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.popular_ad_line_block{
+    display: flex;
+    gap: 10px;
+    font-size: 18px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.popular_ad_line_rating{
+    padding: 3px 5px;
+    border-radius: 5px;
+    background-color: #12B77C;
+    font-family: "Inter", sans-serif;
+}
+.popular_ad_line_rating_gold{
+    padding: 3px 5px;
+    border-radius: 5px;
+    background-color: #FFD25F;
+    color: #3429B0;
+    font-weight: 400;
+    font-family: "Inter", sans-serif;
+}
+
+
+.popular_ad_line_time{
+    font-family: "Inter", sans-serif;
+}
+
+.popular_ad_subtitle{
+    margin-top: 30px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.popular_ad_button{
+    cursor: pointer;
+    margin-top: 30px;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.popular_ad_premium_button{
+    background: linear-gradient(90deg, #3429B0 0%, #4E55D4 100%);
+    border-radius: 15px;
+    font-size: 24px;
+    font-weight: 600;
+    padding: 15px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.popular_ad_premium_button:hover{
+    background: linear-gradient(90deg, #202588 0%, #3429B0 100%);
+}
+
+.popular_ad_info_button{
+    width: 59px;
+    height: 59px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756721637/Info.png");
+    transition: transform 0.5s ease-in-out;
+}
+
+.popular_ad_info_button:hover{
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756721841/Info_hover.png");
+}
+
+.popular_ad_save_button{
+    width: 59px;
+    height: 59px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724377/Save_ad.png");
+    transition: transform 0.5s ease-in-out;
+}
+
+.popular_ad_save_button:hover{
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724378/Save_ad_hover.png");
+}
+
+.popular_ad_save_button.active {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724378/Save_ad_active.png");
+    transition: transform 0.5s ease-in-out;
+}
+
+.popular_ad_save_button.active:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724377/Save_ad_active_hover.png");
+}
+
+
+.popular_collections_section {
+    margin-top: 0;
+    margin-bottom: 80px;
+    margin-left: -60px;
+    margin-right: -60px;
+    position: relative;
+    width: calc(100% + 120px);
+}
+
+.popular_collections_header {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    position: relative;
+    margin-top: 60px;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.popular_collections_title {
+    font-size: 36px;
+    font-weight: 600;
+    color: #F8F8FE;
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.popular_collections_arrow {
+    width: 46px;
+    height: 46px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756334382/Footer_arrow_hover.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.popular_collections_title:hover,
+.popular_collections_header:hover .popular_collections_title {
+    color: #4E55D4;
+}
+
+.popular_collections_arrow:hover,
+.popular_collections_header:hover .popular_collections_arrow {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+    filter: none;
+}
+
+.popular_collections_scroll_btn {
+    position: absolute;
+    top: 58%;
+    transform: translateY(-50%);
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 400px;
+    pointer-events: auto;
+}
+
+.popular_collections_section:hover .popular_collections_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.popular_collections_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.popular_collections_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.popular_collections_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.popular_collections_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.popular_collections_scroll_btn.hidden,
+.popular_collections_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.popular_collections_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+    box-sizing: border-box;
+}
+
+.popular_collections_list {
+    display: flex;
+    gap: 30px;
+    padding: 0 60px;
+    scroll-behavior: smooth;
+    user-select: none;
+    -webkit-user-select: none;
+    align-items: flex-start;
+}
+
+.popular_collections_wrapper::-webkit-scrollbar {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.popular_collections_list::-webkit-scrollbar {
+    display: none;
+}
+
+.collection_item {
+    flex: 0 0 455px;
+    width: 455px;
+    height: 300px;
+    position: relative;
+    z-index: 1;
+}
+
+.collection_card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.collection_item:hover .collection_card {
+    transform: scale(1.05);
+}
+
+.collection_badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #4E55D4;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #F8F8FE;
+    z-index: 2;
+    font-family: 'Raleway', sans-serif;
+}
+
+.collection_image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    margin-bottom: 0;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.collection_name {
+    position: absolute;
+    top: 65px;
+    left: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #F8F8FE;
+    margin: 0;
+    text-align: left;
+    font-family: 'Raleway', sans-serif;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+}
+
+.popular_series_block {
+    margin-top: 60px;
+    position: relative;
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+}
+
+.popular_series_title {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.popular_series_arrow {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756334382/Footer_arrow_hover.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, background-image 0.3s ease;
+}
+
+.popular_series_block:hover .popular_series_arrow {
+    opacity: 1;
+}
+
+.popular_series_header {
+    padding: 0 60px;
+    cursor: pointer;
+    transition: color 0.3s ease, background-image 0.3s ease;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.popular_series_header:hover .popular_series_title {
+    color: #4E55D4;
+}
+
+.popular_series_header:hover .popular_series_arrow {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.popular_series_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+}
+
+.popular_series_list {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 0 60px;
+    align-items: flex-start;
+}
+
+.popular_series_wrapper::-webkit-scrollbar {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.popular_series_block:hover .popular_series_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.popular_series_scroll_btn {
+    margin-top: 40px;
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 307px;
+    pointer-events: auto;
+}
+
+.popular_series_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.popular_series_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.popular_series_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.popular_series_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.popular_series_scroll_btn.hidden,
+.popular_series_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.popular_series_card {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 216px;
+    height: 297px;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+    transform-origin: center center;
+    will-change: transform;
+    pointer-events: auto;
+    margin: 3px 0;
+}
+
+.popular_series_card:hover {
+    opacity: 1;
+    transform: scale(1.02);
+    z-index: 2;
+    margin: 0;
+}
+
+.popular_series_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
+.popular_series_header_actions {
+    margin-left: 60px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    opacity: 0;
+    justify-content: space-between;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popular_series_card:hover .popular_series_header_actions {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popular_series_text {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+
+.popular_series_card:hover .popular_series_text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popular_series_rating {
+    font-family: "Inter", sans-serif;
+    font-size: 32px;
+}
+
+.popular_series_line {
+    font-family: "Raleway", sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.popular_series_line1 {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.popular_series_date {
+    font-family: "Inter", sans-serif;
+}
+
+.popular_series_line2 {
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.popular_series_season {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+
+.popular_series_save {
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_vf5dni.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.popular_series_save:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623598/Bookmark_light_1_uzzzgh.png');
+}
+
+.popular_series_save.active {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_2_ceo99g.png');
+}
+
+.popular_series_save.active:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_3_h4jvhz.png');
+}
+
+.popular_series_repost {
+    margin-top: 5px;
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_jwpc5u.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.popular_series_repost:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_1_znohye.png');
+}
+
+.popular_series_remove {
+    margin-top: 5px;
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623577/View_hide_light_wvgza9.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.popular_series_remove:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623577/View_hide_light_1_cajgib.png');
+}
+
+.popular_series_action:hover {
+    transform: scale(1.1);
+}
+
+.popular_series_action {
+    position: relative;
+    z-index: 1002;
+}
+
+.popular_series_action::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #34353F;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.popular_series_action:hover::after {
+    opacity: 1;
+}
+
+.popular_films_block {
+    margin-top: 60px;
+    position: relative;
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+}
+
+.popular_films_title {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.popular_films_arrow {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756334382/Footer_arrow_hover.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, background-image 0.3s ease;
+}
+
+.popular_films_block:hover .popular_films_arrow {
+    opacity: 1;
+}
+
+.popular_films_header {
+    padding: 0 60px;
+    cursor: pointer;
+    transition: color 0.3s ease, background-image 0.3s ease;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.popular_films_header:hover .popular_films_title {
+    color: #4E55D4;
+}
+
+.popular_films_header:hover .popular_films_arrow {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.popular_films_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+}
+
+.popular_films {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 10px 60px;
+    align-items: flex-start;
+}
+
+.popular_films_wrapper::-webkit-scrollbar {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.popular_films_scroll_btn {
+    margin-top: 40px;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.popular_films_block:hover .popular_films_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.popular_films_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    width: 119px;
+    height: 307px;
+    left: 0;
+}
+
+.popular_films_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.popular_films_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    width: 119px;
+    height: 307px;
+    right: 0;
+}
+
+.popular_films_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.popular_films_scroll_btn.hidden,
+.popular_films_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.popular_film_card {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 216px;
+    height: 297px;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+    transform-origin: center center;
+    will-change: transform;
+    pointer-events: auto;
+    margin: 3px 0;
+}
+
+.popular_film_card:hover {
+    opacity: 1;
+    transform: scale(1.02);
+    z-index: 2;
+    margin: 0;
+}
+
+.popular_film_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.popular_film_header {
+    margin-left: 60px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    opacity: 0;
+    justify-content: space-between;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popular_film_card:hover .popular_film_header {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popular_film_text {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+
+.popular_film_card:hover .popular_film_text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popular_film_rating {
+    font-family: "Inter", sans-serif;
+    font-size: 32px;
+}
+
+.popular_film_line {
+    font-family: "Raleway", sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.popular_film_line1 {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.popular_film_date {
+    font-family: "Inter", sans-serif;
+}
+
+.popular_film_line2 {
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.popular_film_season {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.popular_film_save {
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_vf5dni.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.popular_film_save:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623598/Bookmark_light_1_uzzzgh.png');
+    transform: scale(1.1);
+}
+
+.popular_film_save.active {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_2_ceo99g.png');
+}
+
+.popular_film_save.active:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_3_h4jvhz.png');
+    transform: scale(1.1);
+}
+
+.popular_film_repost {
+    margin-top: 5px;
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_jwpc5u.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.popular_film_repost:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_1_znohye.png');
+    transform: scale(1.1);
+}
+
+.popular_film_remuve {
+    margin-top: 5px;
+    width: 36px;
+    height: 36px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623577/View_hide_light_wvgza9.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.popular_film_remuve:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623577/View_hide_light_1_cajgib.png');
+    transform: scale(1.1);
+}
+
+.popular_film_action {
+    position: relative;
+    z-index: 1002;
+}
+
+.popular_film_action::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #34353F;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.popular_film_action:hover::after {
+    opacity: 1;
+}
+
+@media (max-width: 1920px) {
+    .popular_collections_scroll_btn {
+        width: 140px;
+        height: 400px;
+        top: 60%;
+    }
+
+    .popular_wensday_ad {
+        width: 1800px;
+        height: 550px;
+    }
+
+    .popular_superman_ad {
+        width: 1800px;
+        height: 550px;
+    }
+
+    .popular_page_title {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 1680px) {
+    .popular_page_title {
+        font-size: 40px;
+    }
+
+    .popular_collections_title {
+        font-size: 36px;
+    }
+
+    .popular_collections_arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .popular_collections_header {
+        margin-bottom: 20px;
+        margin-top: 80px;
+    }
+
+    .collection_item {
+        flex: 0 0 400px;
+        width: 400px;
+        height: 300px;
+    }
+
+    .collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_name {
+        font-size: 20px;
+        top: 75px;
+        left: 20px;
+    }
+
+    .collection_badge {
+        font-size: 16px;
+        padding: 4px 10px;
+        top: 30px;
+        left: 20px;
+    }
+
+    .popular_collections_scroll_btn {
+        width: 130px;
+        height: 300px;
+        top: 60%;
+    }
+
+    .popular_series_header {
+        gap: 5px;
+    }
+
+    .popular_series_title {
+        font-size: 27px;
+    }
+
+    .popular_series_arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .popular_series_list {
+        margin: 12px 0;
+    }
+
+    .popular_series_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .popular_series_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .popular_series_rating {
+        font-size: 27px;
+    }
+
+    .popular_series_line1 {
+        font-size: 16px;
+    }
+
+    .popular_series_line2 {
+        font-size: 15px;
+    }
+
+    .popular_series_season {
+        font-size: 15px;
+    }
+
+    .popular_series_save {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_repost {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_remove {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_action::after {
+        font-size: 14px;
+    }
+
+    .popular_films_header {
+        gap: 5px;
+    }
+
+    .popular_films_title {
+        font-size: 27px;
+    }
+
+    .popular_films_arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .popular_films {
+        margin: 12px 0;
+    }
+
+    .popular_film_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .popular_films_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .popular_film_rating {
+        font-size: 27px;
+    }
+
+    .popular_film_line1 {
+        font-size: 16px;
+    }
+
+    .popular_film_line2 {
+        font-size: 15px;
+    }
+
+    .popular_film_season {
+        font-size: 15px;
+    }
+
+    .popular_film_save {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_repost {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_remuve {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_action::after {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .popular_page_title {
+        font-size: 38px;
+        font-weight: 700;
+        font-family: "Raleway", sans-serif;
+    }
+
+    .popular_collections_title {
+        font-size: 33px;
+    }
+
+    .popular_collections_arrow {
+        width: 38px;
+        height: 38px;
+    }
+
+    .popular_collections_header {
+        margin-bottom: 15px;
+        margin-top: 70px;
+    }
+
+    .collection_item {
+        flex: 0 0 370px;
+        width: 370px;
+        height: 270px;
+    }
+
+    .collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_name {
+        font-size: 17px;
+        top: 65px;
+        left: 20px;
+    }
+
+    .collection_badge {
+        font-size: 15px;
+        padding: 4px 10px;
+        top: 25px;
+        left: 15px;
+    }
+
+    .popular_collections_scroll_btn {
+        width: 119px;
+        height: 300px;
+        top: 60%;
+    }
+
+    .popular_series_header {
+        gap: 5px;
+    }
+
+    .popular_series_title {
+        font-size: 27px;
+    }
+
+    .popular_series_arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .popular_series_list {
+        margin: 12px 0;
+    }
+
+    .popular_series_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .popular_series_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .popular_series_rating {
+        font-size: 27px;
+    }
+
+    .popular_series_line1 {
+        font-size: 16px;
+    }
+
+    .popular_series_line2 {
+        font-size: 15px;
+    }
+
+    .popular_series_season {
+        font-size: 15px;
+    }
+
+    .popular_series_save {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_repost {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_remove {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_series_action::after {
+        font-size: 14px;
+    }
+
+    .popular_films_header {
+        gap: 5px;
+    }
+
+    .popular_films_title {
+        font-size: 27px;
+    }
+
+    .popular_films_arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .popular_films {
+        margin: 12px 0;
+    }
+
+    .popular_film_card {
+        width: 185px;
+        height: 260px;
+    }
+
+    .popular_films_scroll_btn {
+        margin-top: 4px;
+    }
+
+    .popular_film_rating {
+        font-size: 27px;
+    }
+
+    .popular_film_line1 {
+        font-size: 16px;
+    }
+
+    .popular_film_line2 {
+        font-size: 15px;
+    }
+
+    .popular_film_season {
+        font-size: 15px;
+    }
+
+    .popular_film_save {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_repost {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_remuve {
+        width: 34px;
+        height: 34px;
+    }
+
+    .popular_film_action::after {
+        font-size: 14px;
+    }
+
+    .popular_wensday_ad {
+        padding: 60px;
+        width: 100%;
+        max-width: 1330px;
+        height: 500px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .popular_wensday_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .popular_superman_ad {
+        padding: 60px;
+        width: 100%;
+        max-width: 1330px;
+        height: 500px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .popular_superman_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .popular_ad_block {
+        margin-top: 0;
+        padding: 0 10px;
+    }
+
+    .popular_ad_new_block {
+        font-size: 23px;
+    }
+
+    .popular_ad_title {
+        margin-top: 70px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .popular_ad_line_block {
+        font-size: 17px;
+    }
+
+    .popular_ad_subtitle {
+        font-size: 17px;
+        margin-top: 20px;
+    }
+
+    .popular_ad_button {
+        margin-top: 25px;
+    }
+
+    .popular_ad_premium_button {
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .popular_ad_info_button {
+        width: 45px;
+        height: 45px;
+    }
+
+    .popular_ad_save_button {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .popular_page_title {
+        font-size: 35px;
+        font-weight: 700;
+        font-family: "Raleway", sans-serif;
+    }
+
+    .popular_collections_title {
+        font-size: 30px;
+    }
+
+    .popular_collections_arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .popular_collections_header {
+        margin-bottom: 10px;
+        margin-top: 65px;
+    }
+
+    .collection_item {
+        flex: 0 0 350px;
+        width: 350px;
+        height: 250px;
+    }
+
+    .collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .collection_name {
+        font-size: 16px;
+        top: 60px;
+        left: 20px;
+    }
+
+    .collection_badge {
+        font-size: 14px;
+        padding: 4px 10px;
+        top: 20px;
+        left: 15px;
+    }
+
+    .popular_collections_scroll_btn {
+        width: 119px;
+        height: 300px;
+        top: 60%;
+    }
+
+    .popular_series_header {
+        gap: 3px;
+    }
+
+    .popular_series_title {
+        font-size: 25px;
+    }
+
+    .popular_series_arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .popular_series_list {
+        margin: 10px 0;
+    }
+
+    .popular_series_card {
+        width: 170px;
+        height: 240px;
+    }
+
+    .popular_series_scroll_btn {
+        margin-top: 5px;
+    }
+
+    .popular_series_rating {
+        font-size: 25px;
+    }
+
+    .popular_series_line1 {
+        font-size: 14px;
+    }
+
+    .popular_series_line2 {
+        font-size: 14px;
+    }
+
+    .popular_series_season {
+        font-size: 14px;
+    }
+
+    .popular_series_save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_series_repost {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_series_remove {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_series_action::after {
+        font-size: 12px;
+    }
+
+    .popular_films_header {
+        gap: 3px;
+    }
+
+    .popular_films_title {
+        font-size: 25px;
+    }
+
+    .popular_films_arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .popular_films {
+        margin: 10px 0;
+    }
+
+    .popular_film_card {
+        width: 170px;
+        height: 240px;
+    }
+
+    .popular_films_scroll_btn {
+        margin-top: 5px;
+    }
+
+    .popular_film_rating {
+        font-size: 25px;
+    }
+
+    .popular_film_line1 {
+        font-size: 14px;
+    }
+
+    .popular_film_line2 {
+        font-size: 14px;
+    }
+
+    .popular_film_season {
+        font-size: 14px;
+    }
+
+    .popular_film_save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_film_repost {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_film_remuve {
+        width: 30px;
+        height: 30px;
+    }
+
+    .popular_film_action::after {
+        font-size: 12px;
+    }
+
+    .popular_wensday_ad {
+        padding: 60px;
+        width: 100%;
+        max-width: 1200px;
+        height: 450px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .popular_wensday_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .popular_superman_ad {
+        padding: 60px;
+        width: 100%;
+        max-width: 1200px;
+        height: 450px;
+        background-size: contain;
+        position: relative;
+        display: inline-block;
+    }
+
+    .popular_superman_ad:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 40px rgba(78, 85, 212, 0.25));
+    }
+
+    .popular_ad_block {
+        margin-top: 0;
+    }
+
+    .popular_ad_new_block {
+        font-size: 21px;
+    }
+
+    .popular_ad_title {
+        margin-top: 70px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .popular_ad_line_block {
+        font-size: 15px;
+    }
+
+    .popular_ad_subtitle {
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .popular_ad_button {
+        margin-top: 20px;
+    }
+
+    .popular_ad_premium_button {
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    .popular_ad_info_button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .popular_ad_save_button {
+        width: 40px;
+        height: 40px;
+    }
+}

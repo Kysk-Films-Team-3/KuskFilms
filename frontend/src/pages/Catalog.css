@@ -1,0 +1,601 @@
+.catalog_page {
+    background: #262630;
+    padding: 120px 60px 60px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+.catalog_container {
+    max-width: 1920px;
+    box-sizing: border-box;
+}
+
+.catalog_title {
+    font-size: 42px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+}
+
+.catalog_grid {
+    display: grid;
+    grid-template-columns: repeat(5, 350px);
+    gap: 15px;
+    margin-top: 60px;
+    grid-template-rows: repeat(3, auto);
+
+}
+
+.catalog_category_card {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 350px;
+    height: 310px;
+}
+
+.catalog_category_card:hover {
+    transform: scale(1.05);
+}
+
+.category_image_wrapper {
+    position: relative;
+    width: 350px;
+    height: 310px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.category_image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.catalog_category_card:hover .category_gradient_overlay {
+    opacity: 0.9;
+}
+
+.category_name {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    font-size: 24px;
+    font-weight: 500;
+    color: #F8F8FE;
+    margin: 0;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    line-height: 1.3;
+}
+
+.catalog_collections_section {
+    margin-top: 0;
+    margin-bottom: 80px;
+    margin-left: -60px;
+    margin-right: -60px;
+    position: relative;
+    width: calc(100% + 120px);
+}
+
+.catalog_collections_header {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    position: relative;
+    margin-top: 60px;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.catalog_collections_title {
+    font-size: 36px;
+    font-weight: 600;
+    color: #F8F8FE;
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.catalog_collections_arrow {
+    width: 46px;
+    height: 46px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756334382/Footer_arrow_hover.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.catalog_collections_title:hover,
+.catalog_collections_header:hover .catalog_collections_title {
+    color: #4E55D4;
+}
+
+.catalog_collections_arrow:hover,
+.catalog_collections_header:hover .catalog_collections_arrow {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+    filter: none;
+}
+
+.catalog_collections_scroll_btn {
+    position: absolute;
+    top: 58%;
+    transform: translateY(-50%);
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 400px;
+    pointer-events: auto;
+}
+
+.catalog_collections_section:hover .catalog_collections_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.catalog_collections_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.catalog_collections_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.catalog_collections_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.catalog_collections_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.catalog_collections_scroll_btn.hidden,
+.catalog_collections_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.catalog_collections_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+    box-sizing: border-box;
+}
+
+.catalog_collections_list {
+    display: flex;
+    gap: 30px;
+    padding: 0 60px;
+    scroll-behavior: smooth;
+    user-select: none;
+    -webkit-user-select: none;
+    align-items: flex-start;
+}
+
+.catalog_collections_wrapper::-webkit-scrollbar {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.catalog_collections_list::-webkit-scrollbar {
+    display: none;
+}
+
+.catalog_collection_item {
+    flex: 0 0 455px;
+    width: 455px;
+    height: 300px;
+    position: relative;
+    z-index: 1;
+}
+
+.catalog_collection_card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.catalog_collection_item:hover .catalog_collection_card {
+    transform: scale(1.05);
+}
+
+.catalog_collection_badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #4E55D4;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #F8F8FE;
+    z-index: 2;
+    font-family: 'Raleway', sans-serif;
+}
+
+.catalog_collection_image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    margin-bottom: 0;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.catalog_collection_name {
+    position: absolute;
+    top: 65px;
+    left: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #F8F8FE;
+    margin: 0;
+    text-align: left;
+    font-family: 'Raleway', sans-serif;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+}
+
+@media (max-width: 1920px) {
+
+    .catalog_collections_scroll_btn {
+        width: 140px;
+        height: 400px;
+        top: 60%;
+    }
+
+}
+
+@media (max-width: 1680px) {
+
+.catalog_page {
+    background: #262630;
+    padding: 100px 60px 20px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+
+    .catalog_title {
+        font-size: 40px;
+    }
+
+    .category_name {
+        font-size: 22px;
+        top: 10px;
+        left: 18px;
+    }
+
+
+    .catalog_grid {
+        display: grid;
+        grid-template-columns: repeat(5, 290px);
+        row-gap: 20px;
+        gap: 20px;
+        column-gap: 0;
+        margin-top: 40px;
+        grid-template-rows: repeat(3, auto);
+
+    }
+
+    .catalog_category_card {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 270px;
+        height: 270px;
+    }
+
+    .category_image_wrapper {
+        position: relative;
+        width: 270px;
+        height: 270px;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    .catalog_collections_title {
+        font-size: 36px;
+    }
+
+    .catalog_collections_arrow {
+        width: 40px;
+        height: 40px;
+    }
+    .catalog_collections_header {
+        margin-bottom: 20px;
+        margin-top: 80px;
+    }
+
+    .catalog_collection_item {
+        flex: 0 0 400px;
+        width: 400px;
+        height: 300px;
+    }
+
+    .catalog_collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_name {
+        font-size: 20px;
+        top: 75px;
+        left: 20px;
+    }
+
+    .catalog_collection_badge {
+        font-size: 16px;
+        padding: 4px 10px;
+        top: 30px;
+        left: 20px;
+    }
+
+    .catalog_collections_scroll_btn {
+        width: 130px;
+        height: 300px;
+        top: 60%;
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .catalog_page {
+        background: #262630;
+        padding: 90px 60px 20px 60px;
+        color: white;
+        font-family: "Inter", sans-serif;
+    }
+
+    .catalog_container {
+        max-width: 1920px;
+        box-sizing: border-box;
+    }
+
+    .catalog_title {
+        font-size: 38px;
+        font-weight: 700;
+        font-family: "Raleway", sans-serif;
+    }
+
+    .category_name {
+        font-size: 20px;
+        top: 10px;
+        left: 18px;
+    }
+
+
+    .catalog_grid {
+        display: grid;
+        grid-template-columns: repeat(5, 265px);
+        row-gap: 15px;
+        gap: 20px;
+        column-gap: 0;
+        margin-top: 40px;
+        grid-template-rows: repeat(3, auto);
+
+    }
+
+    .catalog_category_card {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 245px;
+        height: 245px;
+    }
+
+    .category_image_wrapper {
+        position: relative;
+        width: 245px;
+        height: 245px;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    .catalog_collections_title {
+        font-size: 33px;
+    }
+
+    .catalog_collections_arrow {
+        width: 38px;
+        height: 38px;
+    }
+    .catalog_collections_header {
+        margin-bottom: 15px;
+        margin-top: 70px;
+    }
+
+    .catalog_collection_item {
+        flex: 0 0 370px;
+        width: 370px;
+        height: 270px;
+    }
+
+    .catalog_collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_name {
+        font-size: 17px;
+        top: 65px;
+        left: 20px;
+    }
+
+    .catalog_collection_badge {
+        font-size: 15px;
+        padding: 4px 10px;
+        top: 25px;
+        left: 15px;
+    }
+
+    .catalog_collections_scroll_btn {
+        width: 119px;
+        height: 300px;
+        top: 60%;
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+.catalog_page {
+    background: #262630;
+    padding: 90px 60px 20px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+.catalog_container {
+    max-width: 1920px;
+    box-sizing: border-box;
+}
+
+.catalog_title {
+    font-size: 35px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+}
+
+.category_name {
+        font-size: 18px;
+        top: 10px;
+        left: 18px;
+}
+
+
+.catalog_grid {
+        display: grid;
+        grid-template-columns: repeat(5, 235px);
+        gap: 15px;
+        row-gap: 15px;
+        column-gap: 0;
+        margin-top: 40px;
+        grid-template-rows: repeat(3, auto);
+
+}
+
+.catalog_category_card {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 220px;
+        height: 220px;
+}
+
+    .catalog_category_card:hover {
+        transform: scale(1.05);
+    }
+
+    .category_image_wrapper {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    .catalog_collections_title {
+        font-size: 30px;
+    }
+
+    .catalog_collections_arrow {
+        width: 36px;
+        height: 36px;
+    }
+    .catalog_collections_header {
+    margin-bottom: 10px;
+        margin-top: 65px;
+    }
+
+    .catalog_collection_item {
+        flex: 0 0 350px;
+        width: 350px;
+        height: 250px;
+    }
+
+    .catalog_collection_card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .catalog_collection_name {
+        font-size: 16px;
+        top: 60px;
+        left: 20px;
+    }
+
+    .catalog_collection_badge {
+        font-size: 14px;
+        padding: 4px 10px;
+        top: 20px;
+        left: 15px;
+    }
+
+    .catalog_collections_scroll_btn {
+        width: 119px;
+        height: 300px;
+        top: 60%;
+    }
+
+}

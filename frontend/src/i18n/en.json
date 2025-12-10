@@ -57,6 +57,7 @@
       "catalog": "Catalog",
       "tvShows": "TV Shows",
       "newAndPopular": "New & Popular",
+      "films": "Films",
       "favorites": "Favorites"
     },
 
@@ -69,11 +70,7 @@
     "login": "Login",
     "dropdown": {
       "manageProfile": "Manage Profile",
-      "settings": "Settings",
-      "closeMenu": "Close menu",
-      "openMenu": "Open menu",
-      "switchToEnglish": "English",
-      "switchToUkrainian": "Ukrainian"
+      "settings": "Settings"
     }
   },
 
@@ -324,6 +321,7 @@
   },
   "subcategories": {
     "new-series": "New series",
+    "new-films": "New films",
     "cartoons-liked": "Cartoons you will like",
     "drama": "Drama",
     "true-story": "Based on true events",
@@ -424,14 +422,6 @@
     "share": "Share",
     "dislike": "Dislike"
   },
-  "share": {
-    "copy": "Copy",
-    "copied": "Copied",
-    "shareTo": "Share on social media",
-    "facebook": "Facebook",
-    "twitter": "Twitter",
-    "telegram": "Telegram"
-  },
 
   "profile": {
     "editTitle": "Edit Profile",
@@ -439,20 +429,12 @@
     "lastName": "Last Name",
     "nickname": "Nickname",
     "exit": "Exit",
-    "save": "Save",
-    "saving": "Saving...",
-    "loading": "Loading...",
-    "errorAvatar": "Failed to upload avatar.",
-    "errorAuth": "User is not authorized.",
-    "errorLoad": "Failed to load data.",
-    "errorSave": "Failed to save. Please try again."
+    "save": "Save"
   },
 
   "favorites": {
     "title": "Favorite",
-    "empty": "There is no favorite yet",
-    "recommendations": "From recommendations",
-    "removeFromFavorites": "Remove from favorites"
+    "empty": "There is no favorite yet"
   },
 
   "termsPage": {
@@ -538,168 +520,57 @@
       "content": "Recommendations are generated automatically based on algorithms and are not a guarantee that the content will meet your expectations. We are not responsible for the content of recommended material, but we constantly work to improve the accuracy of recommendations."
     }
   },
-  "aboutPage": {
-    "title": "About KyskFilms",
-    "description": "KyskFilms is a modern streaming service created for people who value quality content, convenient interface and high viewing standards. We combine stylish design, thoughtful navigation and recommendations that work just for you.",
-    "missionTitle": "Our Mission",
-    "missionText": "We strive to make cinema closer, more accessible and enjoyable for every viewer. Our goal is to provide a comfortable environment for watching favorite films and series without unnecessary obstacles.",
-    "valuesTitle": "Our Values",
-    "value1": "Quality — from interface to stream.",
-    "value2": "Ease of use.",
-    "value3": "Transparency and openness.",
-    "value4": "User at the center of attention.",
-    "value5": "Respect for content and copyright.",
-    "teamTitle": "Team",
-    "teamText": "We are a young team of developers, designers and enthusiasts who strive to create the best Ukrainian platform for watching films. Your comfort is our inspiration."
-  },
-  "promoInput": {
-    "title": "Enter promo code",
-    "placeholder": "For example: KYSK30",
-    "button": "Apply",
-    "hint": "Promo codes provide discounts or bonuses on Kysk subscription."
-  },
-  "commentModal": {
-    "title": "Write a comment",
-    "ratingLabel": "Rate",
-    "titleLabel": "Title",
-    "titlePlaceholder": "I really liked...",
-    "commentLabel": "Comment",
-    "commentPlaceholder": "I really liked...",
-    "rule1": "Be polite",
-    "rule2": "Don't post spoilers",
-    "rule3": "Spam and advertising are prohibited",
-    "submit": "Submit comment"
-  },
-  "faqPage": {
-    "title": "Questions and Answers",
-    "q1": "What is Kysk?",
-    "a1": "Kysk is a modern Ukrainian streaming service for watching films and series in a convenient and high-quality format.",
-    "q2": "How to subscribe?",
-    "a2": "Go to the «Premium» section, choose a tariff and make a payment. The subscription is activated instantly.",
-    "q3": "Can I use Kysk without a subscription?",
-    "a3": "Yes, some content is available for free. But premium subscription opens additional features, exclusives and ad-free viewing.",
-    "q4": "Is it safe to store payment data in Kysk?",
-    "a4": "Yes. Data is encrypted, not stored in plain text and processed exclusively by certified international payment systems.",
-    "q5": "Are there subtitles and different audio tracks?",
-    "a5": "Yes. Many films have Ukrainian and original audio tracks, as well as subtitles. We constantly expand content availability.",
-    "q6": "How to cancel subscription?",
-    "a6": "In your profile there is a «Subscription Management» section where you can disable automatic renewal at any time."
-  },
-  "moviePage": {
-    "loading": "Loading...",
-    "errorId": "Movie ID not specified",
-    "errorLoad": "Failed to load movie information",
-    "notFound": "Movie not found",
-    "videoProcessing": "Video is still processing or unavailable.",
-    "seasonsCount": "Seasons:",
-    "price": "15€/month",
-    "inSubscription": "in Kysk subscription",
-    "watch": "Watch",
-    "trailer": "Trailer",
-    "trailerNotAvailable": "Trailer not available yet",
-    "description": "Description",
-    "collapse": "Collapse",
-    "expand": "Detailed description",
-    "rate": "Rate",
-    "rateSubtext": "Ratings improve your recommendations",
-    "seasons": "Seasons",
-    "season": "Season",
-    "episodes": "Episodes:",
-    "reviews": "Reviews",
-    "writeComment": "Write a comment"
-  },
-  "devicesPage": {
-    "title": "Device List",
-    "smartphones": "Smartphones",
-    "smartphonesDesc": "Platform supports modern smartphones on iOS and Android.",
-    "computers": "Computers and Laptops",
-    "computersDesc": "Works in any modern browser: Windows, macOS, Linux.",
-    "smartTV": "Smart TV",
-    "smartTVDesc": "TVs with browser or Android TV are supported."
-  },
-  "catalog": {
-    "title": "Movie Catalog",
-    "loading": "Loading...",
-    "error": "Failed to load data from server.",
-    "errorFormat": "Unknown data format from server.",
-    "rating": "Rating:"
-  },
-  "careerPage": {
-    "title": "Career at Kysk",
-    "intro": "We are building a modern Ukrainian streaming service and looking for talented people who want to create the future of cinema entertainment with us.",
-    "whyTitle": "Why Kysk?",
-    "why1": "Opportunity to influence key product decisions.",
-    "why2": "Inspiring and supportive team.",
-    "why3": "Modern technology stack.",
-    "why4": "Flexible work schedule and remote work.",
-    "why5": "Product used by thousands of people.",
-    "vacanciesTitle": "Open Positions",
-    "job1Title": "Frontend Developer (React)",
-    "job1Desc": "Creating interface, UI components, performance optimization, working with video player and recommendation module.",
-    "job2Title": "Backend Developer (Node.js)",
-    "job2Desc": "Working on API, recommendation system, authorization, analytics and service scaling.",
-    "job3Title": "UI/UX Designer",
-    "job3Desc": "Interface development, user experience improvement, creating new visual identity for Kysk.",
-    "notFoundTitle": "Didn't find your role?",
-    "notFoundText": "We are always open to talented people. Send your resume to our email — and we will definitely consider your candidacy.",
-    "sendResume": "Send Resume"
-  },
-  "adminPage": {
-    "title": "👑 Administrator Panel",
-    "loading": "Loading admin data...",
-    "errorTitle": "Access Error",
-    "error403": "Access denied. ADMIN role required.",
-    "errorBackend": "Error 403: Backend rejected request (insufficient permissions).",
-    "errorApi": "API Error:",
-    "usersList": "User List (example)"
-  },
-  "promotionsPage": {
-    "title": "Promotions and Offers",
-    "subtitle": "Beneficial premium offers and exclusive promo codes.",
-    "premiumTitle": "Premium with Discount",
-    "premiumText": "Full access to catalog, 4K and ad-free viewing.",
-    "buyPremium": "Buy Premium",
-    "copied": "Copied ✔",
-    "promo1": "Promo Code KYSK25",
-    "promo1Desc": "-30% for new users",
-    "promo2": "Promo Code FREEWEEK",
-    "promo2Desc": "7 days of free premium",
-    "copy": "Copy"
-  },
-  "contactsPage": {
-    "title": "Contacts",
-    "lead": "For any questions about the service, offers or cooperation — we are always in touch.",
-    "writeQuestion": "Write a Question",
-    "responseTime": "We respond within 24 hours."
-  },
-  "distributorsPage": {
-    "title": "For Distributors",
-    "cooperationTitle": "Cooperation with Kysk",
-    "cooperationDesc": "We are open to partnerships with distributors and rights holders who want to place their content on our platform.",
-    "requirementsTitle": "Our Requirements",
-    "requirementsDesc": "We work only with legal content for which all necessary rights are available. Preference is given to materials in high quality (FullHD / UHD), as well as the availability of metadata and localization.",
-    "offerTitle": "What We Offer",
-    "offerDesc": "Content placement on a modern platform with transparent analytics, piracy protection and access to a wide Ukrainian audience.",
-    "contactTitle": "Contact Us",
-    "contactDesc": "Write to us at the corporate address — and we will respond promptly, discuss cooperation terms and help place your content.",
-    "sendProposal": "Send Proposal"
-  },
-  "errorPage": {
-    "title": "Something went wrong",
-    "text": "Page could not be found or an error occurred."
-  },
-  "player": {
-    "speed": "Speed",
-    "subtitles": "Subtitles",
-    "quality": "Quality",
-    "off": "Off",
-    "uk": "Ukr",
-    "eng": "Eng",
-    "ukrainian": "Ukrainian",
-    "english": "English",
-    "turnOff": "Turn Off"
-  }
 
+  "newAndPopular": {
+    "pageTitle": "New & Popular",
+    "collections": "Collections",
+    "collectionBadge": "Collection",
+    "collectionsList": {
+      "dystopia": "Dystopia",
+      "antiheroes": "Antiheroes",
+      "powerOfFriendship": "Power of Friendship",
+      "romance": "Romance"
+    },
+    "supermanAd": {
+      "new": "New",
+      "genre": "• Action/Science Fiction",
+      "description": "Superman must reconcile his alien Kryptonian heritage with his human upbringing as reporter Clark Kent. As the embodiment of truth, justice and the human way, he soon finds himself in a world that considers them old-fashioned."
+    }
+  },
+
+  "catalog": {
+    "title": "Catalog",
+    "collections": "Collections",
+    "collectionBadge": "Collection",
+    "categories": {
+      "films": "Films",
+      "series": "Series",
+      "cartoons": "Cartoons",
+      "animatedSeries": "Animated Series",
+      "interviews": "Interviews",
+      "anime": "Anime",
+      "concerts": "Concerts",
+      "reality": "Reality Shows",
+      "cooking": "Cooking",
+      "programs": "Programs",
+      "opera": "Opera",
+      "nature": "Nature",
+      "art": "Art",
+      "fitness": "Fitness",
+      "lectures": "Lectures"
+    }
+  },
+
+  "filmsPage": {
+    "description": "Online cinema KYSK has collected a collection of thousands of films of various genres and directions for its subscribers.",
+    "sort": {
+      "newest": "By novelty",
+      "popular": "By popularity",
+      "rating": "By rating",
+      "alphabet": "By alphabet"
+    },
+    "reset": "Reset"
+  }
 }
 
 

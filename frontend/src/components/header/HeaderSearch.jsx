@@ -287,3 +287,4 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
 };
 
 
+

@@ -252,8 +252,8 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                         {!isSearchOpen && !isPremiumPage && (
                             <nav className="header_nav">
                                 <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
-                                <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                                <NavLink to="/"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
+                                <NavLink to="/catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
+                                <NavLink to="/new-popular"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
                                 <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
                             </nav>
                         )}

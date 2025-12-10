@@ -4,6 +4,7 @@ import { Home } from '../pages/Home';
 import { Premium } from '../pages/Premium';
 import { Favorites } from '../pages/Favorites';
 import { Catalog } from '../pages/Catalog';
+import { NewAndPopular } from '../pages/NewAndPopular';
 import { MoviePage } from '../pages/MoviePage';
 import {AboutPage} from "../pages/AboutPage";
 import {CareerPage} from "../pages/CareerPage";
@@ -31,6 +32,7 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
                 <Route path="/catalog" element={<Catalog />} />
+                <Route path="/new-popular" element={<NewAndPopular />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
                 <Route path="/movie/:id" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
