@@ -1,0 +1,711 @@
+.actor_overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+    box-sizing: border-box;
+}
+
+.actor_modal {
+    position: relative;
+    background: #34353F;
+    border-radius: 15px;
+    width: 1692px;
+    height: 897px;
+    padding: 60px;
+    color: #F8F8FE;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.actor_close_icon {
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    position: absolute;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756244998/Close.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+}
+
+.actor_block{
+    display: flex;
+}
+
+.actor_info_block{
+    background: #262630;
+    width: 341px;
+    height: 777px;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.actor_info_avatar{
+    width: 302px;
+    height: 302px;
+    flex-shrink: 0;
+    cursor: pointer;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756265327/Robbie.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    transition: background-image 0.5s ease;
+    margin: 0;
+    border-radius: 50%;
+}
+
+.actor_info_name {
+    font-size: 24px;
+    font-weight: 600;
+    color: #F8F8FE;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.actor_info_name_en {
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 2px;
+    color: #8e90a0;
+    text-align: center;
+}
+
+.actor_info_divider {
+    width: 100%;
+    height: 1px;
+    margin: 15px 0;
+    background-color: #34353F;
+}
+
+.actor_info_item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.actor_info_label {
+    font-size: 16px;
+    font-weight: 400;
+    color: #8e90a0;
+    margin-bottom: 2px;
+}
+
+.actor_info_value {
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    font-weight: 300;
+    color: #F8F8FE;
+}
+
+.actor_info_relatives {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.actor_info_relatives > div {
+    text-align: left;
+}
+
+.actor_film_block{
+    padding-left: 20px;
+}
+
+.actor_film_title{
+    font-size: 32px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.actor_film_togle{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.actor_filter_group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.actor_filter_dropdown {
+    position: relative;
+}
+
+.actor_filter_button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background-color: #2A2B3A;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 0 20px;
+    color: #B8B8C8;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    width: 240px;
+    height: 44px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.actor_filter_button:hover {
+    background-color: #343545;
+}
+
+.actor_filter_button.open {
+    border: 1px solid #4E55D4;
+}
+
+.actor_filter_arrow {
+    width: 20px;
+    height: 20px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756263326/Arrow_Down.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1);
+}
+
+.actor_filter_arrow.open {
+    transform: rotate(180deg);
+}
+
+.actor_filter_menu {
+    position: absolute;
+    top: calc(120% + 5px);
+    left: 0;
+    background-color: #34353F;
+    border: 1px solid #434551;
+    border-radius: 10px;
+    width: 240px;
+    z-index: 100;
+    max-height: 310px;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    scrollbar-color: #4E55D4 #34353F;
+    scrollbar-width: auto;
+}
+
+.actor_filter_menu::-webkit-scrollbar {
+    width: 15px !important;
+    height: 15px;
+}
+
+.actor_filter_menu::-webkit-scrollbar-button {
+    display: none !important;
+}
+
+.actor_filter_menu::-webkit-scrollbar-track {
+    background: #34353F;
+    border-radius: 4px;
+}
+
+.actor_filter_menu::-webkit-scrollbar-thumb {
+    background: #B8B8C8;
+    border-radius: 4px;
+}
+
+.actor_filter_menu::-webkit-scrollbar-thumb:hover {
+    background: #9B9BA8;
+}
+
+.actor_filter_menu button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Raleway', sans-serif;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.actor_filter_menu button:hover:not(.selected) {
+    background-color: #414250;
+    color: #F8F8FE;
+}
+
+.actor_filter_menu button.selected {
+    background-color: #4E55D4;
+    color: #F8F8FE;
+}
+
+.actor_block_films {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    max-height: 690px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #4E55D4 #34353F;
+    justify-content: start;
+    align-content: start;
+}
+
+.actor_block_films::-webkit-scrollbar {
+    width: 20px !important;
+    height: 20px;
+}
+
+.actor_block_films::-webkit-scrollbar-button {
+    display: none !important;
+}
+
+.actor_block_films::-webkit-scrollbar-track {
+    background: #34353F;
+    border-radius: 4px;
+}
+
+.actor_block_films::-webkit-scrollbar-thumb {
+    background: #4E55D4;
+    border-radius: 4px;
+}
+
+.actor_block_films::-webkit-scrollbar-thumb:hover {
+    background: #3429B0;
+}
+
+.actor_film-card {
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.actor_film-card:hover {
+    z-index: 10;
+}
+
+.actor_film-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+}
+
+.actor_film-poster {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 225 / 320;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background-color: #34353F;
+    display: block;
+}
+
+.actor_film-title {
+    display: none;
+}
+
+.actor_film-card-header {
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    gap: 10px;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.actor_film-card:hover .actor_film-card-header {
+    opacity: 1;
+}
+
+.actor_film-card-save {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background-size: contain;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_vf5dni.png');
+    background-repeat: no-repeat;
+    transition: background-image 0.3s ease;
+}
+
+.actor_film-card-save:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623598/Bookmark_light_1_uzzzgh.png');
+}
+
+.actor_film-card-save.active {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_2_ceo99g.png');
+    filter: brightness(1.3);
+}
+
+.actor_film-card-save.active:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623597/Bookmark_light_3_h4jvhz.png');
+}
+
+.actor_film-card-repost {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background-size: contain;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_jwpc5u.png');
+    background-repeat: no-repeat;
+    transition: background-image 0.3s ease;
+}
+
+.actor_film-card-repost:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757623581/group_share_light_1_znohye.png');
+}
+
+.actor_film-action {
+    position: relative;
+    z-index: 1002;
+}
+
+.actor_film-action::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #34353F;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.actor_film-action:hover::after {
+    opacity: 1;
+}
+
+.actor_film-card-place {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.actor_film-card:hover .actor_film-card-place {
+    opacity: 1;
+}
+
+.actor_film-card-play {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    background-size: contain;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1757856085/Component_71_rwknbj.png');
+    background-repeat: no-repeat;
+    transition: background-image 0.3s ease;
+}
+
+.actor_film-card-play:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765362013/Property_1_Video_fill_myo1nx.png');
+}
+
+.actor_film-card-text {
+    opacity: 0;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: #F8F8FE;
+    font-family: "Raleway", sans-serif;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.actor_film-card:hover .actor_film-card-text {
+    opacity: 1;
+}
+
+.actor_film-card-rating {
+    font-weight: 500;
+    font-family: "Inter", sans-serif;
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.actor_film-card-date {
+    font-family: "Inter", sans-serif;
+    font-weight: 300;
+}
+
+.actor_film-card-line1,
+.actor_film-card-line2 {
+    font-size: 18px;
+    color: #F8F8FE;
+}
+
+.actor_film-card-line2 {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #F8F8FE;
+}
+
+@media (max-width: 1920px) {
+    .actor_block_films {
+        gap: 20px;
+    }
+
+    .actor_film-poster {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 293 / 428;
+    }
+}
+
+@media (max-width: 1680px) {
+
+    .actor_modal {
+        padding: 60px;
+        width: 1550px;
+        height: 900px;
+    }
+
+    .actor_block_films {
+        max-height: 680px;
+        gap: 25px;
+    }
+
+    .actor_info_block{
+        width: 341px;
+        height: 730px;
+    }
+
+    .actor_info_name {
+        font-size: 24px;
+    }
+
+    .actor_info_name_en {
+        font-size: 16px;
+    }
+
+    .actor_film_title {
+        font-size: 32px;
+    }
+
+    .actor_info_avatar{
+        width: 250px;
+        height: 250px;
+    }
+
+    .actor_info_divider {
+        margin: 15px 0;
+    }
+
+    .actor_info_label {
+        font-size: 15px;
+    }
+
+    .actor_info_value {
+        font-size: 15px;
+    }
+
+    .actor_film-poster {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 250 / 380;
+    }
+
+    .actor_film-card-save {
+        width: 35px;
+        height: 35px;
+    }
+
+    .actor_film-card-repost {
+        width: 35px;
+        height: 35px;
+    }
+
+    .actor_film-card-play {
+        width: 70px;
+        height: 70px;
+    }
+
+    .actor_film-card-rating {
+        font-size: 30px;
+    }
+
+    .actor_film-card-line1,
+    .actor_film-card-line2 {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .actor_modal {
+        padding: 30px;
+        width: 1350px;
+        height: 650px;
+    }
+
+    .actor_info_block{
+        width: 341px;
+        height: 550px;
+    }
+
+    .actor_info_name {
+        font-size: 20px;
+    }
+
+    .actor_info_name_en {
+        font-size: 16px;
+    }
+
+    .actor_film_title {
+        font-size: 28px;
+    }
+    .actor_info_avatar{
+        width: 200px;
+        height: 200px;
+    }
+
+    .actor_filter_menu button{
+        font-size: 16px;
+    }
+
+    .actor_filter_menu {
+        width: 230px;
+    }
+
+    .actor_info_divider {
+        margin: 10px 0;
+    }
+
+    .actor_info_label {
+        font-size: 13px;
+    }
+
+    .actor_info_value {
+        font-size: 13px;
+    }
+    .actor_filter_button {
+        font-size: 16px;
+        width: 230px;
+        height: 40px;
+    }
+
+    .actor_block_films {
+        gap: 15px;
+        max-height: 480px;
+
+    }
+
+    .actor_film-poster {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 190 / 270;
+    }
+
+    .actor_film-card-save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .actor_film-card-repost {
+        width: 30px;
+        height: 30px;
+    }
+
+    .actor_film-card-play {
+        width: 65px;
+        height: 65px;
+    }
+
+    .actor_film-card-rating {
+        font-size: 26px;
+    }
+
+    .actor_film-card-line1,
+    .actor_film-card-line2 {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .actor_modal {
+        width: 1160px;
+        height: 670px;
+    }
+
+    .actor_block_films {
+        gap: 20px;
+        max-height: 500px;
+    }
+
+    .actor_info_block{
+        height: 560px;
+    }
+
+    .actor_film-poster {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 230 / 350;
+    }
+
+    .actor_film-card-save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .actor_film-card-repost {
+        width: 30px;
+        height: 30px;
+    }
+
+    .actor_film-card-play {
+        width: 65px;
+        height: 65px;
+    }
+
+    .actor_film-card-text {
+        bottom: 15px;
+        left: 15px;
+    }
+
+    .actor_film-card-rating {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .actor_film-card-line1,
+    .actor_film-card-line2 {
+        font-size: 13px;
+    }
+}
