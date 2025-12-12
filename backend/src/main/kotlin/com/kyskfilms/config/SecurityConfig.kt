@@ -59,6 +59,9 @@ class SecurityConfig(
                     .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers("/api/test/public").permitAll()
                     .requestMatchers("/api/titles/**").permitAll()
+                    .requestMatchers("/api/stream/**").permitAll()
+                    .requestMatchers("/api/home/**").permitAll()
+                    .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/genres/**").permitAll()
                     .anyRequest().authenticated()
             }

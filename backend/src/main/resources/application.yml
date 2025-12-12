@@ -70,6 +70,7 @@ minio:
 # Application-specific Configuration
 # -------------------------------------------
 app:
+  backend-url: http://localhost:8081
   frontend:
     # Используем синтаксис YAML-списка
     allowed-origins:

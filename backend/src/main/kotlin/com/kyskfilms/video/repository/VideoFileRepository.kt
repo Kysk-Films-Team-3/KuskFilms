@@ -1,12 +1,28 @@
 package com.kyskfilms.video.repository
 
-import com.kyskfilms.video.entity.VideoFile // <-- Вот этот импорт
+import com.kyskfilms.video.entity.VideoFile
+import com.kyskfilms.video.entity.VideoStatus
+import com.kyskfilms.video.entity.VideoType
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.transaction.annotation.Transactional
 
 interface VideoFileRepository : JpaRepository<VideoFile, Int> {
+
+
+    fun findFirstByTitleIdAndTypeAndStatus(
+        titleId: Int,
+        type: VideoType,
+        status: VideoStatus
+    ): VideoFile?
+
+    fun findFirstByEpisodeIdAndTypeAndStatus(
+        episodeId: Int,
+        type: VideoType,
+        status: VideoStatus
+    ): VideoFile?
+
 
     @Transactional
     @Modifying

@@ -1,5 +1,6 @@
 package com.kyskfilms.video.service
 
+import io.minio.GetObjectArgs // <--- ЭТОГО НЕ ХВАТАЛО
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import org.slf4j.LoggerFactory
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
+import java.io.InputStream // <--- ЭТОГО НЕ ХВАТАЛО
 import java.util.*
 
 @Service
@@ -67,6 +69,22 @@ class MinioService(private val minioClient: MinioClient) {
         } catch (e: Exception) {
             log.error("Error uploading HLS file {} to MinIO", file.name, e)
             throw IllegalStateException("Failed to upload HLS file", e)
+        }
+    }
+
+    /**
+     * Получение потока данных файла из MinIO (для стриминга)
+     */
+    fun getFileStream(objectName: String): InputStream {
+        try {
+            return minioClient.getObject(
+                GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .`object`(objectName)
+                    .build()
+            )
+        } catch (e: Exception) {
+            throw IllegalStateException("Could not get file from MinIO: $objectName", e)
         }
     }
 }
