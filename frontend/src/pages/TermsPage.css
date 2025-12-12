@@ -1,0 +1,133 @@
+.terms_page {
+    background: #262630;
+    padding: 120px 60px 80px 60px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    min-height: calc(100vh - 200px);
+}
+
+.terms_block {
+    max-width: 900px;
+}
+
+.terms_title {
+    font-size: 43px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+    margin-bottom: 12px;
+}
+
+.terms_line {
+    width: 100%;
+    height: 2px;
+    margin: 12px 0 24px 0;
+    background:
+    linear-gradient(to right, #4E55D4 120px, transparent 120px) top / 100% 2px no-repeat,
+    linear-gradient(to right, rgba(255,255,255,0.15), rgba(255,255,255,0.15)) bottom / 100% 1px no-repeat;
+}
+
+.terms_line.small {
+    width: 70%;
+}
+
+.terms_content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.terms_section {
+    margin-bottom: 0;
+}
+
+.terms_subtitle {
+    font-size: 35px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    margin-bottom: 12px;
+}
+
+.terms_text {
+    font-size: 22px;
+    color: #d4d4dc;
+    line-height: 1.7;
+    max-width: 900px;
+    margin-top: 24px;
+}
+@media (max-width: 1920px) {
+
+    .terms_title {
+        font-size: 33px;
+    }
+
+    .terms_subtitle {
+        font-size: 29px;
+    }
+
+    .terms_text {
+        font-size: 22px;
+    }
+
+    .terms_page {
+        padding: 80px 60px 80px 60px;
+    }
+
+}
+@media (max-width: 1680px) {
+
+    .terms_title {
+        font-size: 32px;
+    }
+
+    .terms_subtitle {
+        font-size: 28px;
+    }
+
+    .terms_text {
+        font-size: 20px;
+    }
+
+    .terms_page {
+        padding: 80px 60px 80px 60px;
+    }
+
+}
+@media (max-width: 1440px) {
+
+    .terms_title {
+        font-size: 29px;
+    }
+
+    .terms_subtitle {
+        font-size: 24px;
+    }
+
+    .terms_text {
+        font-size: 17px;
+    }
+
+    .terms_page {
+        padding: 80px 60px;
+    }
+
+}
+@media (max-width: 1280px) {
+
+    .terms_title {
+        font-size: 28px;
+    }
+
+    .terms_subtitle {
+        font-size: 23px;
+    }
+
+    .terms_text {
+        font-size: 17px;
+    }
+
+    .terms_page {
+        padding: 70px 60px;
+    }
+
+}
+

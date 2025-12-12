@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import PlayerOverlay from "../components/player/PlayerOverlay";
 import { fetchTitleById } from "../services/api";
 import "./MoviePage.css";
 
 export const MoviePage = ({ onCommentModalClick }) => {
     const { id } = useParams();
+    const { t } = useTranslation();
     const [isPlayerOpen, setIsPlayerOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [movie, setMovie] = useState(null);
@@ -15,7 +17,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
     useEffect(() => {
         const loadMovie = async () => {
             if (!id) {
-                setError("ID фільму не вказано");
+                setError(t("moviePage.errorId"));
                 setLoading(false);
                 return;
             }
@@ -27,7 +29,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 setMovie(data);
             } catch (err) {
                 console.error("Помилка завантаження фільму:", err);
-                setError("Не вдалось завантажити інформацію про фільм");
+                setError(t("moviePage.errorLoad"));
             } finally {
                 setLoading(false);
             }
@@ -39,7 +41,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
     if (loading) {
         return (
             <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
-                <p>Завантаження...</p>
+                <p><Trans i18nKey="moviePage.loading" /></p>
             </div>
         );
     }
@@ -47,12 +49,11 @@ export const MoviePage = ({ onCommentModalClick }) => {
     if (error || !movie) {
         return (
             <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
-                <p style={{ color: 'red' }}>{error || "Фільм не знайдено"}</p>
+                <p style={{ color: 'red' }}>{error || <Trans i18nKey="moviePage.notFound" />}</p>
             </div>
         );
     }
 
-    // Получаем ссылку на поток. Бэкенд возвращает streamUrl для M3U8
     const videoUrl = movie.streamUrl;
 
     const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
@@ -62,7 +63,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
         if (videoUrl) {
             setIsPlayerOpen(true);
         } else {
-            alert("Відео ще обробляється або недоступне.");
+            alert(t("moviePage.videoProcessing"));
         }
     };
 
@@ -86,32 +87,30 @@ export const MoviePage = ({ onCommentModalClick }) => {
                         </div>
                         <div className="movie_poster_info">
                             {movie.seasons && movie.seasons.length > 0 && (
-                                <div className="movie_poster_seasons">Сезонів: {movie.seasons.length}</div>
+                                <div className="movie_poster_seasons"><Trans i18nKey="moviePage.seasonsCount" /> {movie.seasons.length}</div>
                             )}
                         </div>
                         <div className="movie_submit">
-                            <div className="movie_submit_price">15€/місяць</div>
-                            <div className="movie_submit_subtitle">у підписці Kysk</div>
+                            <div className="movie_submit_price"><Trans i18nKey="moviePage.price" /></div>
+                            <div className="movie_submit_subtitle"><Trans i18nKey="moviePage.inSubscription" /></div>
                         </div>
                     </div>
 
                     <div className="movie_poster_watch">
-                        {/* Кнопка "Дивитися" активна, если есть ссылка */}
                         <button
                             className="movie_watch_button"
                             onClick={handleWatchClick}
                             style={{ opacity: videoUrl ? 1 : 0.6, cursor: videoUrl ? 'pointer' : 'not-allowed' }}
                         >
-                            Дивитися
+                            <Trans i18nKey="moviePage.watch" />
                         </button>
 
-                        <button className="movie_trailer_button" onClick={() => alert("Трейлер пока не доступен")}>Трейлер</button>
+                        <button className="movie_trailer_button" onClick={() => alert(t("moviePage.trailerNotAvailable"))}><Trans i18nKey="moviePage.trailer" /></button>
                         <div className="movie_save_button"></div>
                     </div>
                 </div>
             </div>
 
-            {/* Плеер открывается только если есть URL */}
             {isPlayerOpen && videoUrl && (
                 <PlayerOverlay
                     open={isPlayerOpen}
@@ -121,7 +120,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
             )}
 
             <div className="movie_description_block">
-                <div className="movie_description_title">Опис</div>
+                <div className="movie_description_title"><Trans i18nKey="moviePage.description" /></div>
                 <div className="movie_description_title_line"></div>
             </div>
             <div className="movie_overview">
@@ -131,25 +130,25 @@ export const MoviePage = ({ onCommentModalClick }) => {
                             {movie.description}
                         </p>
                         <div className="movie_description_block_toggle" onClick={() => setExpanded(!expanded)}>
-                            {expanded ? "Згорнути" : "Детальний опис"}
+                            {expanded ? <Trans i18nKey="moviePage.collapse" /> : <Trans i18nKey="moviePage.expand" />}
                         </div>
                     </div>
                 )}
                 <div className="movie_mark_block">
-                    <div className="movie_mark_block_text">Поставте оцінку</div>
-                    <div className="movie_mark_block_subtext">Оцінки покращують ваші рекомендації</div>
+                    <div className="movie_mark_block_text"><Trans i18nKey="moviePage.rate" /></div>
+                    <div className="movie_mark_block_subtext"><Trans i18nKey="moviePage.rateSubtext" /></div>
                     <div className="movie_marks"></div>
                 </div>
             </div>
 
             {movie.seasons && movie.seasons.length > 0 && (
                 <div className="movie_seasons_block">
-                    <div className="movie_seasons_title">Сезони</div>
+                    <div className="movie_seasons_title"><Trans i18nKey="moviePage.seasons" /></div>
                     {movie.seasons.map((season) => (
                         <div key={season.id} className="movie_season_item">
-                            <div className="movie_season_name">Сезон {season.seasonNumber}{season.title ? `: ${season.title}` : ''}</div>
+                            <div className="movie_season_name"><Trans i18nKey="moviePage.season" /> {season.seasonNumber}{season.title ? `: ${season.title}` : ''}</div>
                             {season.episodes && season.episodes.length > 0 && (
-                                <div className="movie_season_episodes">Епізодів: {season.episodes.length}</div>
+                                <div className="movie_season_episodes"><Trans i18nKey="moviePage.episodes" /> {season.episodes.length}</div>
                             )}
                         </div>
                     ))}
@@ -157,8 +156,8 @@ export const MoviePage = ({ onCommentModalClick }) => {
             )}
 
             <div className="movie_reviews_block">
-                <div className="movie_reviews_title">Відгуки</div>
-                <button className="movie_reviews_button" onClick={onCommentModalClick}>Написати коментар</button>
+                <div className="movie_reviews_title"><Trans i18nKey="moviePage.reviews" /></div>
+                <button className="movie_reviews_button" onClick={onCommentModalClick}><Trans i18nKey="moviePage.writeComment" /></button>
             </div>
         </div>
     );

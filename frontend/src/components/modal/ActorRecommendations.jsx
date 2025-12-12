@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useFavorites } from '../../context/FavoritesContext';
 import './ActorRecommendations.css';
+import { ShareModal } from './ShareModal';
 
 export const ActorRecommendations = ({ actor, onClose }) => {
     const modalRef = useRef(null);
     const [hoveredId, setHoveredId] = useState(null);
+    const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
     const { favorites, toggleFavorite } = useFavorites();
     const { t } = useTranslation();
 
@@ -105,6 +107,10 @@ export const ActorRecommendations = ({ actor, onClose }) => {
                                     <div
                                         className="actor_card_repost actor_film_action"
                                         data-tooltip={t('tooltip.share')}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShareModal({ isOpen: true, film: item });
+                                        }}
                                     />
                                 </div>
 
@@ -136,6 +142,12 @@ export const ActorRecommendations = ({ actor, onClose }) => {
                     )}
                 </div>
             </div>
+            <ShareModal
+                isOpen={shareModal.isOpen}
+                onClose={() => setShareModal({ isOpen: false, film: null })}
+                filmTitleKey={shareModal.film?.line1 || null}
+                filmId={shareModal.film?.id}
+            />
         </div>
     );
 };

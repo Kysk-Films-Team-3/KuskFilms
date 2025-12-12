@@ -1,0 +1,8 @@
+.layout-main.search-blocked {
+    pointer-events: none !important;
+    user-select: none !important;
+    overflow: hidden !important;
+}
+
+
+

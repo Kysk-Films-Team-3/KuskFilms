@@ -27,8 +27,8 @@
 .actor_recs_close {
     top: 15px;
     right: 15px;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     position: absolute;
     cursor: pointer;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756244998/Close.png');
@@ -228,7 +228,7 @@
 }
 .actor_card_line1,
 .actor_card_line2 {
-    font-size: 14px;
+    font-size: 15px;
     color: #F8F8FE;
 }
 
@@ -236,4 +236,152 @@
     margin-top: 5px;
     font-size: 14px;
     color: #F8F8FE;
+}
+
+@media (max-width: 1920px) {
+
+    .actor_recs_modal {
+        width: 1550px;
+        height: 500px;
+    }
+
+}
+
+@media (max-width: 1680px) {
+
+    .actor_recs_modal {
+        width: 1450px;
+        height: 500px;
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .actor_recs_modal {
+        width: 1300px;
+        height: 500px;
+    }
+
+    .actor_recs_close {
+        width: 32px;
+        height: 32px;
+    }
+
+    .actor_recs_title {
+        font-size: 30px;
+    }
+
+    .actor_recs_quote {
+        font-size: 20px;
+    }
+
+    .actor_recs_empty {
+        font-size: 20px;
+    }
+
+    .actor_card {
+        width: 190px;
+    }
+
+    .actor_card_img {
+        width: 100%;
+        height: 280px;
+    }
+
+    .actor_card_save{
+        width: 36px;
+        height: 36px;
+    }
+
+    .actor_card_repost{
+        width: 36px;
+        height: 36px;
+    }
+
+    .actor_film_action::after {
+        font-size: 16px;
+    }
+
+
+    .actor_card_play {
+        width: 70px;
+        height: 70px;
+    }
+
+    .actor_card_rating {
+        font-size: 35px;
+        font-family: "Inter", sans-serif;
+    }
+
+    .actor_card_line1,
+    .actor_card_line2 {
+        font-size: 14px;
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+    .actor_recs_modal {
+        width: 1200px;
+        height: 500px;
+    }
+
+    .actor_recs_close {
+        width: 30px;
+        height: 30px;
+    }
+
+    .actor_recs_title {
+        font-size: 28px;
+    }
+
+    .actor_recs_quote {
+        font-size: 18px;
+    }
+
+    .actor_recs_empty {
+        font-size: 18px;
+    }
+
+    .actor_card {
+        width: 190px;
+    }
+
+    .actor_card_img {
+        width: 100%;
+        height: 280px;
+    }
+
+    .actor_card_save{
+        width: 36px;
+        height: 36px;
+    }
+
+    .actor_card_repost{
+        width: 36px;
+        height: 36px;
+    }
+
+    .actor_film_action::after {
+        font-size: 16px;
+    }
+
+
+    .actor_card_play {
+        width: 70px;
+        height: 70px;
+    }
+
+    .actor_card_rating {
+        font-size: 30px;
+        font-family: "Inter", sans-serif;
+    }
+
+    .actor_card_line1,
+    .actor_card_line2 {
+        font-size: 12px;
+    }
+
 }

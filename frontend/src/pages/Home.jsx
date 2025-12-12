@@ -5,6 +5,7 @@ import { fakeCategories, fakeContent, fakeSlides, getMenuItems, getWatchModeItem
 import { useFavorites } from '../context/FavoritesContext';
 import {Trans, useTranslation} from 'react-i18next';
 import '../i18n/i18n';
+import { ShareModal } from '../components/modal/ShareModal';
 
 export const Home = ({ onOpenActorRecs }) => {
     const [currentSlide, setCurrentSlide] = useState(1);
@@ -41,6 +42,7 @@ export const Home = ({ onOpenActorRecs }) => {
     const [menuItems, setMenuItems] = useState([]);
     const [watchModeItems, setWatchModeItems] = useState([]);
     const [starsActors, setStarsActors] = useState([]);
+    const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
     const { t } = useTranslation();
     const { favorites, toggleFavorite } = useFavorites();
     const location = useLocation();
@@ -236,17 +238,63 @@ export const Home = ({ onOpenActorRecs }) => {
             const track = carouselTrackRef.current;
             const wrapper = carouselWrapperRef.current;
             if (track && wrapper && slides.length > 0) {
-                const slideWidth = 900;
+                const firstSlide = track.querySelector('.home_carousel_slide');
+                if (!firstSlide) return;
+                
+                const slideWidth = firstSlide.offsetWidth;
                 const gap = 20;
                 const wrapperWidth = wrapper.offsetWidth;
-                const centerOffset = (wrapperWidth - slideWidth) / 2;
-                const slideOffset = currentSlide * (slideWidth + gap);
-                track.style.transform = `translateX(${centerOffset - slideOffset}px)`;
+                
+                if (slideWidth <= 0 || wrapperWidth <= 0) return;
+                
+                const slideLeftPosition = currentSlide * (slideWidth + gap);
+                
+                const wrapperCenter = wrapperWidth / 2;
+                const slideCenter = slideLeftPosition + slideWidth / 2;
+                const offset = wrapperCenter - slideCenter;
+                
+                track.style.transform = `translateX(${offset}px)`;
             }
         };
+        
         updatePosition();
-        const timeoutId = setTimeout(updatePosition, 50);
-        return () => clearTimeout(timeoutId);
+        const timeoutId1 = setTimeout(updatePosition, 10);
+        const timeoutId2 = setTimeout(updatePosition, 50);
+        
+        let resizeTimeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updatePosition();
+            }, 50);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        
+        let resizeObserver = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => {
+                requestAnimationFrame(updatePosition);
+            });
+            
+            const wrapper = carouselWrapperRef.current;
+            const track = carouselTrackRef.current;
+            if (wrapper) resizeObserver.observe(wrapper);
+            if (track) {
+                const firstSlide = track.querySelector('.home_carousel_slide');
+                if (firstSlide) resizeObserver.observe(firstSlide);
+            }
+        }
+        
+        return () => {
+            clearTimeout(timeoutId1);
+            clearTimeout(timeoutId2);
+            clearTimeout(resizeTimeout);
+            window.removeEventListener('resize', handleResize);
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+        };
     }, [currentSlide, slides.length]);
 
     useEffect(() => {
@@ -420,7 +468,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     <div 
                                                         className="home_film_repost home_film_action" 
                                                         data-tooltip={t('tooltip.share')}
-                                                        onClick={(e) => e.stopPropagation()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShareModal({ isOpen: true, film: film });
+                                                        }}
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
@@ -448,72 +499,6 @@ export const Home = ({ onOpenActorRecs }) => {
 
                 {activeCategories.length === 0 && (
                     <>
-
-                        <div className="home_trailer_block">
-                            <div className="home_trailer">
-                                <div className="home_trailer_logo"></div>
-
-                                <div className="home_trailer_title"><Trans i18nKey="trailer.title" /></div>
-                                <div className="home_trailer_line_block">
-                                    <div className="home_trailer_line_rating">8.7</div>
-                                    <div className="home_trailer_line_time">2024</div>
-                                    <div className="home_trailer_line_genre"><Trans i18nKey="trailer.genre" /></div>
-                                    <div className="home_trailer_line_time">•  2h 8m</div>
-                                </div>
-
-                                <div className="home_trailer_subtitle"><Trans i18nKey="trailer.description" /></div>
-
-                                <div className="home_trailer_button">
-                                    <div className="home_more_trailer_button"><Trans i18nKey="trailer.details" /></div>
-                                    <div className={`home_save_trailer_button ${isTrailerSaved ? "active" : ""}`} onClick={toggleTrailerSave}/>
-                                    <div className="home_left_trailer_button"></div>
-                                    <div className="home_right_trailer_button"></div>
-                                </div>
-
-                                <div className="home_trailer_dropdowns">
-                                    <div className="home_trailer_dropdown" ref={dropdownRef}>
-                                        <button className={`home_trailer_dropdown_button ${isMenuOpen ? 'open' : ''}`} onClick={handleToggleMenu}>
-                                            <img src={selectedMenuItem.emoji} alt="" className="menu_trailer_item_icon" />
-                                            <span><Trans i18nKey={`trailerMenu.${selectedMenuItem.id}`} /></span>
-                                            <img src="https://res.cloudinary.com/da9jqs8yq/image/upload/v1756800196/Status_list.png" alt="" className="menu_trailer_item_icon status_trailer_icon"/>
-                                        </button>
-
-                                        {isMenuOpen && (
-                                            <div className="home_trailer_dropdown_menu">
-                                                {menuItems.map(item => (
-                                                    <div key={item.id} className={`home_trailer_dropdown_menu_item ${item.id === selectedItemId ? 'selected' : ''}`} onClick={() => handleMenuItemClick(item.id)}>
-                                                        <img src={item.emoji} alt="" className="menu_trailer_item_icon" />
-                                                        <span className="home_trailer_dropdown_menu_text">
-                                                    <Trans i18nKey={`trailerMenu.${item.id}`} />
-                                                    </span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="home_trailer_dropdown" ref={dropdownRef2}>
-                                        <button className={`home_trailer_dropdown_button ${isWatchModeMenuOpen ? 'open' : ''}`} onClick={handleToggleWatchModeMenu}>
-                                            <img src={selectedWatchModeItem.emoji} alt="" className="menu_trailer_item_icon" />
-                                            <span><Trans i18nKey={`watchMode.${selectedWatchModeItem.id}`} /></span>
-                                            <img src="https://res.cloudinary.com/da9jqs8yq/image/upload/v1756800196/Status_list.png" alt="" className="menu_trailer_item_icon status_trailer_icon"/>
-                                        </button>
-
-                                        {isWatchModeMenuOpen && (
-                                            <div className="home_trailer_dropdown_menu">
-                                                {watchModeItems.map(item => (
-                                                    <div key={item.id} className={`home_trailer_dropdown_menu_item ${item.id === selectedWatchModeId ? 'selected' : ''}`} onClick={() => handleWatchModeSelect(item.id)}>
-                                                        <img src={item.emoji} alt="" className="menu_trailer_item_icon" />
-                                                        <span><Trans i18nKey={`watchMode.${item.id}`} /></span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className={`home_trailer_volume ${isVolumeActive ? "active" : ""}`} onClick={toggleVolume}/>
-                                </div>
-                            </div>
-                        </div>
 
                         <div className="home_stars_choice_block">
                             <div className="home_stars_header">
@@ -595,7 +580,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                             <div 
                                                                 className="home_film_repost home_film_action" 
                                                                 data-tooltip={t('tooltip.share')}
-                                                                onClick={(e) => e.stopPropagation()}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setShareModal({ isOpen: true, film: film });
+                                                                }}
                                                             />
                                                             <div 
                                                                 className="home_film_remuve home_film_action" 
@@ -713,7 +701,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     <div 
                                                         className="home_film_repost home_film_action" 
                                                         data-tooltip={t('tooltip.share')}
-                                                        onClick={(e) => e.stopPropagation()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShareModal({ isOpen: true, film: film });
+                                                        }}
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
@@ -739,6 +730,13 @@ export const Home = ({ onOpenActorRecs }) => {
                 )}
 
             </div>
+            <ShareModal
+                isOpen={shareModal.isOpen}
+                onClose={() => setShareModal({ isOpen: false, film: null })}
+                filmTitle={shareModal.film?.title || null}
+                filmTitleKey={shareModal.film?.line1 ? `films.${shareModal.film.id}.line1` : null}
+                filmId={shareModal.film?.id}
+            />
         </div>
     );
 };

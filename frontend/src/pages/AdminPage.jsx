@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { useHasRole } from '../services/useHasRole';
 
 export const AdminPage = () => {
+    const { t } = useTranslation();
     const [adminData, setAdminData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,7 +13,7 @@ export const AdminPage = () => {
 
     useEffect(() => {
         if (!hasAdminRole) {
-            setError("Доступ заборонено. Потрібна роль ADMIN.");
+            setError(t("adminPage.error403"));
             setLoading(false);
             return;
         }
@@ -27,9 +29,9 @@ export const AdminPage = () => {
             } catch (err) {
                 console.error("Admin API Error:", err.response || err);
                 if (err.response && err.response.status === 403) {
-                    setError("Помилка 403: Бэкенд відхилив запит (недостатньо прав).");
+                    setError(t("adminPage.errorBackend"));
                 } else {
-                    setError(`Помилка API: ${err.message}`);
+                    setError(`${t("adminPage.errorApi")} ${err.message}`);
                 }
             } finally {
                 setLoading(false);
@@ -37,24 +39,24 @@ export const AdminPage = () => {
         };
 
         fetchAdminData();
-    }, [hasAdminRole]);
+    }, [hasAdminRole, t]);
 
     return (
         <div className="admin-page-container" style={{ padding: '20px', minHeight: '80vh' }}>
-            <h1>👑 Панель Адміністратора</h1>
+            <h1><Trans i18nKey="adminPage.title" /></h1>
 
-            {loading && <p>Завантаження адмін-даних...</p>}
+            {loading && <p><Trans i18nKey="adminPage.loading" /></p>}
 
             {error && (
                 <div style={{ color: 'red', border: '1px solid red', padding: '10px' }}>
-                    <h3>Помилка доступу</h3>
+                    <h3><Trans i18nKey="adminPage.errorTitle" /></h3>
                     <p>{error}</p>
                 </div>
             )}
 
             {adminData && (
                 <div>
-                    <h3>Список користувачів (приклад)</h3>
+                    <h3><Trans i18nKey="adminPage.usersList" /></h3>
                     <pre>{JSON.stringify(adminData, null, 2)}</pre>
                 </div>
             )}

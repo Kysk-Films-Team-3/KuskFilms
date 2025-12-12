@@ -1,3 +1,16 @@
+.header_search_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.05);
+    z-index: 999;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: none;
+}
+
 .header {
     position: fixed;
     top: 0;
@@ -113,7 +126,8 @@
 
 .header_search_box {
     position: relative;
-    min-width: 850px;
+    min-width: 1520px;
+    z-index: 1001;
 }
 
 .header_search_bar {
@@ -159,18 +173,34 @@
     width: 100%;
     height: auto;
     background-color: #262630;
-    padding: 30px 50px;
+    padding: 30px 50px 30px 0;
     white-space: nowrap;
     display: flex;
     flex-direction: column;
     gap: 40px;
+    overflow-x: visible;
+    overflow-y: visible;
+    min-height: fit-content;
+    z-index: 1001;
+}
+
+@media (max-width: 1440px) {
+    .header_search_results {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .header_search_results {
+        gap: 20px;
+    }
 }
 
 .header_search_label {
     font-size: 24px;
     font-weight: 600;
-    margin-left: 15px;
-    margin-bottom: -30px;
+    margin-left: 0;
+    margin-bottom: -20px;
     color: #F8F8FE;
 }
 
@@ -178,25 +208,19 @@
     content: none;
 }
 
-.header_search_results .header_search_films {
-    display: flex;
-    gap: 15px;
-}
 
 .header_search_results .header_films_preview {
     width: 270px;
     flex-shrink: 0;
     transition: transform 0.3s ease;
+    overflow: visible;
 }
+
 
 .header_search_results .header_films_preview:hover {
     transform: scale(1.05);
 }
 
-.header_search_results .header_search_actors {
-    display: flex;
-    gap: 15px;
-}
 
 .header_actor_card {
     display: flex;
@@ -204,14 +228,18 @@
     align-items: center;
     text-align: center;
     margin-left: 16px;
+    flex: 0 0 auto;
     flex-shrink: 0;
     cursor: pointer;
     transition: transform 0.3s ease;
+    padding: 10px 0;
+    overflow: visible;
 }
 
 .header_actor_preview{
     transition: transform 0.3s ease;
     width: 150px;
+    overflow: visible;
 }
 
 .header_search_results .header_actor_preview:hover {
@@ -368,6 +396,20 @@
     background-position: center;
     box-shadow: 0 0 10px rgba(78, 85, 212, 0.5);
     transition: box-shadow 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.header_avatar.has-avatar {
+    background-image: none;
+}
+
+.header_avatar .avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
 .header_arrow {
@@ -401,8 +443,6 @@
     padding: 10px 0;
     z-index: 1000;
     margin-top: 8px;
-    width: 303px;
-    height: 230px;
     transition: transform 0.3s ease;
 }
 
@@ -447,6 +487,7 @@
 .check_icon {
     width: 30px;
     height: 30px;
+    margin-left: 5px;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756263887/Done.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -526,22 +567,47 @@
     color: #4E55D4;
 }
 
+.header_dropdown li.header_dropdown_logout:hover a {
+    color: #DD5254;
+}
+
+.header_dropdown li.header_dropdown_logout:hover .dropdown_link {
+    color: #DD5254;
+}
+
+.header_dropdown li.header_dropdown_logout .settings_logout_link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    color: #F8F8FE;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 8px;
+    margin-top: 0;
+}
+
+.header_dropdown li.header_dropdown_logout:hover .settings_logout_link {
+    color: #DD5254;
+}
+
 .manage_icon {
     transition: transform 0.3s ease;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264600/Edit.png');
 }
 
-.settings_icon {
+.logout_icon {
     transition: transform 0.3s ease;
-    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264534/Setting.png');
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1764952716/Sign_in_squre_light_tm8jld.png');
 }
 
 .header_dropdown li:hover .manage_icon {
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264602/Edit_hover.png');
 }
 
-.header_dropdown li:hover .settings_icon {
-    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756264532/Setting_hover.png');
+.header_dropdown li:hover .logout_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756422933/Logout.png');
 }
 
 .header_dropdown a,
@@ -652,9 +718,451 @@
     width: 100%;
 }
 
-@media (min-width: 1920px) {
+@media (max-width: 1920px) {
     .header_search_box {
-        min-width: 1480px;
+        min-width: 880px;
 
     }
+}
+
+@media (max-width: 1680px) {
+    .header {
+        height: 90px;
+    }
+
+    .header_logo {
+        width: 130px;
+    }
+
+    .header_container {
+        padding: 15px 30px;
+    }
+
+    .header_nav {
+        margin-left: 40px;
+        gap: 45px;
+    }
+
+    .header_nav a {
+        font-size: 21px;
+    }
+
+    .header_right {
+        gap: 45px;
+    }
+
+    .header_search_right_icon,
+    .header_search_left_icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header_search_right_icon.open{
+        width: 30px;
+        height: 30px;
+    }
+
+    .header_search_box {
+        min-width: 820px;
+    }
+
+    .header_search_bar {
+        margin-left: 30px;
+        padding: 5px 10px;
+    }
+
+    .header_premium {
+        width: 180px;
+        height: 40px;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 17px;
+    }
+
+    .header_promo_icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header_promo_text {
+        font-size: 19px;
+    }
+
+    .log_button_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .header_log_button {
+        width: 110px;
+        height: 40px;
+    }
+
+    .header_search_results {
+        top: 90px;
+    }
+
+    .header_avatar {
+        width: 45px;
+        height: 45px;
+    }
+
+    .header_arrow {
+        width: 45px;
+        height: 45px;
+    }
+
+    .header_search_bar input {
+        font-size: 16px;
+    }
+
+    .header_search_bar {
+        font-size: 16px;
+        padding: 5px 14px;
+    }
+
+    .header_search_right_icon.open{
+        width: 32px;
+        height: 32px;
+        margin-left: 10px;
+    }
+
+    .header_search_results .header_films_preview {
+        width: 235px;
+    }
+
+    .header_actor_preview{
+        width: 145px;
+    }
+
+    .header_search_label {
+        font-size: 25px;
+    }
+
+    .header_search_results .header_search_films,
+    .header_search_results .header_search_actors {
+        padding: 0 50px;
+    }
+
+    .dropdown_link {
+        font-size: 17px;
+    }
+
+    .profile_name {
+        font-size: 18px;
+    }
+
+    .dropdown_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .check_icon {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .header_arrow {
+        width: 30px;
+        height: 30px;
+    }
+
+}
+
+@media (max-width: 1440px) {
+    .header {
+        height: 80px;
+    }
+
+    .header_logo {
+        width: 120px;
+    }
+
+    .header_container {
+        padding: 15px 30px;
+    }
+
+    .header_nav {
+        margin-left: 40px;
+        gap: 30px;
+    }
+
+    .header_nav a {
+        font-size: 17px;
+    }
+
+    .header_right {
+        gap: 30px;
+    }
+
+    .header_search_right_icon,
+    .header_search_left_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .header_search_right_icon.open{
+        width: 30px;
+        height: 30px;
+    }
+
+    .header_search_box {
+        min-width: 685px;
+    }
+
+    .header_search_bar {
+        margin-left: 30px;
+        padding: 5px 10px;
+    }
+
+    .header_premium {
+        width: 160px;
+        height: 35px;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .header_promo_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .header_promo_text {
+        font-size: 16px;
+    }
+
+    .log_button_icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .header_log_button {
+        width: 100px;
+        height: 35px;
+    }
+
+    .header_search_results {
+        top: 70px;
+    }
+
+    .header_search_results .header_search_films,
+    .header_search_results .header_search_actors {
+        padding: 0 50px;
+    }
+
+    .header_avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header_arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header_search_bar input {
+        font-size: 16px;
+    }
+
+    .header_search_bar {
+        font-size: 16px;
+        padding: 5px 14px;
+    }
+
+    .header_search_right_icon.open{
+        width: 32px;
+        height: 32px;
+        margin-left: 10px;
+    }
+
+    .header_search_results .header_films_preview {
+        width: 220px;
+    }
+
+    .header_actor_preview{
+        width: 140px;
+    }
+
+    .header_search_label {
+        font-size: 24px;
+    }
+
+    .dropdown_link {
+        font-size: 14px;
+    }
+
+    .profile_name {
+        font-size: 16px;
+    }
+
+    .dropdown_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .check_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .header_avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header_arrow {
+        width: 30px;
+        height: 30px;
+    }
+
+}
+
+@media (max-width: 1280px) {
+    .header {
+        height: 70px;
+    }
+
+    .header_logo {
+        width: 110px;
+    }
+
+    .header_container {
+        padding: 15px 30px;
+    }
+
+    .header_nav {
+        margin-left: 40px;
+        gap: 30px;
+    }
+
+    .header_nav a {
+        font-size: 17px;
+    }
+
+    .header_right {
+        gap: 30px;
+    }
+
+    .header_search_right_icon,
+    .header_search_left_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .header_search_right_icon.open{
+        width: 30px;
+        height: 30px;
+    }
+
+    .header_search_box {
+        min-width: 670px;
+    }
+
+    .header_search_bar {
+        margin-left: 30px;
+        padding: 5px 10px;
+    }
+
+    .header_premium {
+        width: 150px;
+        height: 35px;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .header_promo_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .header_promo_text {
+        display: none;
+    }
+
+    .log_button_icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .header_log_button {
+        width: 100px;
+        height: 35px;
+    }
+
+    .header_search_results {
+        top: 70px;
+    }
+
+    .header_avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header_arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header_search_bar input {
+        font-size: 16px;
+    }
+
+    .header_search_bar {
+        font-size: 16px;
+        padding: 5px 14px;
+    }
+
+    .header_search_right_icon.open{
+        width: 32px;
+        height: 32px;
+        margin-left: 10px;
+    }
+
+    .header_search_results .header_films_preview {
+        width: 200px;
+    }
+
+    .header_actor_preview{
+        width: 120px;
+    }
+
+    .header_search_results .header_search_films,
+    .header_search_results .header_search_actors {
+        padding: 0 50px;
+    }
+
+    .header_search_label {
+        font-size: 22px;
+    }
+
+    .dropdown_link {
+        font-size: 14px;
+    }
+
+    .profile_name {
+        font-size: 16px;
+    }
+
+    .dropdown_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .check_icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .header_avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header_arrow {
+        width: 30px;
+        height: 30px;
+    }
+
 }

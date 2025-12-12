@@ -1,59 +1,56 @@
 import "./CareerPage.css";
+import { Trans } from "react-i18next";
 
 export const CareerPage = () => {
     return (
         <div className="career_page">
 
             <div className="career_header">
-                <h1 className="career_title">Кар'єра в Kysk</h1>
+                <h1 className="career_title"><Trans i18nKey="careerPage.title" /></h1>
                 <div className="career_line"></div>
 
                 <p className="career_intro">
-                    Ми будуємо сучасний український стримінговий сервіс і шукаємо талановитих людей,
-                    які хочуть створювати майбутнє кіноразваг разом із нами.
+                    <Trans i18nKey="careerPage.intro" />
                 </p>
             </div>
 
             <div className="career_section">
-                <h2 className="career_subtitle">Чому Kysk?</h2>
+                <h2 className="career_subtitle"><Trans i18nKey="careerPage.whyTitle" /></h2>
                 <div className="career_line small"></div>
 
                 <ul className="career_list">
-                    <li>Можливість впливати на ключові рішення продукту.</li>
-                    <li>Команда, що надихає та підтримує.</li>
-                    <li>Сучасний технологічний стек.</li>
-                    <li>Гнучкий робочий графік та дистанційна робота.</li>
-                    <li>Продукт, яким користуються тисячі людей.</li>
+                    <li><Trans i18nKey="careerPage.why1" /></li>
+                    <li><Trans i18nKey="careerPage.why2" /></li>
+                    <li><Trans i18nKey="careerPage.why3" /></li>
+                    <li><Trans i18nKey="careerPage.why4" /></li>
+                    <li><Trans i18nKey="careerPage.why5" /></li>
                 </ul>
             </div>
 
             <div className="career_section">
-                <h2 className="career_subtitle">Відкриті вакансії</h2>
+                <h2 className="career_subtitle"><Trans i18nKey="careerPage.vacanciesTitle" /></h2>
                 <div className="career_line small"></div>
 
                 <div className="career_jobs">
 
                     <div className="job_card">
-                        <h3 className="job_title">Frontend Developer (React)</h3>
+                        <h3 className="job_title"><Trans i18nKey="careerPage.job1Title" /></h3>
                         <p className="job_desc">
-                            Створення інтерфейсу, UI-компонентів, оптимізація продуктивності,
-                            робота з відеоплеєром та рекомендаційним модулем.
+                            <Trans i18nKey="careerPage.job1Desc" />
                         </p>
                     </div>
 
                     <div className="job_card">
-                        <h3 className="job_title">Backend Developer (Node.js)</h3>
+                        <h3 className="job_title"><Trans i18nKey="careerPage.job2Title" /></h3>
                         <p className="job_desc">
-                            Робота над API, системою рекомендацій, авторизацією, аналітикою та
-                            масштабуванням сервісу.
+                            <Trans i18nKey="careerPage.job2Desc" />
                         </p>
                     </div>
 
                     <div className="job_card">
-                        <h3 className="job_title">UI/UX Designer</h3>
+                        <h3 className="job_title"><Trans i18nKey="careerPage.job3Title" /></h3>
                         <p className="job_desc">
-                            Розробка інтерфейсів, покращення користувацького досвіду, створення
-                            нової візуальної айдентики Kysk.
+                            <Trans i18nKey="careerPage.job3Desc" />
                         </p>
                     </div>
 
@@ -61,12 +58,11 @@ export const CareerPage = () => {
             </div>
 
             <div className="career_section">
-                <h2 className="career_subtitle">Не знайшли свою роль?</h2>
+                <h2 className="career_subtitle"><Trans i18nKey="careerPage.notFoundTitle" /></h2>
                 <div className="career_line small"></div>
 
                 <p className="career_intro">
-                    Ми завжди відкриті до талановитих людей.
-                    Надішліть резюме нам на пошту — і ми обов'язково розглянемо вашу кандидатуру.
+                    <Trans i18nKey="careerPage.notFoundText" />
                 </p>
                 <a
                     href="https://mail.google.com/mail/?view=cm&fs=1&to=kyskfilms@gmail.com"
@@ -74,7 +70,7 @@ export const CareerPage = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    Надіслати резюме
+                    <Trans i18nKey="careerPage.sendResume" />
                 </a>
 
             </div>

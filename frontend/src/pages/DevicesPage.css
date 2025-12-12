@@ -47,14 +47,65 @@
 }
 
 .device_name {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
     font-family: "Raleway", sans-serif;
 }
 
 .device_desc {
     margin-top: 6px;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.55;
     color: #ccccd7;
+}
+
+@media (max-width: 1680px) {
+
+    .devices_title {
+        font-size: 40px;
+    }
+
+    .device_name {
+        font-size: 27px;
+    }
+
+    .device_desc {
+        font-size: 19px;
+
+    }
+
+}
+
+@media (max-width: 1440px) {
+
+    .devices_title {
+        font-size: 37px;
+    }
+
+    .device_name {
+        font-size: 26px;
+    }
+
+    .device_desc {
+        font-size: 17px;
+
+    }
+
+}
+
+@media (max-width: 1280px) {
+
+    .devices_title {
+        font-size: 35px;
+    }
+
+    .device_name {
+        font-size: 24px;
+    }
+
+    .device_desc {
+        font-size: 16px;
+
+    }
+
 }

@@ -1,16 +1,19 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Home } from '../pages/Home';
-import { Settings } from '../pages/Settings';
 import { Premium } from '../pages/Premium';
 import { Favorites } from '../pages/Favorites';
 import { Catalog } from '../pages/Catalog';
+import { NewAndPopular } from '../pages/NewAndPopular';
 import { MoviePage } from '../pages/MoviePage';
 import {AboutPage} from "../pages/AboutPage";
 import {CareerPage} from "../pages/CareerPage";
 import {AgentsPage} from "../pages/AgentsPage";
 import {PromotionsPage} from "../pages/PromotionsPage";
 import {FaqPage} from "../pages/FaqPage";
+import {TermsPage} from "../pages/TermsPage";
+import {PrivacyPage} from "../pages/PrivacyPage";
+import {RulesPage} from "../pages/RulesPage";
 import {DevicesPage} from "../pages/DevicesPage";
 import {DistributorsPage} from "../pages/DistributorsPage";
 import {ContactsPage} from "../pages/ContactsPage";
@@ -24,11 +27,12 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
     return (
         <Routes>
             <Route
-                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick}/>}
+                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick} onOpenLogoutModal={onOpenLogoutModal}/>}
 
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
                 <Route path="/catalog" element={<Catalog />} />
+                <Route path="/new-popular" element={<NewAndPopular />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
                 <Route path="/movie/:id" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
@@ -40,23 +44,10 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/devices" element={<DevicesPage />} />
                 <Route path="/distributors" element={<DistributorsPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/rules" element={<RulesPage />} />
                 <Route path="/error" element={<ErrorPage />} />
-                <Route
-                    path="/settings"
-                    element={
-                        <PrivateRoute>
-
-                            <Settings
-                                onOpenLogoutModal={onOpenLogoutModal}
-                                onPaymentClick={onPaymentClick}
-                                onDeviceClick={onDeviceClick}
-                                userProfile={userProfile}
-                                onProfileUpdate={onProfileUpdate}
-                            />
-
-                        </PrivateRoute>
-                    }
-                />
 
                 <Route
                     path="/admin"

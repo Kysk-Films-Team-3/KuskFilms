@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './Header.css';
 import { getPopularFilms, getPopularActors } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
+import { HeaderSearch } from './HeaderSearch';
 
-export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
+export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal}) => {
 
     const { t, i18n } = useTranslation();
     const location = useLocation();
@@ -21,6 +23,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
     const [popularFilms, setPopularFilms] = useState([]);
     const [popularActors, setPopularActors] = useState([]);
     const dropdownRef = useRef(null);
+    const searchRef = useRef(null);
 
     const isLoggedIn = keycloak?.authenticated;
     const avatarUrl = userProfile?.avatarUrl;
@@ -151,111 +154,133 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
         };
     }, [isDropdownOpen]);
 
-    const showPopular = searchQuery === '';
+    useEffect(() => {
+        if (isSearchOpen) {
+            const originalOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            
+            document.body.classList.add('search-open');
+            
+            const mainElement = document.querySelector('.layout-main');
+            const footerElement = document.querySelector('.footer, footer');
+            const layoutElement = document.querySelector('.layout');
+            
+            if (mainElement) {
+                mainElement.classList.add('search-blocked');
+                mainElement.style.pointerEvents = 'none';
+                mainElement.style.userSelect = 'none';
+            }
+            if (footerElement) {
+                footerElement.style.pointerEvents = 'none';
+                footerElement.style.userSelect = 'none';
+            }
+            if (layoutElement && !layoutElement.querySelector('.header')) {
+                layoutElement.style.pointerEvents = 'none';
+            }
+            
+            const blockEvent = (e) => {
+                const target = e.target;
+                const isAllowed = target.closest('.header') ||
+                                target.closest('.header_search') ||
+                                target.closest('.header_search_box') ||
+                                target.closest('.header_search_results') ||
+                                target.closest('.header_search_overlay');
+                
+                if (!isAllowed) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    return false;
+                }
+            };
+
+            const events = ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'contextmenu', 'dblclick'];
+            events.forEach(eventType => {
+                document.addEventListener(eventType, blockEvent, { capture: true, passive: false });
+            });
+
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.classList.remove('search-open');
+                
+                if (mainElement) {
+                    mainElement.classList.remove('search-blocked');
+                    mainElement.style.pointerEvents = '';
+                    mainElement.style.userSelect = '';
+                }
+                if (footerElement) {
+                    footerElement.style.pointerEvents = '';
+                    footerElement.style.userSelect = '';
+                }
+                if (layoutElement) {
+                    layoutElement.style.pointerEvents = '';
+                }
+                
+                events.forEach(eventType => {
+                    document.removeEventListener(eventType, blockEvent, { capture: true });
+                });
+            };
+        }
+    }, [isSearchOpen]);
 
     return (
-        <header className="header">
-            <div className="header_container">
-                <div className="header_left">
-                    <Link to="/" className="logo">
-                        <img src="https://res.cloudinary.com/da9jqs8yq/image/upload/v1754083133/Logo.png" className="header_logo" alt="Logo"/>
-                    </Link>
+        <>
+            {isSearchOpen && createPortal(
+                <div 
+                    className="header_search_overlay"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                        setSearchResults({ films: [], actors: [] });
+                    }}
+                />,
+                document.body
+            )}
+            <header className="header">
+                <div className="header_container">
+                    <div className="header_left">
+                        <Link to="/" className="logo">
+                            <img src="https://res.cloudinary.com/da9jqs8yq/image/upload/v1754083133/Logo.png" className="header_logo" alt="Logo"/>
+                        </Link>
 
-                    {!isSearchOpen && !isPremiumPage && (
-                        <nav className="header_nav">
-                            <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
-                            <NavLink to="/Catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                            <NavLink to="/"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
-                            <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
-                            <NavLink to="/movie">Плеер(временно)</NavLink>
-                        </nav>
-                    )}
+                        {!isSearchOpen && !isPremiumPage && (
+                            <nav className="header_nav">
+                                <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
+                                <NavLink to="/catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
+                                <NavLink to="/new-popular"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
+                                <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
+                            </nav>
+                        )}
 
-                    {isSearchOpen && !isPremiumPage && (
-                        <div className="header_search_box">
-                            <div className="header_search_bar">
-                                <div className="header_search_left_icon" />
-                                <input
-                                    type="text"
-                                    placeholder={String(t("header.search.placeholder"))}
-                                    autoFocus
-                                    value={searchQuery}
-                                    onChange={handleSearchInputChange}
-                                />
-                            </div>
-                            {isSearchOpen && (
-                                <div className={`header_search_results ${showPopular ? '' : 'no-before'}`}>
-                                    {showPopular ? (
-                                        <>
-                                            <span className="header_search_label"><Trans i18nKey="searchFrequently" /></span>
-                                            <div className="header_search_films">
-                                                {popularFilms.map(film => (
-                                                    <div key={film.id} className="header_film_card">
-                                                        <Link to={`/film/${film.id}`}>
-                                                            <img src={film.image} className="header_films_preview" alt={film.title} />
-                                                        </Link>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="header_search_actors">
-                                                {popularActors.map(actor => (
-                                                    <div key={actor.id} className="header_actor_card">
-                                                        <Link to={`/actor/${actor.id}`}>
-                                                            <img src={actor.image} className="header_actor_preview" alt={actor.name} />
-                                                            <p className="header_actor_name"><Trans i18nKey={`actors.${actor.name}`} /></p>
-                                                            <p className="header_actor_role"><Trans i18nKey={`actorRoles.${actor.role}`} /></p>
-                                                        </Link>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="search_results_display">
-                                            <div className="search_results_columns">
-                                                {searchResults.films.length > 0 && (
-                                                    <div className="search_results_films_column">
-                                                        <h3><Trans i18nKey="category.films" /></h3>
-                                                        {searchResults.films.map(film => (
-                                                            <Link to={`/film/${film.id}`} key={film.id} className="search_item_card">
-                                                                <img src={film.image} className="search_item_image" alt={film.title} />
-                                                                <div className="search_item_info">
-                                                                    <p className="search_item_title">
-                                                                        {film.title} <span className="search_item_type">(<Trans i18nKey="category.films" />)</span>
-                                                                    </p>
-                                                                    <p className="search_item_rating">6.8 <span className="search_item_year">(2023)</span></p>
-                                                                    <p className="search_item_genre">USA • Adventure</p>
-                                                                </div>
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                                {searchResults.actors.length > 0 && (
-                                                    <div className="search_results_actors_column">
-                                                        <h3><Trans i18nKey="category.series" /></h3>
-                                                        {searchResults.actors.map(actor => (
-                                                            <Link to={`/actor/${actor.id}`} key={actor.id} className="search_item_card actor">
-                                                                <img src={actor.image} className="search_item_image_actor" alt={actor.name} />
-                                                                <div className="search_item_info">
-                                                                    <p className="search_item_title">
-                                                                        {actor.name} <span className="search_item_type">(Actor)</span>
-                                                                    </p>
-                                                                    <p className="search_item_birthdate">Barbara Ferreira, 1996</p>
-                                                                </div>
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                            {searchResults.films.length === 0 && searchResults.actors.length === 0 && (
-                                                <p className="no_results_text"><Trans i18nKey="home.errorLoading" /></p>
-                                            )}
-                                        </div>
-                                    )}
+                        {isSearchOpen && !isPremiumPage && (
+                            <div className="header_search_box" ref={searchRef}>
+                                <div className="header_search_bar">
+                                    <div className="header_search_left_icon" />
+                                    <input
+                                        type="text"
+                                        placeholder={String(t("header.search.placeholder"))}
+                                        autoFocus
+                                        value={searchQuery}
+                                        onChange={handleSearchInputChange}
+                                    />
                                 </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                                {isSearchOpen && (
+                                    <HeaderSearch
+                                        popularFilms={popularFilms}
+                                        popularActors={popularActors}
+                                        searchResults={searchResults}
+                                        searchQuery={searchQuery}
+                                    />
+                                )}
+                            </div>
+                        )}
+                    </div>
 
                 <div className="header_right">
                     {!isPremiumPage && (
@@ -285,10 +310,8 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                     {isLoggedIn ? (
                         <div className="header_profile">
                             <div onClick={toggleDropdown} className="header_profile_switch">
-                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? 'Закрити меню' : 'Відкрити меню'} />
+                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? t("header.dropdown.closeMenu") : t("header.dropdown.openMenu")} />
 
-                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                {/* Статичный `div` заменен на `div` с условным рендерингом `img` внутри. */}
                                 <div className="header_avatar">
                                     {avatarUrl && (
                                         <img
@@ -298,15 +321,12 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                         />
                                     )}
                                 </div>
-                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                             </div>
 
                             {isDropdownOpen && (
                                 <div className="header_dropdown" ref={dropdownRef}>
                                     <div className="profile_info_block">
                                         <div className="profile_block">
-                                            {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                            {/* Аналогичное изменение для аватара в выпадающем меню. */}
                                             <div className="header_avatar">
                                                 {avatarUrl && (
                                                     <img
@@ -316,14 +336,10 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                     />
                                                 )}
                                             </div>
-                                            {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             <div className="profile_text_block">
-                                                {/* ========= НАЧАЛО ИЗМЕНЕНИЙ ========== */}
-                                                {/* Старый способ получения имени заменен на новую переменную `username`. */}
                                                 <div className="profile_name">
                                                     {username || 'User'}
                                                 </div>
-                                                {/* ========= КОНЕЦ ИЗМЕНЕНИЙ ============ */}
                                             </div>
                                         </div>
                                         <div className="check_icon"></div>
@@ -336,12 +352,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                 <Trans i18nKey="header.dropdown.manageProfile" />
                                             </button>
                                         </li>
-                                        <li>
-                                            <Link to="/settings" onClick={handleMenuItemClick} className="dropdown_link">
-                                                <div className="dropdown_icon settings_icon"></div>
-                                                <Trans i18nKey="header.dropdown.settings" />
-                                            </Link>
-                                        </li>
+
                                         <li>
                                             <button
                                                 className="dropdown_link language_switch"
@@ -352,8 +363,22 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                                 }}
                                             >
                                                 <div className="dropdown_icon language_icon"></div>
-                                                {i18n.language === 'ua' ? 'English' : 'Українська'}
+                                                {i18n.language === 'ua' ? <Trans i18nKey="header.dropdown.switchToEnglish" /> : <Trans i18nKey="header.dropdown.switchToUkrainian" />}
                                             </button>
+                                        </li>
+                                        <li className="header_dropdown_logout">
+                                            <Link
+                                                to="/"
+                                                className="settings_logout_link dropdown_link"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleMenuItemClick();
+                                                    onOpenLogoutModal();
+                                                }}
+                                            >
+                                                <div className="dropdown_icon logout_icon"></div>
+                                                <Trans i18nKey="settings.logout" />
+                                            </Link>
                                         </li>
                                         {hasAdminRole && (
                                             <li>
@@ -370,13 +395,12 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                                         )}
                                     </ul>
 
-                                    <hr className="divider" />
-                                    <div style={{ padding: '0 10px', backgroundColor: '#222', color: 'gray' }}>
+                                    <div style={{ padding: '10px 10px', color: 'gray' }}>
                                         <p style={{ margin: '5px 0', fontWeight: 'bold' }}>API ТЕСТЫ</p>
                                         <ul>
                                             <li>
                                                 <button onClick={() => fetchApi('/api/test/public')} className="dropdown_link">
-                                                    <div className="dropdown_icon settings_icon"></div>
+                                                    <div className="dropdown_icon language_icon"></div>
                                                     Тест: Public
                                                 </button>
                                             </li>
@@ -409,5 +433,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick}) => {
                 </div>
             </div>
         </header>
+        </>
     );
 };

@@ -1,8 +1,7 @@
 .favorite_page {
     background-color: #262630;
     color: #F8F8FE;
-    padding: 130px 60px 60px;
-    font-family: 'Raleway', sans-serif;
+    padding: 120px 60px 60px;
     box-sizing: border-box;
     min-height: 742px;
 }
@@ -95,9 +94,150 @@
 .favorite_actor_card_line1,
 .favorite_actor_card_line2 {
     font-size: 14px;
+    font-family: "Inter", sans-serif;
     color: #F8F8FE;
+}
+
+.favorite_actor_card_linedate{
+    font-family: "Inter", sans-serif;
 }
 
 .favorite_actor_card_line2 {
     margin-top: 5px;
+}
+
+
+@media (max-width: 1680px) {
+
+    .favorite_page {
+        padding: 110px 60px 60px;
+    }
+
+    .favorite_title {
+        font-size: 28px;
+    }
+
+    .favorite_subtitle {
+        font-size: 22px;
+    }
+
+    .favorite_actor_card {
+        width: 230px;
+    }
+
+    .favorite_actor_card_img {
+        height: 300px;
+    }
+
+    .favorite_actor_card_save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .favorite_actor_card_rating {
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        font-size: 30px;
+        margin-bottom: 5px;
+    }
+
+    .favorite_actor_card_line1,
+    .favorite_actor_card_line2,
+    .favorite_actor_card_linedate {
+        font-size: 16px;
+        color: #F8F8FE;
+    }
+
+
+
+}
+
+@media (max-width: 1440px) {
+
+    .favorite_page {
+        padding: 95px 60px 60px;
+    }
+
+    .favorite_title {
+        font-size: 25px;
+    }
+
+    .favorite_subtitle {
+        font-size: 20px;
+    }
+
+    .favorite_actor_card {
+        width: 230px;
+    }
+
+    .favorite_actor_card_img {
+        height: 300px;
+    }
+
+    .favorite_actor_card_save {
+        width: 30px;
+        height: 30px;
+    }
+
+    .favorite_actor_card_rating {
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        font-size: 30px;
+        margin-bottom: 5px;
+    }
+
+    .favorite_actor_card_line1,
+    .favorite_actor_card_line2,
+    .favorite_actor_card_linedate {
+        font-size: 15px;
+        color: #F8F8FE;
+    }
+
+
+
+}
+
+@media (max-width: 1280px) {
+
+    .favorite_page {
+        padding: 90px 60px 60px;
+    }
+
+    .favorite_title {
+        font-size: 25px;
+    }
+
+    .favorite_subtitle {
+        font-size: 18px;
+    }
+
+    .favorite_actor_card {
+        width: 200px;
+    }
+
+    .favorite_actor_card_img {
+        height: 280px;
+    }
+
+    .favorite_actor_card_save {
+        width: 28px;
+        height: 28px;
+    }
+
+    .favorite_actor_card_rating {
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+    .favorite_actor_card_line1,
+    .favorite_actor_card_line2,
+    .favorite_actor_card_linedate {
+        font-size: 14px;
+        color: #F8F8FE;
+    }
+
+
+
 }

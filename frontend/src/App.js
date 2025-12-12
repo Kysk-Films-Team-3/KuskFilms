@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes/AppRoutes';
 import { Profile } from './components/modal/Profile';
-import { Device } from './components/modal/Device';
-import { Payment } from './components/modal/Payment';
 import { Logout } from './components/modal/Logout';
 import { ActorRecommendations } from './components/modal/ActorRecommendations';
 import { RegistrationComplete } from './components/modal/RegistrationComplete';
@@ -81,8 +79,6 @@ const AppContent = () => {
                 onPromoInputClick={() => openModal('PromoInput')}
                 onCommentModalClick={() => openModal('CommentModal')}
                 onPlayerOverlayClick={() => openModal('PlayerOverlay')}
-                onDeviceClick={() => openModal('device')}
-                onPaymentClick={() => openModal('payment')}
                 onOpenLogoutModal={() => openModal('logout')}
                 onOpenActorRecs={(actor) => openModal({ type: 'actorRecs', actor })}
                 onProfileClick={() => openModal('profile')}
@@ -90,8 +86,6 @@ const AppContent = () => {
             {activeModal === 'PlayerOverlay' && <PlayerOverlay isOpen onClose={closeModal} />}
             {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
             {activeModal === 'CommentModal' && <CommentModal isOpen onClose={closeModal} />}
-            {activeModal === 'device' && <Device isOpen onClose={closeModal} />}
-            {activeModal === 'payment' && <Payment isOpen onClose={closeModal} />}
             {activeModal === 'logout' && <Logout isOpen onClose={closeModal} />}
             {activeModal === 'profile' && <Profile userProfile={userProfile} onProfileUpdate={setUserProfile} isOpen onClose={closeModal} />}
             {activeModal?.type === 'actorRecs' && (

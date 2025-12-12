@@ -2,7 +2,8 @@
     background-color: #262630;
     color: #F8F8FE;
     font-family: 'Raleway', sans-serif;
-    padding-top: 130px;
+    padding-top: 80px;
+    padding-bottom: 95px;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -10,7 +11,7 @@
 .premium_header {
     display: flex;
     align-items: center;
-    margin-top: 30px;
+    margin-top: 120px;
     margin-left: 60px;
 }
 
@@ -20,14 +21,14 @@
     gap: 10px;
     text-decoration: none;
     color: #F8F8FE;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: 500;
     cursor: pointer;
 }
 
 .premium_back_icon {
-    width: 24px;
-    height: 24px;
+    width: 35px;
+    height: 35px;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756254344/Back.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -45,14 +46,14 @@
 .premium_row {
     margin-left: 60px;
     align-items: center;
-    width: 1800px;
+    width: 90%;
     height: 321px;
 }
 
 .premium_row::before {
     content: '';
     position: absolute;
-    top: 31%;
+    top: 28%;
     left: 29%;
     width: 1px;
     height: 253px;
@@ -62,19 +63,19 @@
 .premium_title_line {
     white-space: nowrap;
     margin-top: 60px;
-    gap: 1040px;
+    gap: 55%;
     display: flex;
-    font-size: 25px;
+    font-size: 30px;
 }
 
 .premium_title{
     color: #FFFFFF;
-    font-size: 25px;
+    font-size: 30px;
 
 }
 
 .premium_price{
-    font-size: 20px;
+    font-size: 25px;
     text-align: center;
     margin-top: 5px;
     font-weight: 400;
@@ -90,7 +91,6 @@
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid #34353F;
-
 }
 
 .premium_line:last-child {
@@ -98,7 +98,7 @@
 }
 
 .premium_feature_text {
-    font-size: 20px;
+    font-size: 25px;
     color: #9999A1;
     flex: 1;
     font-weight: 500;
@@ -108,7 +108,7 @@
 .premium_line_icon {
     width: 40px;
     height: 40px;
-    margin-right: 450px;
+    margin-right: 29%;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756263887/Done.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -118,7 +118,7 @@
 .premium_button_container {
     display: flex;
     justify-content: center;
-    margin-left: 890px;
+    margin-left: 31%;
 }
 
 .premium_button {
@@ -126,7 +126,7 @@
     color: #F8F8FE;
     font-size: 24px;
     font-weight: 200;
-    padding: 10px 15px;
+    padding: 10px 25px;
     border: none;
     border-radius: 15px;
     cursor: pointer;
@@ -137,37 +137,212 @@
     background: linear-gradient(90deg, #202588, #3429B0);
 }
 
-
-@media (min-width: 1920px) {
+@media (max-width: 1920px) {
 
     .premium_page {
-        min-height: calc(100vh - 563px);
-        padding-top: 130px;
+        padding-top: 80px;
+        padding-bottom: 25px;
+    }
+
+    .premium_back {
+        font-size: 30px;
+    }
+
+    .premium_back_icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .premium_row {
+        width: 90%;
+    }
+
+    .premium_row::before {
+        top: 36%;
+        left: 45%;
+    }
+
+    .premium_title_line {
+        gap: 58%;
+    }
+
+    .premium_title {
+        font-size: 28px;
+    }
+
+    .premium_feature_text{
+        font-size: 25px;
+    }
+
+    .premium_button_container {
+        margin-top: 30px;
+        margin-left: 40%;
+    }
+
+    .premium_line_icon {
+        margin-right: 22%;
+        width: 40px;
+        height: 40px;
+    }
+
+    .premium_button_container {
+        margin-left: 45%;
+    }
+
+    .premium_button {
+        font-size: 20px;
+        padding: 10px 15px;
+    }
+
+
+
+}
+
+@media (max-width: 1680px) {
+
+    .premium_page {
+        padding-top: 80px;
+        padding-bottom: 25px;
+    }
+
+    .premium_back {
+        font-size: 30px;
+    }
+
+    .premium_back_icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .premium_row {
+        width: 90%;
+    }
+
+    .premium_row::before {
+        top: 30%;
+        left: 45%;
+    }
+
+    .premium_title_line {
+        gap: 55%;
+    }
+
+    .premium_title {
+        font-size: 28px;
+    }
+
+    .premium_feature_text{
+        font-size: 25px;
+    }
+
+    .premium_button_container {
+        margin-top: 30px;
+        margin-left: 40%;
+    }
+
+    .premium_line_icon {
+        margin-right: 22%;
+        width: 40px;
+        height: 40px;
+    }
+
+    .premium_button_container {
+        margin-left: 45%;
+    }
+
+    .premium_button {
+        font-size: 20px;
+        padding: 10px 15px;
+    }
+
+
+
+}
+
+@media (max-width: 1440px) {
+
+    .premium_page {
+        padding-top: 70px;
+    }
+
+    .premium_back {
+        font-size: 28px;
+    }
+
+    .premium_back_icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .premium_row {
+        width: 90%;
+    }
+
+    .premium_row::before {
+        top: 41%;
+        left: 45%;
+    }
+
+    .premium_title_line {
+        gap: 52%;
+    }
+
+    .premium_title {
+        font-size: 26px;
+    }
+
+    .premium_feature_text{
+        font-size: 22px;
+    }
+
+    .premium_button_container {
+        margin-top: 30px;
+        margin-left: 40%;
+    }
+
+    .premium_line_icon {
+        margin-right: 22%;
+        width: 35px;
+        height: 35px;
+    }
+
+    .premium_button_container {
+        margin-left: 47%;
+    }
+
+    .premium_button {
+        font-size: 20px;
+        padding: 10px 15px;
+    }
+
+
+
+}
+
+@media (max-width: 1280px) {
+
+    .premium_page {
+        padding-top: 70px;
         padding-bottom: 30px;
         box-sizing: border-box;
     }
 
     .premium_back {
-        font-size: 32px;
+        font-size: 25px;
     }
 
     .premium_back_icon {
-        width: 40px;
-        height: 40px;
-        background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756254344/Back.png');
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-
+        width: 30px;
+        height: 30px;
     }
 
     .premium_row {
-        width: 95%;
+        width: 90%;
     }
 
     .premium_row::before {
-        top: 25%;
-        left: 25%;
+        top: 34%;
+        left: 45%;
     }
 
     .premium_title_line {
@@ -175,20 +350,31 @@
     }
 
     .premium_title {
-        font-size: 32px;
+        font-size: 25px;
     }
 
     .premium_feature_text{
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .premium_button_container {
-        margin-top: 30px;
-        margin-left: 30%;
+        margin-top: -10px;
+        margin-left: 40%;
     }
 
     .premium_line_icon {
-        margin-right: 33.5%;
+        margin-right: 22%;
+        width: 30px;
+        height: 30px;
+    }
+
+    .premium_button_container {
+        margin-left: 47%;
+    }
+
+    .premium_button {
+        font-size: 20px;
+        padding: 10px 15px;
     }
 
 
