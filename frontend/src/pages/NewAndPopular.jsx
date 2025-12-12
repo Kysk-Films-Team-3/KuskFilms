@@ -291,7 +291,6 @@ export const NewAndPopular = () => {
                 if (newFilms) {
                     setFilmsData(newFilms.films || []);
                 } else {
-                    // Если нет new-films, берем первую подкатегорию из Фільми
                     const filmsCategory = allContent.find(cat => cat.category === 'Фільми');
                     if (filmsCategory && filmsCategory.subcategories && filmsCategory.subcategories.length > 0) {
                         setFilmsData(filmsCategory.subcategories[0].films || []);
@@ -357,7 +356,6 @@ export const NewAndPopular = () => {
                         </div>
                     </div>
                 </div>
-            {/* Collections Section */}
             <div className="popular_collections_section">
                 <div className="popular_collections_header">
                     <h2 className="popular_collections_title"><Trans i18nKey="newAndPopular.collections" /></h2>
@@ -402,7 +400,6 @@ export const NewAndPopular = () => {
                 </div>
             </div>
 
-            {/* Новинки сериалов Section */}
             {seriesData.length > 0 && (
                 <div className="popular_films_block">
                     <div className="popular_films_header">
@@ -509,9 +506,6 @@ export const NewAndPopular = () => {
                     </div>
                 </div>
 
-
-
-            {/* Новинки фильмов Section */}
             {filmsData.length > 0 && (
                 <div className="popular_films_block">
                     <div className="popular_films_header">

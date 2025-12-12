@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { fakeCategories, fakeContent, fakeSlides, getMenuItems, getWatchModeItems, getStarsActors } from '../services/api';
+import { getMenuItems, getWatchModeItems, getHomePageData, transformCarouselItems, transformCategories, transformSections, transformCelebrities, transformPromo } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import {Trans, useTranslation} from 'react-i18next';
 import '../i18n/i18n';
@@ -42,6 +42,7 @@ export const Home = ({ onOpenActorRecs }) => {
     const [menuItems, setMenuItems] = useState([]);
     const [watchModeItems, setWatchModeItems] = useState([]);
     const [starsActors, setStarsActors] = useState([]);
+    const [promoData, setPromoData] = useState(null);
     const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
     const { t } = useTranslation();
     const { favorites, toggleFavorite } = useFavorites();
@@ -132,7 +133,6 @@ export const Home = ({ onOpenActorRecs }) => {
             try {
                 setMenuItems(await getMenuItems());
                 setWatchModeItems(await getWatchModeItems());
-                setStarsActors(await getStarsActors());
             } catch (err) {
                 console.error("Помилка завантаження допоміжних даних:", err);
             }
@@ -140,18 +140,33 @@ export const Home = ({ onOpenActorRecs }) => {
 
         const loadInitialData = async () => {
             try {
-                const loadedSlides = await fakeSlides();
-                const loadedCategories = await fakeCategories();
-
-                setSlides(loadedSlides);
-                setCategories(loadedCategories);
-                setOriginalCategories(loadedCategories);
-
-                const allCategoryNames = loadedCategories.map(cat => cat.name);
-                const loadedAllContent = await fakeContent(allCategoryNames);
-
-                setAllContent(loadedAllContent);
-                setFilteredContent(loadedAllContent);
+                const homeData = await getHomePageData();
+                
+                const slides = transformCarouselItems(homeData.carousel);
+                setSlides(slides);
+                
+                const categories = transformCategories(homeData.categories);
+                setCategories(categories);
+                setOriginalCategories(categories);
+                
+                const sections = transformSections(homeData.sections);
+                const mappedContent = [{
+                    category: "Главная",
+                    subcategories: sections.map(section => ({
+                        id: `section-${section.id}`,
+                        title: section.title,
+                        films: section.films
+                    }))
+                }];
+                
+                setAllContent(mappedContent);
+                setFilteredContent(mappedContent);
+                
+                const celebrities = transformCelebrities(homeData.celebrities);
+                setStarsActors(celebrities);
+                
+                const promo = transformPromo(homeData.promo);
+                setPromoData(promo);
 
                 await loadAuxiliaryData();
             } catch (err) {
@@ -351,28 +366,52 @@ export const Home = ({ onOpenActorRecs }) => {
                     <div className="home_carousel_outer_wrapper">
                         <div className="home_carousel_wrapper" ref={carouselWrapperRef}>
                             <div className="home_carousel_track" ref={carouselTrackRef}>
-                                {slides.map((slide, index) => (
-                                    <Link key={slide.id} to={slide.link} className={`home_carousel_slide ${index === currentSlide ? 'active' : ''}`}>
-                                        <div className={`home_slide_background ${slide.className}`}/>
+                                {slides.length > 0 ? slides.map((slide, index) => (
+                                    <Link key={slide.id || index} to={slide.link || '#'} className={`home_carousel_slide ${index === currentSlide ? 'active' : ''}`}>
+                                        <div 
+                                            className={`home_slide_background ${slide.className || 'home_slide1'}`} 
+                                            style={slide.imageUrl ? { 
+                                                backgroundImage: `url(${slide.imageUrl})`,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center'
+                                            } : {}}
+                                        />
                                         <div className="home_slide_text">
-                                            <div className="home_slide_new">
-                                                <div className="home_slide_new_title"><Trans i18nKey={slide.new}/></div>
+                                            {slide.isNew && (
+                                                <div className="home_slide_new">
+                                                    <div className="home_slide_new_title"><Trans i18nKey="slide.new"/></div>
+                                                </div>
+                                            )}
+                                            <div className="home_slide_film_name">
+                                                {slide.title || 'Без названия'}
                                             </div>
-                                            <div className="home_slide_film_name"><Trans i18nKey={slide.filmname}/></div>
                                             <div className="home_slide_line_block">
-                                                <div className="home_slide_line_rating">8.0</div>
-                                                <div className="home_slide_line_time">2022-2025</div>
-                                                <div className="home_slide_line_genre">
-                                                    <Trans i18nKey={slide.genre} />
-                                                </div>
-                                                <div className="home_slide_line_time">
-                                                    <Trans i18nKey={slide.time}/>
-                                                </div>
+                                                {slide.rating && (
+                                                    <div className="home_slide_line_rating">{slide.rating}</div>
+                                                )}
+                                                {slide.year && (
+                                                    <div className="home_slide_line_time">{slide.year}</div>
+                                                )}
+                                                {slide.genre && (
+                                                    <div className="home_slide_line_genre">
+                                                        {slide.genre}
+                                                    </div>
+                                                )}
+                                                {slide.duration && (
+                                                    <div className="home_slide_line_time">
+                                                        {slide.duration}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </Link>
-
-                                ))}
+                                )) : (
+                                    <div className="home_carousel_slide">
+                                        <div className="home_slide_text">
+                                            <div className="home_slide_film_name">Загрузка...</div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             {slides.length > 0 && (
                                 <>
@@ -403,7 +442,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                     <button key={category.name} className={`home_categories_button ${isActive ? 'active' : ''}`} onClick={() => {if (!isActive) {setActiveCategories(prev => [category.name, ...prev]);
                                         setTimeout(() => { if (categoriesRef.current) { categoriesRef.current.scrollTo({ left: 0, behavior: 'auto' }); } }, 10); } }}>
                                         <img src={isActive ? category.activeIcon : category.icon} className="home_button_icon" alt={category.name} onDragStart={e => e.preventDefault()}/>
-                                        <span><Trans i18nKey={`category.${category.name}`} /></span>
+                                        <span>{category.name}</span>
                                         {isActive && (
                                             <span className="home_category_remove" onClick={(e) => {e.stopPropagation();setActiveCategories(prev => prev.filter(name => name !== category.name));}}/>)}
                                     </button>
@@ -417,11 +456,10 @@ export const Home = ({ onOpenActorRecs }) => {
             <div className="home_dynamic">
                 {filteredContent.map(cat =>
                     cat.subcategories
-                        .filter(sub => ['new-series', 'cartoons-liked'].includes(sub.id))
                         .map(sub => (
                             <div key={sub.id} className="home_block">
                                 <div className="home_block_header">
-                                    <div className="home_block_title"><Trans i18nKey={`subcategories.${sub.id}`} /></div>
+                                    <div className="home_block_title">{sub.title}</div>
                                     <div className="home_block_arrow"></div>
                                 </div>
                                 <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
@@ -456,10 +494,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                                 image: film.image,
                                                                 hoverImage: film.hoverImage,
                                                                 rating: film.rating,
-                                                                linedate: `films.${film.id}.linedate`,
-                                                                line1: `films.${film.id}.line1`,
-                                                                line2: film.line2 ? `films.${film.id}.line2` : undefined,
-                                                                season: film.season ? `films.${film.id}.season` : undefined,
+                                                                linedate: film.linedate,
+                                                                line1: film.line1,
+                                                                line2: film.line2,
+                                                                season: film.season,
                                                                 source: 'home',
                                                             });
                                                         }}
@@ -483,10 +521,13 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <div className="home_film_text">
                                                     <div className="home_film_rating">{film.rating}</div>
                                                     <div className="home_film_line">
-                                                        <div className="home_film_line1"><span className="home_film_date"><Trans i18nKey={`films.${film.id}.linedate`} /></span>      <Trans i18nKey={`films.${film.id}.line1`} /></div>
-                                                        <div className="home_film_line2"><Trans i18nKey={`films.${film.id}.line2`} /></div>
+                                                        <div className="home_film_line1">
+                                                            {film.linedate && <span className="home_film_date">{film.linedate}</span>}
+                                                            {film.line1 && ` ${film.line1}`}
+                                                        </div>
+                                                        {film.line2 && <div className="home_film_line2">{film.line2}</div>}
                                                     </div>
-                                                    <div className="home_film_season"><Trans i18nKey={`films.${film.id}.season`} /></div>
+                                                    {film.season && <div className="home_film_season">{film.season}</div>}
                                                 </div>
                                             </div>
 
@@ -507,20 +548,31 @@ export const Home = ({ onOpenActorRecs }) => {
                             </div>
 
                             <div className="home_stars_actor">
-                                {starsActors.map(actor => (
-                                    <div key={actor.id} className={actor.className} onClick={() => handleActorClick(actor)}>
+                                {starsActors.map((actor, index) => (
+                                    <div 
+                                        key={actor.id || actor.collectionId} 
+                                        className={actor.className || `home_stars_actor_${index + 1}`} 
+                                        style={actor.actorImageUrl ? { backgroundImage: `url(${actor.actorImageUrl})` } : {}}
+                                        onClick={() => handleActorClick(actor)}
+                                    >
                                         <div className="home_stars_text">
-                                            <div className="home_stars_collection">
-                                                <div className="home_stars_collection_title">
-                                                    <Trans i18nKey="stars.collection" />
+                                            {actor.badgeText && (
+                                                <div className="home_stars_collection">
+                                                    <div className="home_stars_collection_title">
+                                                        {actor.badgeText}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="home_stars_collection_watch">
-                                                <Trans i18nKey="stars.watch" />
-                                            </div>
-                                            <div className="home_stars_collection_watch_actor">
-                                                <Trans i18nKey={actor.nameKey} />
-                                            </div>
+                                            )}
+                                            {actor.description && (
+                                                <div className="home_stars_collection_watch">
+                                                    {actor.description}
+                                                </div>
+                                            )}
+                                            {actor.actorName && (
+                                                <div className="home_stars_collection_watch_actor">
+                                                    {actor.actorName}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -529,12 +581,11 @@ export const Home = ({ onOpenActorRecs }) => {
 
                         {filteredContent.map(cat =>
                             cat.subcategories
-                                .filter(sub => sub.id === 'drama')
                                 .map(sub => (
                                     <div key={sub.id} className="home_block">
 
                                         <div className="home_block_header">
-                                            <div className="home_block_title"><Trans i18nKey={`subcategories.${sub.id}`} /></div>
+                                            <div className="home_block_title">{sub.title}</div>
                                             <div className="home_block_arrow"></div>
                                         </div>
                                         <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
@@ -595,10 +646,13 @@ export const Home = ({ onOpenActorRecs }) => {
                                                         <div className="home_film_text">
                                                             <div className="home_film_rating">{film.rating}</div>
                                                             <div className="home_film_line">
-                                                                <div className="home_film_line1"><span className="home_film_date"><Trans i18nKey={`films.${film.id}.linedate`} /></span>      <Trans i18nKey={`films.${film.id}.line1`} /></div>
-                                                                <div className="home_film_line2"><Trans i18nKey={`films.${film.id}.line2`} /></div>
+                                                                <div className="home_film_line1">
+                                                                {film.linedate && <span className="home_film_date">{film.linedate}</span>}
+                                                                {film.line1 && ` ${film.line1}`}
                                                             </div>
-                                                            <div className="home_film_season"><Trans i18nKey={`films.${film.id}.season`} /></div>
+                                                            {film.line2 && <div className="home_film_line2">{film.line2}</div>}
+                                                        </div>
+                                                        {film.season && <div className="home_film_season">{film.season}</div>}
                                                         </div>
                                                     </div>
 
@@ -608,53 +662,68 @@ export const Home = ({ onOpenActorRecs }) => {
                                     </div>
                                 ))
                         )}
-                        <div className="home_ad_block">
-                            <div className="home_ad">
-                                <div className="home_ad_text_block">
-                                    <div className="home_ad_new_block">
-                                        <Trans i18nKey="ad.newSeason" />
-                                    </div>
-                                    <div className="home_ad_title">
-                                        <Trans i18nKey="ad.title" />
-                                    </div>
-                                    <div className="home_ad_line_block">
-                                        <div className="home_ad_line_rating">8.0</div>
-                                        <div className="home_ad_line_time">2022-2025</div>
-                                        <div className="home_ad_line_genre">
-                                            <Trans i18nKey="ad.genre" />
+                        {promoData && (
+                            <div className="home_ad_block">
+                                <div className="home_ad" style={{ backgroundImage: `url(${promoData.imageUrl})` }}>
+                                    <div className="home_ad_text_block">
+                                        {promoData.badgeText && (
+                                            <div className="home_ad_new_block">
+                                                {promoData.badgeText}
+                                            </div>
+                                        )}
+                                        <div className="home_ad_title">
+                                            {promoData.title}
                                         </div>
-                                        <div className="home_ad_line_time">
-                                            <Trans i18nKey="ad.duration" />
+                                        <div className="home_ad_line_block">
+                                            {promoData.rating && (
+                                                <div className="home_ad_line_rating">{promoData.rating}</div>
+                                            )}
+                                            {promoData.year && (
+                                                <div className="home_ad_line_time">{promoData.year}</div>
+                                            )}
+                                            {promoData.genre && (
+                                                <div className="home_ad_line_genre">
+                                                    {promoData.genre}
+                                                </div>
+                                            )}
+                                            {promoData.duration && (
+                                                <div className="home_ad_line_time">
+                                                    {promoData.duration}
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
 
-                                    <div className="home_ad_subtitle">
-                                        <Trans i18nKey="ad.description" />
-                                    </div>
+                                        {promoData.description && (
+                                            <div className="home_ad_subtitle">
+                                                {promoData.description}
+                                            </div>
+                                        )}
 
-                                    <div className="home_ad_button">
-                                        <div className="home_ad_premium_button">
-                                            <Trans i18nKey="ad.premiumButton" />
+                                        <div className="home_ad_button">
+                                            {promoData.buttonText && (
+                                                <div className="home_ad_premium_button">
+                                                    {promoData.buttonText}
+                                                </div>
+                                            )}
+                                            <div className="home_ad_info_button"></div>
+                                            <div
+                                                className={`home_ad_save_button ${promoData.isSaved ? "active" : ""}`}
+                                                onClick={() => setPromoData({...promoData, isSaved: !promoData.isSaved})}
+                                            ></div>
                                         </div>
-                                        <div className="home_ad_info_button"></div>
-                                        <div
-                                            className={`home_ad_save_button ${isSaved ? "active" : ""}`}
-                                            onClick={toggleSave}
-                                        ></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </>
                 )}
                 {filteredContent.map(cat =>
                     cat.subcategories
-                        .filter(sub => !['new-series', 'cartoons-liked', 'drama'].includes(sub.id))
                         .map(sub => (
                             <div key={sub.id} className="home_block">
 
                                 <div className="home_block_header">
-                                    <div className="home_block_title"><Trans i18nKey={`subcategories.${sub.id}`} /></div>
+                                    <div className="home_block_title">{sub.title}</div>
                                     <div className="home_block_arrow"></div>
                                 </div>
                                 <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
@@ -687,10 +756,10 @@ export const Home = ({ onOpenActorRecs }) => {
                                                                 image: film.image,
                                                                 hoverImage: film.hoverImage,
                                                                 rating: film.rating,
-                                                                linedate: `films.${film.id}.linedate`,
-                                                                line1: `films.${film.id}.line1`,
-                                                                line2: film.line2 ? `films.${film.id}.line2` : undefined,
-                                                                season: film.season ? `films.${film.id}.season` : undefined,
+                                                                linedate: film.linedate,
+                                                                line1: film.line1,
+                                                                line2: film.line2,
+                                                                season: film.season,
                                                                 source: 'home',
                                                             });
                                                         }}
@@ -716,10 +785,13 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <div className="home_film_text">
                                                     <div className="home_film_rating">{film.rating}</div>
                                                     <div className="home_film_line">
-                                                        <div className="home_film_line1"><span className="home_film_date"><Trans i18nKey={`films.${film.id}.linedate`} /></span>      <Trans i18nKey={`films.${film.id}.line1`} /></div>
-                                                        <div className="home_film_line2"><Trans i18nKey={`films.${film.id}.line2`} /></div>
+                                                        <div className="home_film_line1">
+                                                            {film.linedate && <span className="home_film_date">{film.linedate}</span>}
+                                                            {film.line1 && ` ${film.line1}`}
+                                                        </div>
+                                                        {film.line2 && <div className="home_film_line2">{film.line2}</div>}
                                                     </div>
-                                                    <div className="home_film_season"><Trans i18nKey={`films.${film.id}.season`} /></div>
+                                                    {film.season && <div className="home_film_season">{film.season}</div>}
                                                 </div>
                                             </div>
                                         ))}
