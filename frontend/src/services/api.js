@@ -14,8 +14,11 @@ import {
 
 export { fakeSlides, fakeCategories, fakeContent, getPopularFilms, getPopularActors, getMenuItems, getWatchModeItems, getStarsActors };
 
+const baseURL = API_URL || "";
+console.log("API Base URL:", baseURL || "не установлен");
+
 export const api = axios.create({
-    baseURL: API_URL || "",
+    baseURL: baseURL,
     headers: { "Content-Type": "application/json" },
 });
 
@@ -68,14 +71,189 @@ export const getHomeContent = async () => {
     }
 };
 
+export const getHomePageData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/home';
+        
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/home';
+        }
+        
+        console.log("Base URL:", baseURL);
+        console.log("Используемый путь:", url);
+        console.log("Полный URL будет:", baseURL + url);
+        
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Помилка завантаження даних головної сторінки:", error);
+        console.error("URL запроса:", error.config?.url);
+        console.error("Base URL:", api.defaults.baseURL);
+        throw error;
+    }
+};
+
+export const transformCarouselItems = (carouselItems) => {
+    if (!carouselItems || !Array.isArray(carouselItems)) {
+        return [];
+    }
+    
+    return carouselItems.map((item, index) => {
+        const className = `home_slide${(index % 4) + 1}`;
+        const link = `/movie/${item.id}`;
+        
+        let rating = null;
+        if (item.rating !== null && item.rating !== undefined) {
+            const ratingNum = typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating);
+            if (!isNaN(ratingNum)) {
+                rating = ratingNum.toFixed(1);
+            }
+        }
+        
+        return {
+            id: item.id,
+            className: className,
+            link: link,
+            title: item.title || '',
+            isNew: Boolean(item.isNew),
+            genre: item.genre || '',
+            duration: item.duration || '',
+            imageUrl: item.imageUrl || '',
+            rating: rating,
+            year: item.year || null
+        };
+    });
+};
+
+export const transformCategories = (categories) => {
+    if (!categories || !Array.isArray(categories)) {
+        return [];
+    }
+    
+    return categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        icon: cat.iconUrl,
+        activeIcon: cat.iconUrl,
+        slug: cat.slug
+    }));
+};
+
+export const transformSections = (sections) => {
+    if (!sections || !Array.isArray(sections)) {
+        return [];
+    }
+    
+    return sections.map(section => ({
+        id: section.categoryId,
+        title: section.title,
+        films: section.items.map(item => {
+            let rating = null;
+            if (item.rating !== null && item.rating !== undefined) {
+                const ratingNum = typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating);
+                if (!isNaN(ratingNum)) {
+                    rating = ratingNum.toFixed(1);
+                }
+            }
+            
+            return {
+                id: item.id,
+                title: item.title,
+                image: item.posterUrl || '',
+                hoverImage: item.posterUrl || '',
+                rating: rating,
+                linedate: item.year ? String(item.year) : '',
+                line1: item.genre || '',
+                line2: item.country || '',
+                season: item.seasonsCount ? `${item.seasonsCount} сезон${item.seasonsCount > 1 ? 'ів' : ''}` : '',
+                isSaved: item.isSaved || false
+            };
+        })
+    }));
+};
+
+export const transformCelebrities = (celebrities) => {
+    if (!celebrities || !Array.isArray(celebrities)) {
+        return [];
+    }
+    
+    return celebrities.map((celeb, index) => ({
+        id: celeb.actorId || celeb.collectionId,
+        collectionId: celeb.collectionId,
+        actorId: celeb.actorId,
+        actorName: celeb.actorName,
+        actorImageUrl: celeb.actorImageUrl,
+        badgeText: celeb.badgeText,
+        description: celeb.description,
+        nameKey: celeb.actorName,
+        className: `home_stars_actor_${index + 1}`
+    }));
+};
+
+export const transformPromo = (promo) => {
+    if (!promo) {
+        return null;
+    }
+    
+    let rating = null;
+    if (promo.rating !== null && promo.rating !== undefined) {
+        const ratingNum = typeof promo.rating === 'string' ? parseFloat(promo.rating) : Number(promo.rating);
+        if (!isNaN(ratingNum)) {
+            rating = ratingNum.toFixed(1);
+        }
+    }
+    
+    return {
+        id: promo.id,
+        imageUrl: promo.imageUrl,
+        badgeText: promo.badgeText || '',
+        title: promo.title,
+        rating: rating,
+        year: promo.year,
+        genre: promo.genre,
+        duration: promo.duration,
+        description: promo.description,
+        buttonText: promo.buttonText,
+        isSaved: promo.isSaved || false
+    };
+};
+
 export const fetchTitles = async (page = 0) => {
-    const response = await api.get(`/api/public/titles?page=${page}`);
+    const baseURL = api.defaults.baseURL || '';
+    let url = `/api/public/titles?page=${page}`;
+    
+    if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+        url = `/public/titles?page=${page}`;
+    }
+    
+    const response = await api.get(url);
     return response.data;
 };
 
 export const fetchTitleById = async (id) => {
-    const response = await api.get(`/api/public/titles/${id}`);
-    return response.data;
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/titles/${id}`;
+        
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/titles/${id}`;
+        }
+        
+        console.log("Загрузка фильма ID:", id);
+        console.log("Base URL:", baseURL);
+        console.log("Используемый путь:", url);
+        console.log("Полный URL будет:", baseURL + url);
+        
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки фильма:", error);
+        console.error("URL запроса:", error.config?.url);
+        console.error("Base URL:", api.defaults.baseURL);
+        console.error("Детали ошибки:", error.response?.data || error.message);
+        throw error;
+    }
 };
 
 export const fetchUserProfile = async () => {
