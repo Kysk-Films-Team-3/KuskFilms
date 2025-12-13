@@ -82,7 +82,6 @@ services:
         PGPASSWORD: ${POSTGRES_PASSWORD} # PGPASSWORD автоматически подхватывается psql
       volumes:
         - ./init-minio.sh:/init-minio.sh:ro # Монтируем скрипт внутрь
-        - C:\Users\artem\Desktop\5464:/videos:ro
       entrypoint: [ "/bin/sh", "/init-minio.sh" ] # Запускаем его
       networks:
         - kyskfilms-network
@@ -104,16 +103,14 @@ services:
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
       KC_HTTP_ENABLED: "true"
 
-      # === ВАЖНЫЕ ИЗМЕНЕНИЯ ДЛЯ SWAGGER И CSS ===
-      # Указываем внешний путь, по которому браузер видит Keycloak
       KC_HOSTNAME_URL: http://localhost/auth
       KC_HOSTNAME_ADMIN_URL: http://localhost/auth
 
-      # Отключаем строгие проверки хоста (помогает при разработке локально)
+
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
 
-      # Говорим, что мы за прокси (Nginx)
+
       KC_PROXY: "edge"
       # ==========================================
 
