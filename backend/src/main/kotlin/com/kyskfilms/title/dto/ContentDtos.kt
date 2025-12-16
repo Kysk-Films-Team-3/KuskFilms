@@ -1,6 +1,6 @@
 package com.kyskfilms.title.dto
 
-import com.kyskfilms.title.entity.TitleType
+import com.kyskfilms.title.entity.enums.TitleType
 import java.math.BigDecimal
 import java.time.LocalDate
 

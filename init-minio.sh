@@ -1,120 +1,134 @@
-#!/bin/sh
 
-# === 1. Установка утилит ===
-echo "🔧 Installing dependencies..."
-apk add --no-cache curl postgresql-client bash ffmpeg
+#!/bin/bash
 
-# MinIO Client
-curl -L -o /usr/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
-chmod +x /usr/bin/mc
-
-# Переменные для удобства (предполагаем, что они есть в .env)
-DB_NAME="kyskfilms_db"
-
-# === 2. Ожидание сервисов ===
 echo "⏳ Waiting for MinIO..."
 until mc alias set myminio $MINIO_INTERNAL_URL $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do sleep 2; done
 
-echo "⏳ Waiting for Postgres to start..."
+echo "⏳ Waiting for Postgres..."
 until pg_isready -h postgres -U $POSTGRES_USER; do sleep 2; done
 
-echo "⏳ Waiting for Database '$DB_NAME' to be ready (waiting for init.sql)..."
-# Цикл ждет, пока появится таблица titles, которую создает ваш init.sql
-until psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c "SELECT 1 FROM titles LIMIT 1" > /dev/null 2>&1; do
-  echo "   ... waiting for schema initialization ..."
-  sleep 3
-done
-
-# === 3. Настройка Бакету ===
 echo "📦 Setting up bucket..."
 mc mb --ignore-existing myminio/$MINIO_BUCKET
-mc anonymous set download myminio/$MINIO_BUCKET
+mc anonymous set public myminio/$MINIO_BUCKET
 
-# === 4. Функция Генерации ===
-generate_movie() {
-    SLUG="$1"
-    TITLE="$2"
-    IMG="$3"
-    GENRE_ID="$4"
+# === 1. Генерация КАРТИНОК (Постеры) ===
+echo "🎨 Generating images..."
+FONT_PATH="/usr/share/fonts/ttf-dejavu/DejaVuSans-Bold.ttf"
 
-    # Проверка на существование
-    EXISTS=$(psql -h postgres -U $POSTGRES_USER -d $DB_NAME -tAc "SELECT 1 FROM titles WHERE slug='$SLUG'")
-
-    if [ "$EXISTS" != "1" ]; then
-        echo "🎬 Generating virtual movie: '$TITLE'..."
-
-        UUID=$(cat /proc/sys/kernel/random/uuid)
-        WORK_DIR="/tmp/$UUID"
-        mkdir -p $WORK_DIR
-
-        # Генерируем 30 сек видео + звук
-        ffmpeg -f lavfi -i testsrc=duration=30:size=1280x720:rate=30 \
-               -f lavfi -i sine=frequency=1000:duration=30 \
-               -c:v libx264 -preset ultrafast -c:a aac \
-               -f hls -hls_time 10 -hls_list_size 0 \
-               -hls_segment_filename "$WORK_DIR/segment%03d.ts" \
-               "$WORK_DIR/master.m3u8" > /dev/null 2>&1
-
-        if [ $? -eq 0 ]; then
-            # Заливаем в MinIO
-            mc cp --recursive $WORK_DIR/ myminio/$MINIO_BUCKET/$UUID/ > /dev/null
-
-            # --- ЗАПИСЬ В ВАШУ БАЗУ ---
-
-            # 1. Вставляем Title (type='MOVIE' обязательно, т.к. у вас constraint)
-            psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c \
-            "INSERT INTO titles (type, title, slug, poster_url, rating, release_date) VALUES ('MOVIE', '$TITLE', '$SLUG', '$IMG', 8.5, NOW());"
-
-            # Получаем ID
-            TITLE_ID=$(psql -h postgres -U $POSTGRES_USER -d $DB_NAME -tAc "SELECT id FROM titles WHERE slug='$SLUG'" | tr -d '[:space:]')
-
-            # 2. Вставляем Video File (status='READY', type='FEATURE')
-            psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c \
-            "INSERT INTO video_files (title_id, status, type, object_name) VALUES ($TITLE_ID, 'READY', 'FEATURE', '$UUID/master.m3u8');"
-
-            # 3. Привязываем Жанр
-            psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c \
-            "INSERT INTO title_genres (title_id, genre_id) VALUES ($TITLE_ID, $GENRE_ID) ON CONFLICT DO NOTHING;"
-
-            echo "   ✅ Done!"
-        else
-            echo "   ❌ FFmpeg error"
-        fi
-        rm -rf $WORK_DIR
-    else
-        echo "⏭️  Skipped: $TITLE (exists)"
-    fi
+generate_image() {
+    NAME="$1"
+    COLOR="$2"
+    SIZE="$3"
+    TEXT="$4"
+    # Генерируем во временную папку
+    ffmpeg -f lavfi -i color=c=$COLOR:s=$SIZE -frames:v 1 \
+           -vf "drawtext=text='$TEXT':fontfile=$FONT_PATH:fontcolor=white:fontsize=40:x=(w-text_w)/2:y=(h-text_h)/2" \
+           -y "/tmp/$NAME" > /dev/null 2>&1
+    mc cp "/tmp/$NAME" "myminio/$MINIO_BUCKET/images/$NAME" > /dev/null
+    rm "/tmp/$NAME"
 }
 
-# === 5. Подготовка Данных ===
+# Постеры фильмов
+generate_image "cyberpunk_wide.jpg" "purple" "1920x800" "Cyberpunk"
+generate_image "dune2_wide.jpg" "orange" "1920x800" "Dune Part Two"
+generate_image "matrix_poster.jpg" "green" "500x750" "Matrix"
+generate_image "dune2_poster.jpg" "orange" "500x750" "Dune 2"
+generate_image "interstellar_promo.jpg" "black" "1920x1080" "Interstellar"
+generate_image "keanu.jpg" "gray" "300x300" "Keanu"
 
-echo "🚀 Starting Data Population..."
+# Иконки категорий
+mkdir -p /tmp/icons
+ffmpeg -f lavfi -i color=c=blue:s=100x100 -frames:v 1 -y /tmp/icons/movies.png > /dev/null 2>&1
+ffmpeg -f lavfi -i color=c=red:s=100x100 -frames:v 1 -y /tmp/icons/series.png > /dev/null 2>&1
+ffmpeg -f lavfi -i color=c=gray:s=100x100 -frames:v 1 -y /tmp/icons/doc.png > /dev/null 2>&1
+ffmpeg -f lavfi -i color=c=pink:s=100x100 -frames:v 1 -y /tmp/icons/anime.png > /dev/null 2>&1
+mc cp --recursive /tmp/icons/ myminio/$MINIO_BUCKET/images/icons/ > /dev/null
+rm -rf /tmp/icons
 
-# 1. Получаем ID категории 'feature-films' (создается в вашем init.sql)
-# Если вдруг init.sql еще не отработал (хотя мы ждали), создадим категорию, чтобы скрипт не упал.
-CAT_ID=$(psql -h postgres -U $POSTGRES_USER -d $DB_NAME -tAc "SELECT id FROM categories WHERE slug='feature-films'")
+# === 2. Генерация UI ИКОНОК (Кнопки) ===
+echo "🎨 Generating UI Icons..."
+mkdir -p /tmp/ui
 
-if [ -z "$CAT_ID" ]; then
-   echo "⚠️ Category not found, creating..."
-   psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c "INSERT INTO categories (name, slug) VALUES ('Movies', 'feature-films');"
-   CAT_ID=$(psql -h postgres -U $POSTGRES_USER -d $DB_NAME -tAc "SELECT id FROM categories WHERE slug='feature-films'")
-fi
+# Share (Поделиться)
+ffmpeg -f lavfi -i color=c=white:s=50x50 -frames:v 1 -vf "drawtext=text='Share':fontfile=$FONT_PATH:fontcolor=black:fontsize=10:x=(w-text_w)/2:y=(h-text_h)/2" -y /tmp/ui/share.png > /dev/null 2>&1
+# Watch/Add (Плюс)
+ffmpeg -f lavfi -i color=c=white:s=50x50 -frames:v 1 -vf "drawtext=text='+':fontfile=$FONT_PATH:fontcolor=black:fontsize=30:x=(w-text_w)/2:y=(h-text_h)/2" -y /tmp/ui/plus.png > /dev/null 2>&1
+# Dislike (Минус/Дизлайк)
+ffmpeg -f lavfi -i color=c=white:s=50x50 -frames:v 1 -vf "drawtext=text='-':fontfile=$FONT_PATH:fontcolor=black:fontsize=30:x=(w-text_w)/2:y=(h-text_h)/2" -y /tmp/ui/dislike.png > /dev/null 2>&1
+# Info (Информация)
+ffmpeg -f lavfi -i color=c=white:s=50x50 -frames:v 1 -vf "drawtext=text='i':fontfile=$FONT_PATH:fontcolor=black:fontsize=20:x=(w-text_w)/2:y=(h-text_h)/2" -y /tmp/ui/info.png > /dev/null 2>&1
+# Play (Треугольник)
+ffmpeg -f lavfi -i color=c=white:s=50x50 -frames:v 1 -vf "drawtext=text='>':fontfile=$FONT_PATH:fontcolor=black:fontsize=20:x=(w-text_w)/2:y=(h-text_h)/2" -y /tmp/ui/play.png > /dev/null 2>&1
 
-# 2. Создаем жанр Sci-Fi
-psql -h postgres -U $POSTGRES_USER -d $DB_NAME -c \
-"INSERT INTO genres (category_id, name, slug) VALUES ($CAT_ID, 'Sci-Fi', 'sci-fi') ON CONFLICT DO NOTHING;"
+mc cp --recursive /tmp/ui/ myminio/$MINIO_BUCKET/ui/ > /dev/null
+rm -rf /tmp/ui
 
-GENRE_ID=$(psql -h postgres -U $POSTGRES_USER -d $DB_NAME -tAc "SELECT id FROM genres WHERE slug='sci-fi'")
+# === 3. Генерация ВИДЕО (HLS Stream) ===
+echo "🎬 Generating HLS Video..."
+mkdir -p /tmp/video
 
-# 3. Генерируем фильмы (передаем ID жанра)
+# Генерируем 10 секунд видео + звук + HLS плейлист
+ffmpeg -f lavfi -i testsrc=duration=10:size=1280x720:rate=30 \
+       -f lavfi -i sine=frequency=1000:duration=10 \
+       -c:v libx264 -preset ultrafast -g 60 -sc_threshold 0 \
+       -c:a aac \
+       -f hls -hls_time 4 -hls_list_size 0 \
+       -hls_segment_filename "/tmp/video/segment%03d.ts" \
+       "/tmp/video/dummy.m3u8" > /dev/null 2>&1
 
-generate_movie "12-angry-men" "12 Angry Men" "https://image.tmdb.org/t/p/w500/ow3wq89wM8qd5X7hFZkLqCFjHA.jpg" "$GENRE_ID"
+# Загружаем папку video в MinIO
+mc cp --recursive /tmp/video/ myminio/$MINIO_BUCKET/video/ > /dev/null
+rm -rf /tmp/video
 
-generate_movie "superman" "Superman" "https://image.tmdb.org/t/p/w500/d7px1FQxZB4ls4GLaPtGdAuQ4u.jpg" "$GENRE_ID"
+# === 4. Обновление БД ===
+echo "💾 Updating Database..."
 
-generate_movie "fantastic-four" "Fantastic Four" "https://image.tmdb.org/t/p/w500/8yoFjgHuxxgSm9lpjtGowF5ztng.jpg" "$GENRE_ID"
+# ВАЖНО: Формируем полный URL к видео
+VIDEO_URL="$MINIO_EXTERNAL_URL/video/dummy.m3u8"
 
-generate_movie "spider-man" "Spider-Man" "https://image.tmdb.org/t/p/w500/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg" "$GENRE_ID"
+psql -h postgres -U $POSTGRES_USER -d $POSTGRES_APP_DB <<EOF
+-- Фикс типов
+DO \$\$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_cast WHERE castsource = 'character varying'::regtype AND casttarget = 'video_type'::regtype) THEN
+        CREATE CAST (character varying AS video_type) WITH INOUT AS IMPLICIT;
+    END IF;
+EXCEPTION WHEN OTHERS THEN NULL; END \$\$;
 
-echo "🏁 Setup Complete! Your friend is ready to go."
+-- Категории
+INSERT INTO categories (id, name, slug) VALUES (1, 'Фильмы', 'movies') ON CONFLICT (id) DO NOTHING;
+INSERT INTO categories (id, name, slug) VALUES (2, 'Сериалы', 'series') ON CONFLICT (id) DO NOTHING;
+
+-- Фильмы (Картинки оставляем короткими, их клеит контроллер)
+INSERT INTO titles (id, title, slug, type, rating, release_date, poster_url)
+VALUES (1, 'The Matrix', 'the-matrix', 'MOVIE', 8.7, NOW(), 'matrix_poster.jpg')
+ON CONFLICT (id) DO UPDATE SET poster_url = 'matrix_poster.jpg';
+
+INSERT INTO titles (id, title, slug, type, rating, release_date, poster_url)
+VALUES (2, 'Dune: Part Two', 'dune-2', 'MOVIE', 8.5, NOW(), 'dune2_poster.jpg')
+ON CONFLICT (id) DO UPDATE SET poster_url = 'dune2_poster.jpg';
+
+INSERT INTO titles (id, title, slug, type, rating, release_date, poster_url)
+VALUES (4, 'Interstellar', 'interstellar', 'MOVIE', 8.9, NOW(), 'interstellar_promo.jpg')
+ON CONFLICT (id) DO UPDATE SET poster_url = 'interstellar_promo.jpg';
+
+INSERT INTO titles (id, title, slug, type, rating, release_date, poster_url)
+VALUES (5, 'Cyberpunk: Edgerunners', 'cyberpunk', 'SERIES', 8.6, NOW(), 'cyberpunk_wide.jpg')
+ON CONFLICT (id) DO UPDATE SET poster_url = 'cyberpunk_wide.jpg';
+
+-- !!! ВИДЕО: Пишем ПОЛНЫЙ путь (http://localhost/kyskfilms/video/dummy.m3u8) !!!
+INSERT INTO video_files (title_id, status, type, object_name, created_at, updated_at)
+VALUES
+(1, 'READY', 'FEATURE', '$VIDEO_URL', NOW(), NOW()),
+(2, 'READY', 'FEATURE', '$VIDEO_URL', NOW(), NOW()),
+(4, 'READY', 'FEATURE', '$VIDEO_URL', NOW(), NOW()),
+(5, 'READY', 'FEATURE', '$VIDEO_URL', NOW(), NOW())
+ON CONFLICT (id) DO UPDATE SET object_name = '$VIDEO_URL';
+
+-- На всякий случай обновляем старые записи, если ID не совпали
+UPDATE video_files SET object_name = '$VIDEO_URL' WHERE object_name LIKE '%dummy.m3u8';
+
+SELECT setval('titles_id_seq', (SELECT MAX(id) FROM titles));
+EOF
+
+echo "🏁 Done. UI Icons, Video & DB updated."
 

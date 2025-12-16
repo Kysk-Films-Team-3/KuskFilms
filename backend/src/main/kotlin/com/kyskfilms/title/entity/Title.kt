@@ -1,6 +1,7 @@
 package com.kyskfilms.title.entity
 
 import com.kyskfilms.comment.entity.Comment
+import com.kyskfilms.title.entity.enums.TitleType
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -14,7 +15,7 @@ class Title(
     val id: Int? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "title_type")
+    @Column(columnDefinition = "video_type")
     var type: TitleType,
 
     @Column(nullable = false)
@@ -49,7 +50,3 @@ class Title(
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     var updatedAt: OffsetDateTime = OffsetDateTime.now()
 )
-
-enum class TitleType {
-    MOVIE, SERIES
-}

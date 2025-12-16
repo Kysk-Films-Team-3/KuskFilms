@@ -25,10 +25,10 @@ class SecurityConfig(
     @Value("\${app.frontend.allowed-origins}")
     private lateinit var allowedOrigins: List<String>
 
-
-    @Value("\${KEYCLOAK_CLIENT_ID}") // <-- ИЗМЕНЕНО: теперь берется из окружения
+    @Value("\${KEYCLOAK_CLIENT_ID}")
     private lateinit var keycloakClientId: String
 
+    // --- 1. Публичный фильтр (Swagger, Actuator) ---
     @Bean
     fun publicFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -45,6 +45,7 @@ class SecurityConfig(
         return http.build()
     }
 
+    // --- 2. Основной API фильтр ---
     @Bean
     fun apiFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -56,13 +57,24 @@ class SecurityConfig(
             .addFilterAfter(jitUserProvisioningFilter, BasicAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
                 auth
+                    // === ПУБЛИЧНЫЕ ЭНДПОИНТЫ ===
+                    // Главная, Хедер, Футер, Поиск
                     .requestMatchers("/api/public/**").permitAll()
-                    .requestMatchers("/api/test/public").permitAll()
-                    .requestMatchers("/api/titles/**").permitAll()
-                    .requestMatchers("/api/stream/**").permitAll()
+                    .requestMatchers("/api/public/layout/**").permitAll()
                     .requestMatchers("/api/home/**").permitAll()
-                    .requestMatchers("/api/public/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/genres/**").permitAll()
+
+                    // Каталог и фильмы (чтение)
+                    .requestMatchers(HttpMethod.GET, "/api/titles/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/genres/**").permitAll()
+
+                    // Стриминг (если видео публичное)
+                    .requestMatchers("/api/stream/**").permitAll()
+
+                    // Тесты
+                    .requestMatchers("/api/test/public").permitAll()
+
+                    // === ВСЁ ОСТАЛЬНОЕ ТРЕБУЕТ ВХОДА ===
                     .anyRequest().authenticated()
             }
         return http.build()

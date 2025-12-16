@@ -27,5 +27,3 @@ export const VideoPlayer = forwardRef(({ src }, ref) => {
         />
     );
 });
-
-
