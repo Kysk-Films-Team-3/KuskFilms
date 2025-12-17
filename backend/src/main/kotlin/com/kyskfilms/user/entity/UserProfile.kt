@@ -16,6 +16,14 @@ data class UserProfile(
     @Column(name = "avatar_url")
     var avatarUrl: String? = null,
 
+    // ======
+    @Column(name = "is_premium")
+    var isPremium: Boolean = false,
+
+    @Column(name = "subscription_ends_at")
+    var subscriptionEndsAt: Instant? = null,
+    // ==================
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     var createdAt: Instant? = null,
@@ -24,5 +32,12 @@ data class UserProfile(
     @Column(name = "updated_at")
     var updatedAt: Instant? = null
 ) {
-    constructor() : this(UUID.randomUUID(), null, null, null)
+    constructor() : this(
+        UUID.randomUUID(),
+        null,
+        false, // <--- ИСПРАВЛЕНО (было null)
+        null,
+        null,
+        null
+    )
 }

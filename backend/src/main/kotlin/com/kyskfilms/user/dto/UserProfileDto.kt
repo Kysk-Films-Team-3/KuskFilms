@@ -1,4 +1,4 @@
-package com.kyskfilms.dto
+package com.kyskfilms.user.dto
 
 import java.util.UUID
 

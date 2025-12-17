@@ -74,6 +74,10 @@ class SecurityConfig(
                     // Тесты
                     .requestMatchers("/api/test/public").permitAll()
 
+
+                    .requestMatchers("/api/payment/webhook").permitAll()
+
+
                     // === ВСЁ ОСТАЛЬНОЕ ТРЕБУЕТ ВХОДА ===
                     .anyRequest().authenticated()
             }

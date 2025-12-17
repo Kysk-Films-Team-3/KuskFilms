@@ -1,9 +1,9 @@
-package com.kyskfilms.controller
+package com.kyskfilms.user.controller
 
-import com.kyskfilms.dto.UserProfileDto
+import com.kyskfilms.user.dto.UserProfileDto
 import com.kyskfilms.video.service.MinioService
-import com.kyskfilms.mapper.toDto
-import com.kyskfilms.service.UserProfileService
+import com.kyskfilms.user.mapper.toDto
+import com.kyskfilms.user.service.UserProfileService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag

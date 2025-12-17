@@ -1,5 +1,5 @@
 
-package com.kyskfilms.repository
+package com.kyskfilms.user.repository
 
 import com.kyskfilms.user.entity.UserProfile
 import org.springframework.data.jpa.repository.JpaRepository

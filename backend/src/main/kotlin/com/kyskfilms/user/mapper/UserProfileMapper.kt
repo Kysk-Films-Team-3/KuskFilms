@@ -1,6 +1,6 @@
-package com.kyskfilms.mapper
+package com.kyskfilms.user.mapper
 
-import com.kyskfilms.dto.UserProfileDto
+import com.kyskfilms.user.dto.UserProfileDto
 import com.kyskfilms.user.entity.UserProfile
 
 fun UserProfile.toDto(username: String, minioBaseUrl: String): UserProfileDto {

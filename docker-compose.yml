@@ -172,6 +172,9 @@ services:
       KEYCLOAK_CLIENT_ID: "kyskfilms-backend"
       KEYCLOAK_ISSUER_URI: http://${DOMAIN}/auth/realms/${KEYCLOAK_REALM}
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/auth/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL}
       MINIO_URL: ${MINIO_INTERNAL_URL}
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}

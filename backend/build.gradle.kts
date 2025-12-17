@@ -52,6 +52,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("commons-io:commons-io:2.17.0")
 
+    implementation("com.stripe:stripe-java:31.0.0")
+
     // Configuration Processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
