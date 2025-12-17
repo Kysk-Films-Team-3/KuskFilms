@@ -1,0 +1,953 @@
+﻿.admin_list_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    font-family: 'Raleway', sans-serif;
+}
+
+.admin_list_modal {
+    background-color: #262630;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 30px 40px;
+    max-height: 67vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+}
+
+.admin_list_header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.admin_list_title {
+    color: #F8F8FE;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+}
+
+.admin_list_close {
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10001;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: opacity 0.3s ease;
+    border: none;
+    background-color: transparent;
+}
+
+.admin_list_close:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.admin_list_edit_header {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.admin_list_top_controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin_list_buttons_group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin_list_dropdown_wrapper {
+    position: relative;
+    z-index: 10;
+}
+
+.admin_list_dropdown {
+    position: relative;
+}
+
+.admin_list_dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2A2B3A;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 0 20px;
+    padding-right: 45px;
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    min-width: 180px;
+    height: 44px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.admin_list_dropdown:hover {
+    background-color: #343545;
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_dropdown_value {
+    flex: 1;
+}
+
+.admin_list_dropdown_arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    transition: background-image 0.3s ease;
+}
+
+.admin_list_dropdown_arrow.open {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_dropdown_menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background-color: #2A2B3A;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.admin_list_dropdown_menu.opens-upward {
+    top: auto;
+    bottom: calc(100% + 5px);
+}
+
+.admin_list_dropdown_option {
+    padding: 15px 20px;
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    background-color: #2A2B3A;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin_list_dropdown_option:first-child {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.admin_list_dropdown_option:last-child {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom: none;
+}
+
+.admin_list_dropdown_option:hover {
+    background-color: #343545;
+}
+
+.admin_list_dropdown_option.selected {
+    background-color: #4E55D4;
+    color: #F8F8FE;
+}
+
+.admin_list_search {
+    position: relative;
+    width: 100%;
+}
+
+.admin_list_search_icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.admin_list_search_input {
+    width: 100%;
+    background-color: #34353F;
+    color: #F8F8FE;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 15px;
+    padding: 15px 15px 15px 50px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.admin_list_search_input:focus {
+    border-color: #4E55D4;
+}
+
+.admin_list_search_input::placeholder {
+    color: #9999A1;
+    opacity: 0.6;
+}
+
+.admin_list_edit_button {
+    background-color: #4E55D4;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.admin_list_edit_button:hover {
+ color: #000000;
+    background-color: #F8F8FE;
+}
+
+.admin_list_edit_btn.active {
+    background-color: #3d44b3;
+}
+
+.admin_list_edit_icon {
+    width: 25px;
+    height: 25px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.admin_list_edit_button:hover .admin_list_edit_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_delete_button {
+    background-color: #34353F;
+    color: #DD5254;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.admin_list_delete_button:hover {
+    background-color: #414250;
+}
+
+.admin_list_delete_icon {
+    width: 25px;
+    height: 25px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.admin_list_grid {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding: 5px 15px;
+    display: grid;
+    grid-template-columns: repeat(6, 2fr);
+    gap: 35px;
+    align-content: start;
+    scroll-padding-top: 40px;
+    justify-items: center;
+    min-height: 0;
+    max-height: 100%;
+}
+
+.admin_list_grid.admin_list_edit_mode {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding-right: 15px;
+}
+
+.admin_list_grid:has(.admin_list_edit_item) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding-right: 15px;
+}
+
+.admin_list_edit_item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background-color: #34353F;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 670px;
+    height: 217px;
+    box-sizing: border-box;
+    justify-self: center;
+    transition: background-color 0.25s ease;
+    cursor: pointer;
+}
+
+.admin_list_edit_item:hover {
+    background-color: #414250;
+}
+
+.admin_list_edit_item:hover .admin_list_edit_poster {
+    transform: scale(1.03);
+    border: 1px solid #4E55D4;
+}
+
+
+.admin_list_edit_checkbox {
+    width: 24px;
+    height: 24px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+    transition: background-image 0.25s ease;
+}
+
+.admin_list_edit_item:hover .admin_list_edit_checkbox {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_edit_checkbox.selected {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_edit_item:hover .admin_list_edit_checkbox.selected {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_edit_poster {
+    width: 120px;
+    height: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, border 0.25s ease;
+    border: 1px solid transparent;
+}
+
+.admin_list_edit_avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, border 0.25s ease;
+}
+
+.admin_list_edit_avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin_list_edit_item:hover .admin_list_edit_avatar {
+    transform: scale(1.03);
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_edit_poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin_list_edit_info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.admin_list_edit_title_uk {
+    color: #F8F8FE;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Raleway', sans-serif;
+}
+
+.admin_list_edit_title_en {
+    color: #B8B8C8;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.admin_list_edit_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin_list_edit_item_button {
+    background-color: #4E55D4;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.admin_list_edit_item_button:hover {
+    background-color: #F8F8FE;
+    color: #000000;
+}
+
+.admin_list_edit_item_button:hover .admin_list_edit_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_delete_item_button {
+    background-color: #3e3e45;
+    color: #DD5254;
+    border: none;
+    border-radius: 14px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.admin_list_delete_item_button:hover {
+    background-color: #414250;
+}
+
+.admin_list_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    width: 100%;
+    max-width: 150px;
+}
+
+.admin_list_create_placeholder {
+    cursor: default;
+}
+
+.admin_list_create_placeholder:hover {
+    transform: scale(1.03);
+    background-color: transparent;
+}
+
+.admin_list_checkmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+    transition: background-image 0.2s ease;
+}
+
+.admin_list_item:hover:not(.admin_list_create_placeholder) .admin_list_checkmark:not(.selected) {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_checkmark.selected {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_poster:hover .admin_list_checkmark.selected {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_item:hover:not(.admin_list_create_placeholder) .admin_list_checkmark.selected {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: visible;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2A2B3A;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, border 0.25s ease;
+    box-sizing: border-box;
+}
+
+.admin_list_avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.admin_list_item:hover:not(.admin_list_create_placeholder) .admin_list_avatar {
+    transform: scale(1.03);
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_avatar.admin_list_avatar_placeholder {
+    background-color: #2A2B3A;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+}
+
+.admin_list_avatar.admin_list_avatar_placeholder:hover {
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_avatar_placeholder span {
+    display: none;
+}
+
+.admin_list_poster {
+    width: 195px;
+    height: 266px;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #34353F;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+}
+
+.admin_list_poster:hover {
+    transform: scale(1.03);
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin_list_poster_placeholder {
+    width: 195px;
+    height: 266px;
+    background-color: #34353F;
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+}
+
+.admin_list_poster_placeholder span {
+    font-size: 50px;
+    color: #666;
+    opacity: 0.5;
+}
+
+.admin_list_poster_placeholder .admin_list_create_in_grid_button {
+    position: absolute;
+    margin: 0;
+    width: auto;
+}
+
+.admin_list_poster_placeholder:hover .admin_list_create_in_grid_button {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.admin_list_poster_placeholder:hover .admin_list_create_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_info {
+    text-align: center;
+    width: 100%;
+}
+
+.admin_list_name {
+    color: #F8F8FE;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Raleway', sans-serif;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.admin_list_role {
+    color: #B8B8C8;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.admin_list_create_in_grid_button {
+    background-color: #4E55D4;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    width: auto;
+}
+
+.admin_list_create_in_grid_button:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.admin_list_create_in_grid_button:hover .admin_list_create_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.admin_list_create_placeholder:hover .admin_list_avatar.admin_list_avatar_placeholder {
+    border: 1px solid #4E55D4;
+}
+
+.admin_list_create_icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    transition: background-image 0.25s ease;
+}
+
+
+.admin_list_footer {
+    padding: 40px 0 0 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.admin_list_footer_persons {
+    padding: 45px 0 0 0;
+}
+
+.admin_list_footer_right {
+    display: flex;
+    gap: 15px;
+}
+
+.admin_list_exit_button {
+    background-color: #34353F;
+    color: #F8F8FE;
+    border: none;
+    border-radius: 14px;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.admin_list_exit_button:hover {
+    background-color: #414250;
+}
+
+.admin_list_save_btn {
+    background-color: #4E55D4;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 15px 25px;
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.admin_list_save_btn:hover {
+    background-color: #3429B0;
+}
+
+.admin_list_empty_state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.admin_list_empty_icon {
+    width: 300px;
+    height: 300px;
+    margin-bottom: 30px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.admin_list_empty_title {
+    color: #F8F8FE;
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+    margin-bottom: 10px;
+}
+
+.admin_list_empty_message {
+    color: #B8B8C8;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+}
+
+.admin_list_save_icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.admin_list_grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin_list_grid::-webkit-scrollbar-track {
+    background: #34353F;
+}
+
+.admin_list_grid::-webkit-scrollbar-thumb {
+    background: #838387;
+    border-radius: 4px;
+    min-height: 60px;
+}
+
+.admin_list_grid::-webkit-scrollbar-thumb:hover {
+    background: #838387;
+}
+
+@media (max-width: 1920px) {
+    .admin_list_modal {
+        max-width: 1400px;
+        padding: 25px 30px;
+        max-height: 85vh;
+    }
+
+    .admin_list_footer {
+        padding-top: 12px;
+    }
+
+    .admin_list_footer_persons {
+        padding-top: 30px;
+    }
+
+}
+
+@media (max-width: 1680px) {
+    .admin_list_modal {
+        max-width: 1200px;
+        padding: 25px 35px;
+        max-height: calc(67vh + 50px);
+    }
+
+    .admin_list_grid {
+        grid-template-columns: repeat(5, 2fr);
+        gap: 30px;
+    }
+
+    .admin_list_footer {
+        padding-top: 20px;
+    }
+
+    .admin_list_footer_persons {
+        padding-top: 25px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .admin_list_modal {
+        max-width: 1080px;
+        padding: 25px 30px;
+        max-height: 85vh;
+    }
+
+    .admin_list_grid {
+        grid-template-columns: repeat(4, 2fr);
+        gap: 25px;
+    }
+
+    .admin_list_poster,
+    .admin_list_poster_placeholder {
+        width: 180px;
+        height: 246px;
+    }
+
+    .admin_list_item {
+        max-width: 140px;
+    }
+
+    .admin_list_footer {
+        padding-top: 40px;
+    }
+
+    .admin_list_empty_icon {
+        width: 200px;
+        height: 200px;
+    }
+
+    .admin_list_empty_title {
+        font-size: 20px;
+    }
+
+    .admin_list_empty_message {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .admin_list_modal {
+        max-width: 1100px;
+        padding: 20px 25px;
+        max-height: 80vh;
+    }
+
+    .admin_list_grid {
+        grid-template-columns: repeat(3, 2fr);
+        gap: 20px;
+        padding: 5px 10px;
+    }
+
+    .admin_list_poster,
+    .admin_list_poster_placeholder {
+        width: 160px;
+        height: 219px;
+    }
+
+    .admin_list_item {
+        max-width: 130px;
+    }
+
+    .admin_list_title {
+        font-size: 28px;
+    }
+
+    .admin_list_footer {
+        padding-top: 26px;
+    }
+
+    .admin_list_footer_persons {
+        padding-top: 20px;
+    }
+
+    .admin_list_create_in_grid_button {
+        font-size: 12px;
+    }
+}
+
+
+
+
+
+
+

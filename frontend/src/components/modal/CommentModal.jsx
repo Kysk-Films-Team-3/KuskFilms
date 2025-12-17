@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 export const CommentModal = ({ isOpen, onClose }) => {
     const commentRef = useRef(null);
     const [rating, setRating] = useState(null);
+    const [hoveredRating, setHoveredRating] = useState(0);
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
     const { t } = useTranslation();
@@ -37,16 +38,29 @@ export const CommentModal = ({ isOpen, onClose }) => {
 
                 <h2 className="comment_title"><Trans i18nKey="commentModal.title" /></h2>
 
-                <div className="comment_section_label"><Trans i18nKey="commentModal.ratingLabel" /></div>
+                <div className="comment_rating_section">
+                    <div className="comment_section_label"><Trans i18nKey="commentModal.ratingLabel" /></div>
+                    {rating !== null && (
+                        <button 
+                            className="comment_rating_delete"
+                            onClick={() => setRating(null)}
+                        >
+                            <Trans i18nKey="commentModal.delete" />
+                        </button>
+                    )}
+                </div>
                 <div className="comment_stars">
                     {Array.from({ length: 10 }).map((_, i) => (
-                        <div
+                        <button
                             key={i}
-                            className={`comment_star ${rating === i + 1 ? "active" : ""}`}
+                            className={`comment_star ${rating !== null && rating >= i + 1 ? "active" : ""} ${hoveredRating >= i + 1 ? "hovered" : ""}`}
                             onClick={() => setRating(i + 1)}
+                            onMouseEnter={() => setHoveredRating(i + 1)}
+                            onMouseLeave={() => setHoveredRating(0)}
+                            aria-label={`Rate ${i + 1}`}
                         >
-                            {i + 1}
-                        </div>
+                            <span className="comment_star_number">{i + 1}</span>
+                        </button>
                     ))}
                 </div>
 

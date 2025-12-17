@@ -4,7 +4,7 @@ import { Header } from '../components/header/Header';
 import { Footer } from '../components/footer/Footer';
 import './Layout.css';
 
-export const Layout = ({ onLoginClick, userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal }) => {
+export const Layout = ({ onLoginClick, userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal, onOpenListModal }) => {
 
     return (
         <div className="layout">
@@ -14,6 +14,7 @@ export const Layout = ({ onLoginClick, userProfile, onProfileClick, onPromoInput
                 userProfile={userProfile}
                 onProfileClick={onProfileClick}
                 onOpenLogoutModal={onOpenLogoutModal}
+                onOpenListModal={onOpenListModal}
             />
 
             <main className="layout-main">

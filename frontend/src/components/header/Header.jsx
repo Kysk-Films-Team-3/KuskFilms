@@ -8,13 +8,21 @@ import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 import { HeaderSearch } from './HeaderSearch';
 
-export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal}) => {
+export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal, onOpenListModal}) => {
 
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const { keycloak } = useKeycloak();
     const hasAdminRole = useHasRole("ADMIN");
     const isPremiumPage = location.pathname === '/Premium';
+    
+    useEffect(() => {
+        if (keycloak?.authenticated && keycloak?.tokenParsed) {
+            console.log('User roles:', keycloak.tokenParsed.realm_access?.roles);
+            console.log('Has ADMIN role:', hasAdminRole);
+            console.log('Token parsed:', keycloak.tokenParsed);
+        }
+    }, [keycloak?.authenticated, hasAdminRole]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isSearchHovered, setIsSearchHovered] = useState(false);
@@ -366,6 +374,22 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 {i18n.language === 'ua' ? <Trans i18nKey="header.dropdown.switchToEnglish" /> : <Trans i18nKey="header.dropdown.switchToUkrainian" />}
                                             </button>
                                         </li>
+                                        {hasAdminRole && (
+                                            <li>
+                                                <button
+                                                    onClick={() => {
+                                                        handleMenuItemClick();
+                                                        if (onOpenListModal) {
+                                                            onOpenListModal();
+                                                        }
+                                                    }}
+                                                    className="dropdown_link"
+                                                >
+                                                    <div className="dropdown_icon settings_icon"></div>
+                                                    <Trans i18nKey="header.dropdown.adminPanel" />
+                                                </button>
+                                            </li>
+                                        )}
                                         <li className="header_dropdown_logout">
                                             <Link
                                                 to="/"
@@ -380,19 +404,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 <Trans i18nKey="settings.logout" />
                                             </Link>
                                         </li>
-                                        {hasAdminRole && (
-                                            <li>
-                                                <Link
-                                                    to="/admin"
-                                                    onClick={handleMenuItemClick}
-                                                    className="dropdown_link"
-                                                    style={{ color: '#00ffaa', fontWeight: 'bold' }}
-                                                >
-                                                  <div className="dropdown_icon settings_icon"></div>
-                                                    Адмін-панель
-                                                </Link>
-                                            </li>
-                                        )}
                                     </ul>
 
                                     <div style={{ padding: '10px 10px', color: 'gray' }}>

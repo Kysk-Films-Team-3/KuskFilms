@@ -70,7 +70,8 @@
     "login": "Login",
     "dropdown": {
       "manageProfile": "Manage Profile",
-      "settings": "Settings"
+      "settings": "Settings",
+      "adminPanel": "list"
     }
   },
 
@@ -570,6 +571,138 @@
       "alphabet": "By alphabet"
     },
     "reset": "Reset"
+  },
+
+  "admin": {
+    "list": {
+      "title": "List",
+      "persons": "Persons",
+      "movies": "Movies",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "exit": "Exit",
+      "create": "Create",
+      "addMovie": "Add movie",
+      "searchMoviePlaceholder": "Enter movie title",
+      "searchPersonPlaceholder": "Enter actor, actress or director name",
+      "emptyStateTitle": "Warning, error detected",
+      "emptyStateMessage": "Nothing found! For accurate search, enter the original title."
+    },
+    "editActor": {
+      "title": "Edit Profile",
+      "mainInfo": "Main Information",
+      "name": "Name",
+      "surname": "Surname",
+      "activityType": "Activity Type",
+      "gender": "Gender",
+      "birthDate": "Date of Birth",
+      "day": "Day",
+      "month": "Month",
+      "year": "Year",
+      "birthPlace": "Place of Birth",
+      "country": "Country",
+      "city": "City",
+      "filmography": "Filmography",
+      "addMovie": "Add movie",
+      "relatives": "Relatives",
+      "add": "Add",
+      "delete": "Delete",
+      "save": "Save"
+    },
+    "searchMovie": {
+      "title": "Search Movie",
+      "placeholder": "Enter movie, series or show title",
+      "addMovie": "Add movie",
+      "delete": "Delete",
+      "save": "Save",
+      "emptyStateTitle": "Warning, error detected",
+      "emptyStateMessage": "Nothing found! For accurate search, enter the original title."
+    },
+    "searchActor": {
+      "title": "Search Actor",
+      "placeholder": "Enter actor name",
+      "create": "Create",
+      "delete": "Delete",
+      "save": "Save",
+      "emptyStateTitle": "Warning, error detected",
+      "emptyStateMessage": "Nothing found! For accurate search, enter the original title."
+    },
+    "confirmDelete": {
+      "deleteMovies": "Delete these movies",
+      "deletePersons": "Delete these persons",
+      "confirmDeleteMovies": "Are you sure you want to delete these movies?",
+      "confirmDeletePersons": "Are you sure you want to delete these persons?",
+      "exit": "Exit",
+      "delete": "Delete"
+    },
+    "editMovie": {
+      "title": "Edit Movie",
+      "images": "Images",
+      "cover": "Cover",
+      "logo": "Movie Logo",
+      "background": "Background Poster",
+      "reload": "Reload",
+      "delete": "Delete",
+      "upload": "Upload",
+      "movieTitle": "Movie Title",
+      "shortDescription": "Short Description",
+      "director": "Director",
+      "directors": "Movie Directors",
+      "addNewDirector": "New Director",
+      "actors": "Actors",
+      "movieActors": "Movie Actors",
+      "year": "Year",
+      "duration": "Duration",
+      "genres": "Genres",
+      "categories": "Categories",
+      "seasons": "Seasons",
+      "episodes": "Episodes",
+      "episodeCover": "Episode Cover",
+      "episodeTitle": "Episode Title",
+      "reviews": "Reviews",
+      "save": "Save",
+      "deleteMovie": "Delete Movie"
+    }
+  },
+
+  "moviePage": {
+    "errorId": "Error: movie ID is missing",
+    "errorLoad": "Error loading movie",
+    "loading": "Loading...",
+    "notFound": "Movie not found",
+    "videoProcessing": "Video is being processed",
+    "seasonsCount": "Seasons",
+    "price": "Free",
+    "inSubscription": "In subscription",
+    "watch": "Watch",
+    "trailer": "Trailer",
+    "trailerNotAvailable": "Trailer not available",
+    "description": "Description",
+    "expand": "Full description",
+    "collapse": "Collapse",
+    "rate": "Rate",
+    "delete": "Delete",
+    "rateSubtext": "Ratings improve your recommendations",
+    "castAndCrew": "Directors and Actors",
+    "reviews": "Reviews",
+    "readFull": "Read full",
+    "writeComment": "Write comment",
+    "alsoWatch": "Also Watch"
+  },
+
+  "commentModal": {
+    "title": "Write Comment",
+    "ratingLabel": "Rating",
+    "delete": "Delete",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter title",
+    "commentLabel": "Comment",
+    "commentPlaceholder": "Enter comment",
+    "rule1": "Be polite and respect other users",
+    "rule2": "Do not use profanity or offensive language",
+    "rule3": "Your comment will be reviewed before publication",
+    "submit": "Submit"
   }
 }
 

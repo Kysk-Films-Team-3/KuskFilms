@@ -39,11 +39,33 @@
     margin-bottom: 30px;
 }
 
-.comment_section_label {
+.comment_rating_section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 12px;
-    font-size: 20px;
     margin-bottom: 10px;
+}
+
+.comment_section_label {
+    font-size: 20px;
     font-weight: 400;
+}
+
+.comment_rating_delete {
+    background: none;
+    border: none;
+    color: #DD5254;
+    font-size: 18px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease;
+}
+
+.comment_rating_delete:hover {
+    opacity: 0.8;
 }
 
 .comment_stars {
@@ -55,21 +77,41 @@
 .comment_star {
     width: 48px;
     height: 48px;
-    border-radius: 8px;
-    background: #3A3B46;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #D1D1DB;
-    font-size: 18px;
+    border: none;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
     cursor: pointer;
-    transition: 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 0;
 }
 
-.comment_star.active,
+.comment_star .comment_star_number {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    position: relative;
+    z-index: 1;
+}
+
 .comment_star:hover {
-    background: #4E55D4;
-    color: white;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    transform: scale(1.05);
+}
+
+.comment_star.hovered {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.comment_star.active {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
 }
 
 .comment_input,

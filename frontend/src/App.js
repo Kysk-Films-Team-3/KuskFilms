@@ -11,11 +11,16 @@ import { keycloak } from 'services/keycloak';
 import PlayerOverlay  from "./components/player/PlayerOverlay";
 import {PromoInput} from "./components/modal/PromoInput";
 import {CommentModal} from "./components/modal/CommentModal";
+import { List } from './components/admin/List';
+import { EditActor } from './components/admin/EditActor';
+import { SearchMovie } from './components/admin/SearchMovie';
+import { SearchActor } from './components/admin/SearchActor';
 import { ModalsProvider, useModals } from './context/ModalsContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { ActorProvider } from './context/ActorContext';
 import { fetchUserProfile } from 'services/api';
+import { useHasRole } from 'services/useHasRole';
 
 export const App = () => (
     <ReactKeycloakProvider
@@ -42,7 +47,10 @@ const AppContent = () => {
     const shownRegistrationRef = useRef(false);
     const shownPasswordResetRef = useRef(false);
     const { keycloak, initialized } = useKeycloak();
+    const hasAdminRole = useHasRole("ADMIN");
     const [userProfile, setUserProfile] = useState(null);
+    const [selectedMovies, setSelectedMovies] = useState([]);
+    const [selectedActors, setSelectedActors] = useState([]);
 
     useEffect(() => {
         if (initialized && keycloak.authenticated) {
@@ -82,6 +90,7 @@ const AppContent = () => {
                 onOpenLogoutModal={() => openModal('logout')}
                 onOpenActorRecs={(actor) => openModal({ type: 'actorRecs', actor })}
                 onProfileClick={() => openModal('profile')}
+                onOpenListModal={() => openModal('adminList')}
             />
             {activeModal === 'PlayerOverlay' && <PlayerOverlay isOpen onClose={closeModal} />}
             {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
@@ -96,6 +105,60 @@ const AppContent = () => {
             )}
             {activeModal === 'forgotComplete' && (
                 <ForgotComplete isOpen onClose={closeModal} />
+            )}
+            {activeModal === 'adminList' && hasAdminRole && (
+                <List 
+                    isOpen 
+                    onClose={closeModal}
+                    onOpenEditActor={() => {
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                />
+            )}
+            {activeModal === 'editActor' && (
+                <EditActor
+                    isOpen
+                    onClose={closeModal}
+                    onOpenSearchMovie={() => openModal('searchMovie')}
+                    onOpenSearchActor={() => openModal('searchActor')}
+                    selectedMovies={selectedMovies}
+                    onMoviesAdded={() => setSelectedMovies([])}
+                    selectedActors={selectedActors}
+                    onActorsAdded={() => setSelectedActors([])}
+                />
+            )}
+            {activeModal === 'searchMovie' && (
+                <SearchMovie
+                    isOpen
+                    onClose={() => {
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                    onSelectMovies={(movies) => {
+                        setSelectedMovies(movies);
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                />
+            )}
+            {activeModal === 'searchActor' && (
+                <SearchActor
+                    isOpen
+                    onClose={() => {
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                    onSelectActors={(actors) => {
+                        setSelectedActors(actors);
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                    onOpenEditActor={() => {
+                        closeModal();
+                        openModal('editActor');
+                    }}
+                />
             )}
         </>
     );

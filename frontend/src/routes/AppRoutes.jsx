@@ -22,12 +22,12 @@ import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
 
-export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal, onOpenActorRecs, onProfileClick, onPromoInputClick, onCommentModalClick }) => {
+export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDeviceClick, onPaymentClick, onOpenLogoutModal, onOpenActorRecs, onProfileClick, onPromoInputClick, onCommentModalClick, onOpenListModal }) => {
 
     return (
         <Routes>
             <Route
-                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick} onOpenLogoutModal={onOpenLogoutModal}/>}
+                element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick} onOpenLogoutModal={onOpenLogoutModal} onOpenListModal={onOpenListModal}/>}
 
             >
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />

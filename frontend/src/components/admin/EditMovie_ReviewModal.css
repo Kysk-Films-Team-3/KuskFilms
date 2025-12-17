@@ -1,0 +1,141 @@
+﻿.edit_movie_review_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 20px;
+}
+
+.edit_movie_review_modal {
+    background: #34353F;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 25px;
+    padding: 50px 60px;
+    position: relative;
+    animation: fadeIn 0.25s ease;
+    color: #F8F8FE;
+    font-family: 'Inter', sans-serif;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.edit_movie_review_modal_close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit_movie_review_modal_close_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.edit_movie_review_modal_close:hover .edit_movie_review_modal_close_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.edit_movie_review_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.edit_movie_review_modal_left {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.edit_movie_review_modal_avatar {
+    width: 50px;
+    height: 50px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.edit_movie_review_modal_info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.edit_movie_review_modal_author {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.edit_movie_review_modal_date {
+    color: #9999A1;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.edit_movie_review_modal_rating {
+    width: 50px;
+    height: 50px;
+    background-color: #12B77C;
+    color: #F8F8FE;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+
+.edit_movie_review_modal_title {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+    margin-bottom: 20px;
+}
+
+.edit_movie_review_modal_text {
+    color: #F8F8FE;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+
+
+
+
+
+

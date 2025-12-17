@@ -67,7 +67,8 @@
     "login": "Увійти",
     "dropdown": {
       "manageProfile": "Керувати профілем",
-      "settings": "Перейти до налаштувань"
+      "settings": "Перейти до налаштувань",
+      "adminPanel": "list"
     }
   },
 
@@ -566,6 +567,138 @@
       "powerOfFriendship": "Сила Дружби",
       "romance": "Романтика"
     }
+  },
+
+  "admin": {
+    "list": {
+      "title": "Список",
+      "persons": "Персони",
+      "movies": "Фільми",
+      "edit": "Редагувати",
+      "delete": "Видалити",
+      "save": "Зберегти",
+      "exit": "Вийти",
+      "create": "Створити",
+      "addMovie": "Додати фільм",
+      "searchMoviePlaceholder": "Введіть назву фільму",
+      "searchPersonPlaceholder": "Введіть ім'я актора, акторки чи режисера",
+      "emptyStateTitle": "Увага, виявлена помилка",
+      "emptyStateMessage": "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+    },
+    "editActor": {
+      "title": "Редагування профілю",
+      "mainInfo": "Основна інформація",
+      "name": "Ім'я",
+      "surname": "Прізвище",
+      "activityType": "Вид діяльності",
+      "gender": "Стать",
+      "birthDate": "Дата народження",
+      "day": "День",
+      "month": "Місяць",
+      "year": "Рік",
+      "birthPlace": "Місто народження",
+      "country": "Країна",
+      "city": "Місто",
+      "filmography": "Фільмографія",
+      "addMovie": "Додати фільм",
+      "relatives": "Родичі",
+      "add": "Додати",
+      "delete": "Видалити",
+      "save": "Зберегти"
+    },
+    "searchMovie": {
+      "title": "Пошук фільму",
+      "placeholder": "Введіть назву фільму, серіалу або шоу",
+      "addMovie": "Додати фільм",
+      "delete": "Видалити",
+      "save": "Зберегти",
+      "emptyStateTitle": "Увага, виявлена помилка",
+      "emptyStateMessage": "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+    },
+    "searchActor": {
+      "title": "Пошук актора",
+      "placeholder": "Введіть ім'я актора",
+      "create": "Створити",
+      "delete": "Видалити",
+      "save": "Зберегти",
+      "emptyStateTitle": "Увага, виявлена помилка",
+      "emptyStateMessage": "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+    },
+    "confirmDelete": {
+      "deleteMovies": "Видалити ці фільми",
+      "deletePersons": "Видалити цих персон",
+      "confirmDeleteMovies": "Ви впевнені, що хочете видалити ці фільми?",
+      "confirmDeletePersons": "Ви впевнені, що хочете видалити цих персон?",
+      "exit": "Вийти",
+      "delete": "Видалити"
+    },
+    "editMovie": {
+      "title": "Редагування фільму",
+      "images": "Зображення",
+      "cover": "Обкладинка",
+      "logo": "Логотип фільму",
+      "background": "Фоновий постер",
+      "reload": "Перезавантажити",
+      "delete": "Видалити",
+      "upload": "Завантажити",
+      "movieTitle": "Назва фільму",
+      "shortDescription": "Короткий опис",
+      "director": "Режисер",
+      "directors": "Режисери фільму",
+      "addNewDirector": "Новий режисер",
+      "actors": "Актори",
+      "movieActors": "Актори фільму",
+      "year": "Рік",
+      "duration": "Тривалість",
+      "genres": "Жанри",
+      "categories": "Категорії",
+      "seasons": "Сезони",
+      "episodes": "Серії",
+      "episodeCover": "Обкладинка Серії",
+      "episodeTitle": "Назва Серії",
+      "reviews": "Відгуки",
+      "save": "Зберегти",
+      "deleteMovie": "Видалити фільм"
+    }
+  },
+
+  "moviePage": {
+    "errorId": "Помилка: відсутній ID фільму",
+    "errorLoad": "Помилка завантаження фільму",
+    "loading": "Завантаження...",
+    "notFound": "Фільм не знайдено",
+    "videoProcessing": "Відео обробляється",
+    "seasonsCount": "Сезонів",
+    "price": "Безкоштовно",
+    "inSubscription": "В підписку",
+    "watch": "Дивитися",
+    "trailer": "Трейлер",
+    "trailerNotAvailable": "Трейлер недоступний",
+    "description": "Опис",
+    "expand": "Детальний опис",
+    "collapse": "Згорнути",
+    "rate": "Поставте оцінку",
+    "delete": "Видалити",
+    "rateSubtext": "Оцінки покращують ваші рекомендації",
+    "castAndCrew": "Режисери та актори",
+    "reviews": "Відгуки",
+    "readFull": "Читати повністю",
+    "writeComment": "Написати коментар",
+    "alsoWatch": "Дивіться також"
+  },
+
+  "commentModal": {
+    "title": "Написати коментар",
+    "ratingLabel": "Оцінка",
+    "delete": "Видалити",
+    "titleLabel": "Заголовок",
+    "titlePlaceholder": "Введіть заголовок",
+    "commentLabel": "Коментар",
+    "commentPlaceholder": "Введіть коментар",
+    "rule1": "Будьте ввічливими та поважайте інших користувачів",
+    "rule2": "Не використовуйте нецензурну лексику або образливі висловлювання",
+    "rule3": "Ваш коментар буде перевірено перед публікацією",
+    "submit": "Відправити"
   }
 
 }

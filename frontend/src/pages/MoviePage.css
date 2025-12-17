@@ -238,13 +238,19 @@ transition: transform 0.3s ease;
     padding: 20px;
     width: 580px;
     height: 174px;
-    border-radius: 10px;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     border: none;
     background-color: #34353F;
     margin-top: 20px;
+}
+
+.movie_mark_block_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .movie_mark_block_text{
@@ -254,6 +260,22 @@ transition: transform 0.3s ease;
     font-family: "Raleway", sans-serif;
 }
 
+.movie_mark_block_delete {
+    background: none;
+    border: none;
+    color: #DD5254;
+    font-size: 18px;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease;
+}
+
+.movie_mark_block_delete:hover {
+    opacity: 0.8;
+}
+
 .movie_mark_block_subtext{
     font-size: 20px;
     color: #9999A1;
@@ -261,12 +283,65 @@ transition: transform 0.3s ease;
     font-family: "Raleway", sans-serif;
 }
 
+.movie_marks {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.movie_star {
+    width: 50px;
+    height: 50px;
+    border: none;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 0;
+}
+
+.movie_star .movie_star_number {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    position: relative;
+    z-index: 1;
+}
+
+.movie_star:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    transform: scale(1.05);
+}
+
+.movie_star.hovered {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.movie_star.active {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
 .movie_reviews_block{
-    padding-left: 60px;
-    padding-right: 60px;
+    padding-left: 0;
+    padding-right: 0;
     gap: 30px;
     display: flex;
     flex-direction: column;
+    position: relative;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
 }
 
 .movie_reviews_title{
@@ -274,6 +349,195 @@ transition: transform 0.3s ease;
     color: white;
     font-weight: 600;
     font-family: "Raleway", sans-serif;
+    margin-bottom: 30px;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.movie_reviews_list_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+    box-sizing: border-box;
+    scroll-padding: 0 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.movie_reviews_list_wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.movie_reviews_list {
+    display: flex;
+    gap: 20px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 10px 60px 10px 60px;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+
+.movie_review_item {
+    flex-shrink: 0;
+    width: 400px;
+}
+
+.movie_review_card {
+    width: 100%;
+    background-color: #34353F;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.movie_review_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.movie_review_left {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.movie_review_avatar {
+    width: 50px;
+    height: 50px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.movie_review_info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.movie_review_author {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.movie_review_date {
+    color: #9999A1;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.movie_review_rating {
+    width: 50px;
+    height: 50px;
+    background-color: #12B77C;
+    color: #F8F8FE;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+
+.movie_review_title {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.movie_review_text {
+    color: #F8F8FE;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie_review_read_more {
+    background: none;
+    border: none;
+    color: #4E55D4;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    transition: color 0.2s ease;
+    align-self: flex-start;
+}
+
+.movie_review_read_more:hover {
+    color: #3429B0;
+}
+
+.movie_reviews_scroll_btn {
+    margin-top: 40px;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 307px;
+    top: 0;
+}
+
+.movie_reviews_block:hover .movie_reviews_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.movie_reviews_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.movie_reviews_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.movie_reviews_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.movie_reviews_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.movie_reviews_scroll_btn.hidden,
+.movie_reviews_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
 }
 
 .movie_reviews_button{
@@ -291,4 +555,487 @@ transition: transform 0.3s ease;
     font-weight: 400;
     cursor: pointer;
     transition: transform 0.3s ease;
+    margin-top: 20px;
+    margin-left: 60px;
+}
+
+.movie_review_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 20px;
+}
+
+.movie_review_modal {
+    background: #34353F;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 25px;
+    padding: 50px 60px;
+    position: relative;
+    animation: fadeIn 0.25s ease;
+    color: #F8F8FE;
+    font-family: 'Inter', sans-serif;
+}
+
+.movie_review_modal_close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.movie_review_modal_close_icon {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.movie_review_modal_close:hover .movie_review_modal_close_icon {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+}
+
+.movie_review_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.movie_review_modal_left {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.movie_review_modal_avatar {
+    width: 50px;
+    height: 50px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.movie_review_modal_info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.movie_review_modal_author {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.movie_review_modal_date {
+    color: #9999A1;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.movie_review_modal_rating {
+    width: 50px;
+    height: 50px;
+    background-color: #12B77C;
+    color: #F8F8FE;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+
+.movie_review_modal_title {
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+    margin-bottom: 20px;
+}
+
+.movie_review_modal_text {
+    color: #F8F8FE;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.movie_cast_block {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+    position: relative;
+}
+
+.movie_cast_title {
+    font-size: 30px;
+    color: white;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    margin-bottom: 30px;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.movie_cast_list_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+    box-sizing: border-box;
+    scroll-padding: 0 10px;
+}
+
+.movie_cast_list_wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.movie_cast_list {
+    display: flex;
+    gap: 20px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 10px 10px 10px 60px;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+
+.movie_cast_scroll_btn {
+    margin-top: 40px;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 307px;
+    top: 0;
+}
+
+.movie_cast_block:hover .movie_cast_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.movie_cast_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.movie_cast_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.movie_cast_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.movie_cast_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.movie_cast_scroll_btn.hidden,
+.movie_cast_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.movie_cast_item {
+    flex: 0 0 auto;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.movie_cast_item:hover {
+    transform: scale(1.05);
+}
+
+.movie_cast_avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #34353F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.movie_cast_avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie_cast_name {
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    text-align: center;
+}
+
+.movie_cast_role {
+    font-size: 14px;
+    color: #9999A1;
+    font-weight: 400;
+    font-family: "Raleway", sans-serif;
+    text-align: center;
+}
+
+.movie_also_watch_block {
+    margin-top: 60px;
+    position: relative;
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+    margin-bottom: 40px;
+}
+
+.movie_also_watch_title {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+}
+
+.movie_also_watch_arrow {
+    width: 40px;
+    height: 40px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756334382/Footer_arrow_hover.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, background-image 0.3s ease;
+}
+
+.movie_also_watch_block:hover .movie_also_watch_arrow {
+    opacity: 1;
+}
+
+.movie_also_watch_header {
+    padding: 0 60px;
+    cursor: pointer;
+    transition: color 0.3s ease, background-image 0.3s ease;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.movie_also_watch_header:hover .movie_also_watch_title {
+    color: #4E55D4;
+}
+
+.movie_also_watch_header:hover .movie_also_watch_arrow {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1756419825/Arrow_hover.png');
+}
+
+.movie_also_watch_wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    padding: 10px 0;
+    margin: -10px 0;
+}
+
+.movie_also_watch_list {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 10px 60px;
+    align-items: flex-start;
+}
+
+.movie_also_watch_wrapper::-webkit-scrollbar {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.movie_also_watch_scroll_btn {
+    margin-top: 40px;
+    position: absolute;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: 119px;
+    height: 307px;
+    top: 0;
+}
+
+.movie_also_watch_block:hover .movie_also_watch_scroll_btn:not(.hidden) {
+    opacity: 1;
+}
+
+.movie_also_watch_scroll_btn.left {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758555944/Frame_47859_acaw5i.png');
+    left: 0;
+}
+
+.movie_also_watch_scroll_btn.left:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758557059/Frame_47859_1_m6ec9z.png');
+}
+
+.movie_also_watch_scroll_btn.right {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758207351/Frame_89_vg187o.png');
+    right: 0;
+}
+
+.movie_also_watch_scroll_btn.right:hover {
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1758231271/Frame_89_1_jwlmdl.png');
+}
+
+.movie_also_watch_scroll_btn.hidden,
+.movie_also_watch_scroll_btn.hidden:hover {
+    background-image: none;
+    cursor: default;
+}
+
+.movie_also_watch_item {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 216px;
+    height: 297px;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+    transform-origin: center center;
+    will-change: transform;
+    pointer-events: auto;
+    margin: 3px 0;
+}
+
+.movie_also_watch_item:hover {
+    opacity: 1;
+    transform: scale(1.02);
+    z-index: 2;
+    margin: 0;
+}
+
+.movie_also_watch_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.movie_also_watch_text {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+
+.movie_also_watch_item:hover .movie_also_watch_text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.movie_also_watch_rating {
+    font-family: "Inter", sans-serif;
+    font-size: 32px;
+}
+
+.movie_also_watch_line {
+    font-family: "Raleway", sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.movie_also_watch_line1 {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.movie_also_watch_date {
+    font-family: "Inter", sans-serif;
+}
+
+.movie_also_watch_line2 {
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.movie_also_watch_season {
+    font-size: 16px;
+    font-weight: 400;
 }
