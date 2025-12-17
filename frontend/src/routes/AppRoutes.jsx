@@ -18,6 +18,8 @@ import {DevicesPage} from "../pages/DevicesPage";
 import {DistributorsPage} from "../pages/DistributorsPage";
 import {ContactsPage} from "../pages/ContactsPage";
 import {ErrorPage} from "../pages/ErrorPage";
+import { PaymentSuccess } from '../pages/PaymentSuccess';
+import { PaymentCancel } from '../pages/PaymentCancel';
 import { AdminPage } from '../pages/AdminPage';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
@@ -48,6 +50,8 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/rules" element={<RulesPage />} />
                 <Route path="/error" element={<ErrorPage />} />
+                <Route path="/payment/success" element={<PaymentSuccess onProfileUpdate={onProfileUpdate} />} />
+                <Route path="/payment/cancel" element={<PaymentCancel />} />
 
                 <Route
                     path="/admin"

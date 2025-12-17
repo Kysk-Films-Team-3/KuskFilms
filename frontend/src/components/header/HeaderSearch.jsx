@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './HeaderSearch.css';
 
-export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery }) => {
+export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle }) => {
     const { t } = useTranslation();
     const showPopular = searchQuery === '';
     
@@ -162,7 +162,9 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
         <div className={`header_search_results ${showPopular ? '' : 'no-before'}`}>
             {showPopular ? (
                 <>
-                    <span className="header_search_label"><Trans i18nKey="searchFrequently" /></span>
+                    <span className="header_search_label">
+                        {searchSuggestionsTitle || <Trans i18nKey="searchFrequently" />}
+                    </span>
 
                     <div className="header_search_section">
                         <div 

@@ -84,8 +84,9 @@
       "parentControl": "Батьківський контроль",
       "offline": "Завантаження та перегляд без інтернету"
     },
-
-    "subscribe": "Оформити"
+    "subscribe": "Оформити",
+    "loading": "Завантаження...",
+    "errorCreatingSession": "Не вдалося створити сесію оплати. Спробуйте ще раз."
   },
 
   "settings": {
@@ -431,7 +432,9 @@
     "lastName": "Прізвище",
     "nickname": "Нікнейм",
     "exit": "Вийти",
-    "save": "Зберегти"
+    "save": "Зберегти",
+    "premiumActive": "Premium активний",
+    "premiumInactive": "Premium не активний"
   },
 
   "favorites": {

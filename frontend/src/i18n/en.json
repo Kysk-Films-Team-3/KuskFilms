@@ -87,8 +87,9 @@
       "parentControl": "Parental control",
       "offline": "Download and watch offline"
     },
-
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "loading": "Loading...",
+    "errorCreatingSession": "Failed to create payment session. Please try again."
   },
 
   "settings": {
@@ -430,7 +431,9 @@
     "lastName": "Last Name",
     "nickname": "Nickname",
     "exit": "Exit",
-    "save": "Save"
+    "save": "Save",
+    "premiumActive": "Premium Active",
+    "premiumInactive": "Premium Inactive"
   },
 
   "favorites": {

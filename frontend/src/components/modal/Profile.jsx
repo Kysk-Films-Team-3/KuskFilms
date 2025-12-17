@@ -50,6 +50,9 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setError(null);
 
                 const response = await fetchUserProfile();
+                console.log("📋 Профиль в компоненте Profile:", response);
+                console.log("📋 isPremium в компоненте:", response?.isPremium);
+                
                 onProfileUpdate(response);
 
                 setName(keycloak.tokenParsed?.given_name || '');
@@ -187,6 +190,23 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                         <Trans i18nKey="profile.nickname" />
                                     </label>
                                 </div>
+                            </div>
+                            
+                            <div className="profile_premium_status" style={{
+                                marginTop: '20px',
+                                padding: '15px',
+                                borderRadius: '8px',
+                                backgroundColor: userProfile?.isPremium ? '#4E55D4' : '#34353F',
+                                color: '#F8F8FE',
+                                textAlign: 'center',
+                                fontSize: '16px',
+                                fontWeight: '500'
+                            }}>
+                                {userProfile?.isPremium ? (
+                                    <Trans i18nKey="profile.premiumActive">Premium активен</Trans>
+                                ) : (
+                                    <Trans i18nKey="profile.premiumInactive">Premium не активен</Trans>
+                                )}
                             </div>
                         </>
                     )}

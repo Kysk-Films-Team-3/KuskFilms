@@ -1,10 +1,31 @@
-import React, { } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Footer.css';
 import { Link } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
+import { fetchFooterData } from '../../services/api';
 
 export const Footer = () => {
-    useTranslation();
+    const [footerData, setFooterData] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchFooterData();
+                setFooterData(data);
+            } catch (error) {
+                console.error("Ошибка загрузки данных футера:", error);
+            }
+        })();
+    }, []);
+
+    const getSocialIconClass = (network) => {
+        switch (network) {
+            case 'tg': return 'footer_telegram_icon';
+            case 'fb': return 'footer_facebook_icon';
+            case 'ig': return 'footer_instagram_icon';
+            case 'x': return 'footer_x_icon';
+            default: return '';
+        }
+    };
 
     return (
         <footer className="footer">
@@ -14,56 +35,27 @@ export const Footer = () => {
                     <div className="footer_top">
                         <div className="footer_left">
                             <div className="footer_icons">
-                                <a href="https://t.me" target="_blank" rel="noopener noreferrer">
-                                    <div className="footer_telegram_icon"></div>
-                                </a>
-
-                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                                    <div className="footer_facebook_icon"></div>
-                                </a>
-
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                                    <div className="footer_instagram_icon"></div>
-                                </a>
-
-                                <a href="https://x.com" target="_blank" rel="noopener noreferrer">
-                                    <div className="footer_x_icon"></div>
-                                </a>
-
+                                {footerData?.socialLinks?.map((social, index) => (
+                                    <a key={index} href={social.url} target="_blank" rel="noopener noreferrer">
+                                        <div className={getSocialIconClass(social.network)}></div>
+                                    </a>
+                                ))}
                             </div>
-
-                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=kyskfilms@gmail.com"
-                                               className="footer_help"
-                                               target="_blank"
-                                               rel="noopener noreferrer">
-                                <button><Trans i18nKey="footer.needHelp" /></button>
-                            </a>
                         </div>
 
                         <div className="footer_columns">
-                            <div className="footer_col">
-                                <div className="footer_col_title"><Trans i18nKey="footer.kysk" /></div>
-                                <div className="footer_col_links">
-                                    <Link to="/about" className="footer_col_link"><Trans i18nKey="footer.aboutUs" /></Link>
-                                    <Link to="/careers" className="footer_col_link"><Trans i18nKey="footer.careers" /></Link>
-                                    <Link to="/agents" className="footer_col_link"><Trans i18nKey="footer.agents" /></Link>
+                            {footerData?.columns?.map((column, index) => (
+                                <div key={index} className="footer_col">
+                                    <div className="footer_col_title">{column.title}</div>
+                                    <div className="footer_col_links">
+                                        {column.links.map(link => (
+                                            <Link key={link.id} to={link.link} className="footer_col_link">
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="footer_col">
-                                <div className="footer_col_title"><Trans i18nKey="footer.help" /></div>
-                                <div className="footer_col_links">
-                                    <Link to="/faq" className="footer_col_link"><Trans i18nKey="footer.faq" /></Link>
-                                    <Link to="/devices" className="footer_col_link"><Trans i18nKey="footer.devices" /></Link>
-                                    <Link to="/distributors" className="footer_col_link"><Trans i18nKey="footer.distributors" /></Link>
-                                    <Link to="/contacts" className="footer_col_link"><Trans i18nKey="footer.contacts" /></Link>
-                                </div>
-                            </div>
-                            <div className="footer_col">
-                                <div className="footer_col_title"><Trans i18nKey="footer.other" /></div>
-                                <div className="footer_col_links">
-                                    <Link to="/offers" className="footer_col_link"><Trans i18nKey="footer.offers" /></Link>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
@@ -77,29 +69,32 @@ export const Footer = () => {
                         </Link>
                         <div className="footer_text">
                             <div className="footer_main_text">
-                                <span className="footer_main_date">© 2012-2025</span> <Trans i18nKey="footer.companyName" />
-                                <br />
-                                <Trans i18nKey="footer.freeChannels" />
-                                <br />
-                                <Trans i18nKey="footer.softwareRegistry" />
+                                {footerData?.bottomText?.map((text, index) => (
+                                    <React.Fragment key={index}>
+                                        {text}
+                                        {index < (footerData.bottomText.length - 1) && <br />}
+                                    </React.Fragment>
+                                ))}
                             </div>
                             <div className="footer_links_vertical">
                                 <div className="footer_link_line">
-                                    <div className="footer_link_item">
-                                        <Link to="/terms" className="footer_link"><Trans i18nKey="footer.terms" /></Link>
-                                        <div className="footer_link_arrow"></div>
-                                    </div>
-                                    <div className="footer_link_item">
-                                        <Link to="/privacy" className="footer_link"><Trans i18nKey="footer.privacy" /></Link>
-                                        <div className="footer_link_arrow"></div>
-                                    </div>
+                                    {footerData?.legalLinks?.slice(0, 2).map(link => (
+                                        <div key={link.id} className="footer_link_item">
+                                            <Link to={link.link} className="footer_link">{link.label}</Link>
+                                            <div className="footer_link_arrow"></div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="footer_link_line">
-                                    <div className="footer_link_item">
-                                        <Link to="/rules" className="footer_link"><Trans i18nKey="footer.rules" /></Link>
-                                        <div className="footer_link_arrow"></div>
+                                {footerData?.legalLinks?.length > 2 && (
+                                    <div className="footer_link_line">
+                                        {footerData.legalLinks.slice(2).map(link => (
+                                            <div key={link.id} className="footer_link_item">
+                                                <Link to={link.link} className="footer_link">{link.label}</Link>
+                                                <div className="footer_link_arrow"></div>
+                                            </div>
+                                        ))}
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>

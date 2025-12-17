@@ -258,16 +258,33 @@ export const fetchTitleById = async (id) => {
 
 export const fetchUserProfile = async () => {
     try {
-    } catch (e) { }
-
-    if (keycloak.tokenParsed) {
+        const response = await api.get('/api/users/profile/me');
+        console.log("📥 Профиль загружен:", response.data);
+        console.log("📥 isPremium:", response.data?.isPremium);
+        if (!response.data) {
+            throw new Error("Профиль не найден в ответе");
+        }
+        return response.data;
+    } catch (e) {
+        console.error("Ошибка загрузки профиля:", e);
+        console.error("Детали ошибки:", e.response?.data || e.message);
+        if (keycloak.tokenParsed) {
+            console.log("⚠️ Используем fallback данные из Keycloak");
+            return {
+                username: keycloak.tokenParsed.preferred_username,
+                email: keycloak.tokenParsed.email,
+                avatarUrl: null,
+                isPremium: false
+            };
+        }
+        console.warn("⚠️ Keycloak token недоступен, возвращаем пустой профиль");
         return {
-            username: keycloak.tokenParsed.preferred_username,
-            email: keycloak.tokenParsed.email,
-            avatarUrl: null
+            username: null,
+            email: null,
+            avatarUrl: null,
+            isPremium: false
         };
     }
-    return null;
 };
 
 export const uploadAvatar = async (file) => {
@@ -394,4 +411,62 @@ export const refreshAccessTokenAPI = async () => {
     const token = "fake_jwt_token_" + Date.now();
     localStorage.setItem("token", token);
     return { success: true, token };
+};
+
+export const createCheckoutSession = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/payment/checkout';
+        
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/payment/checkout';
+        }
+        
+        const response = await api.post(url);
+        return { success: true, url: response.data.url };
+    } catch (error) {
+        console.error("Ошибка создания сессии оплаты:", error);
+        console.error("URL запроса:", error.config?.url);
+        console.error("Base URL:", api.defaults.baseURL);
+        const errorMessage = error.response?.data?.message || error.message || 'Не вдалося створити сесію оплати';
+        return { success: false, message: errorMessage };
+    }
+};
+
+export const fetchHeaderData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/layout/header';
+        
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/layout/header';
+        }
+        
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки данных хедера:", error);
+        console.error("URL запроса:", error.config?.url);
+        console.error("Base URL:", api.defaults.baseURL);
+        throw error;
+    }
+};
+
+export const fetchFooterData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/layout/footer';
+        
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/layout/footer';
+        }
+        
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки данных футера:", error);
+        console.error("URL запроса:", error.config?.url);
+        console.error("Base URL:", api.defaults.baseURL);
+        throw error;
+    }
 };

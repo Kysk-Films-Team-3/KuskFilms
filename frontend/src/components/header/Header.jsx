@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import './Header.css';
-import { getPopularFilms, getPopularActors } from 'services/api';
+import { fetchHeaderData } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 import { HeaderSearch } from './HeaderSearch';
 
 export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal, onOpenListModal}) => {
 
-    const { t, i18n } = useTranslation();
     const location = useLocation();
     const { keycloak } = useKeycloak();
+    const { i18n } = useTranslation();
     const hasAdminRole = useHasRole("ADMIN");
     const isPremiumPage = location.pathname === '/Premium';
     
@@ -30,12 +30,54 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
     const [searchResults, setSearchResults] = useState({ films: [], actors: [] });
     const [popularFilms, setPopularFilms] = useState([]);
     const [popularActors, setPopularActors] = useState([]);
+    const [headerData, setHeaderData] = useState(null);
+    const [navigationItems, setNavigationItems] = useState([]);
+    const [searchSuggestions, setSearchSuggestions] = useState([]);
     const dropdownRef = useRef(null);
     const searchRef = useRef(null);
 
     const isLoggedIn = keycloak?.authenticated;
     const avatarUrl = userProfile?.avatarUrl;
     const username = userProfile?.username || keycloak?.tokenParsed?.preferred_username;
+
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const headerDataResponse = await fetchHeaderData();
+                setHeaderData(headerDataResponse);
+                
+                if (headerDataResponse?.navigation) {
+                    setNavigationItems(headerDataResponse.navigation);
+                }
+                
+                if (headerDataResponse?.searchSuggestions?.items) {
+                    const items = headerDataResponse.searchSuggestions.items;
+                    const films = items
+                        .filter(item => item.type === 'MOVIE')
+                        .map(item => ({
+                            id: item.id,
+                            title: item.title,
+                            image: item.imageUrl
+                        }));
+                    const actors = items
+                        .filter(item => item.type === 'ACTOR')
+                        .map(item => ({
+                            id: item.id,
+                            name: item.title,
+                            image: item.imageUrl
+                        }));
+                    setPopularFilms(films);
+                    setPopularActors(actors);
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки данных хедера:", error);
+            }
+        })();
+    }, []);
+
+    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+    const handleMenuItemClick = () => setIsDropdownOpen(false);
 
     useEffect(() => {
         const savedLang = localStorage.getItem('lang');
@@ -48,22 +90,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
         i18n.changeLanguage(lang).catch(() => {});
         localStorage.setItem('lang', lang);
     };
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const films = await getPopularFilms();
-                const actors = await getPopularActors();
-                setPopularFilms(films);
-                setPopularActors(actors);
-            } catch (error) {
-                console.error(error);
-            }
-        })();
-    }, []);
-
-    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-    const handleMenuItemClick = () => setIsDropdownOpen(false);
 
     const performSearch = (query) => {
         if (!query) {
@@ -259,10 +285,15 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
 
                         {!isSearchOpen && !isPremiumPage && (
                             <nav className="header_nav">
-                                <NavLink to="/" end><Trans i18nKey="header.nav.home" /></NavLink>
-                                <NavLink to="/catalog"><Trans i18nKey="header.nav.catalog" /></NavLink>
-                                <NavLink to="/new-popular"><Trans i18nKey="header.nav.newAndPopular" /></NavLink>
-                                <NavLink to="/Favorites"><Trans i18nKey="header.nav.favorites" /></NavLink>
+                                {navigationItems.map(item => (
+                                    <NavLink 
+                                        key={item.id} 
+                                        to={item.link} 
+                                        end={item.link === '/'}
+                                    >
+                                        {item.label}
+                                    </NavLink>
+                                ))}
                             </nav>
                         )}
 
@@ -272,7 +303,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                     <div className="header_search_left_icon" />
                                     <input
                                         type="text"
-                                        placeholder={String(t("header.search.placeholder"))}
+                                        placeholder={headerData?.texts?.searchPlaceholder || ""}
                                         autoFocus
                                         value={searchQuery}
                                         onChange={handleSearchInputChange}
@@ -284,6 +315,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         popularActors={popularActors}
                                         searchResults={searchResults}
                                         searchQuery={searchQuery}
+                                        searchSuggestionsTitle={headerData?.searchSuggestions?.title}
                                     />
                                 )}
                             </div>
@@ -307,18 +339,18 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     )}
 
                     {!isPremiumPage && (
-                        <Link to="/Premium" className="header_premium"><Trans i18nKey="header.premium" /></Link>
+                        <Link to="/Premium" className="header_premium">Premium</Link>
                     )}
 
                     <div className="header_promo" onClick={onPromoInputClick}>
                         <div className="header_promo_icon" />
-                        <span className="header_promo_text"><Trans i18nKey="header.promo" /></span>
+                        <span className="header_promo_text">Промокод</span>
                     </div>
 
                     {isLoggedIn ? (
                         <div className="header_profile">
                             <div onClick={toggleDropdown} className="header_profile_switch">
-                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? t("header.dropdown.closeMenu") : t("header.dropdown.openMenu")} />
+                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? "Закрити меню" : "Відкрити меню"} />
 
                                 <div className="header_avatar">
                                     {avatarUrl && (
@@ -357,7 +389,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         <li>
                                             <button onClick={() => {onProfileClick();  handleMenuItemClick();}}  className="dropdown_link">
                                                 <div className="dropdown_icon manage_icon"></div>
-                                                <Trans i18nKey="header.dropdown.manageProfile" />
+                                                Керувати профілем
                                             </button>
                                         </li>
 
@@ -371,7 +403,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 }}
                                             >
                                                 <div className="dropdown_icon language_icon"></div>
-                                                {i18n.language === 'ua' ? <Trans i18nKey="header.dropdown.switchToEnglish" /> : <Trans i18nKey="header.dropdown.switchToUkrainian" />}
+                                                {i18n.language === 'ua' ? 'Перемкнути на англійську' : 'Перемкнути на українську'}
                                             </button>
                                         </li>
                                         {hasAdminRole && (
@@ -386,7 +418,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                     className="dropdown_link"
                                                 >
                                                     <div className="dropdown_icon settings_icon"></div>
-                                                    <Trans i18nKey="header.dropdown.adminPanel" />
+                                                    Адмін панель
                                                 </button>
                                             </li>
                                         )}
@@ -401,7 +433,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 }}
                                             >
                                                 <div className="dropdown_icon logout_icon"></div>
-                                                <Trans i18nKey="settings.logout" />
+                                                Вийти
                                             </Link>
                                         </li>
                                     </ul>
@@ -438,7 +470,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     ) : (
                         <div onClick={handleLogin} className="header_log_button">
                             <div className="log_button_icon"></div>
-                            <span><Trans i18nKey="header.login" /></span>
+                            <span>Увійти</span>
                         </div>
                     )}
                 </div>
