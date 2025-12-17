@@ -1,3 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
 .registration_page {
     background-color: #262630;
     color: #F8F8FE;
@@ -8,6 +22,8 @@
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 .registration_layout {
@@ -126,14 +142,16 @@
 }
 
 .registration_error_text {
+    margin-top: 8px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 4px;
     font-family: "Inter", sans-serif;
+    color: #DD5254;
     font-weight: 300;
     font-size: 14px;
-    color: #DD5254;
-    margin-top: 10px;
+    text-align: left;
     width: 100%;
 }
 

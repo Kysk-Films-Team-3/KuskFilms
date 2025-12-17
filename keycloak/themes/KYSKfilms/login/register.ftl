@@ -14,13 +14,6 @@
             Готові дивитися? Введіть свою електронну адресу або
             мобільний телефон, щоб створити акаунт.
         </div>
-        <#if message?has_content>
-            <div class="registration_error_text" id="server-error"
-                 style="display: flex; margin-bottom: 16px; text-align: left;">
-                <div class="registration_error_icon"></div>
-                <span>${message.summary}</span>
-            </div>
-        </#if>
         <form class="registration_form" id="registrationForm"
               action="${url.registrationAction}"
               method="post">
@@ -35,10 +28,6 @@
                         autocomplete="given-name"
                 />
                 <label for="firstName">Ім'я</label>
-                <div class="registration_error_text" id="firstName-client-error" style="display:none;">
-                    <div class="registration_error_icon"></div>
-                    <span id="firstName-client-text"></span>
-                </div>
             </div>
 
             <div class="registration_input_block">
@@ -51,10 +40,6 @@
                         autocomplete="family-name"
                 />
                 <label for="lastName">Прізвище</label>
-                <div class="registration_error_text" id="lastName-client-error" style="display:none;">
-                    <div class="registration_error_icon"></div>
-                    <span id="lastName-client-text"></span>
-                </div>
             </div>
 
             <div class="registration_input_block">
@@ -67,10 +52,6 @@
                         autocomplete="email"
                 />
                 <label for="email">Ел. пошта</label>
-                <div class="registration_error_text" id="email-client-error" style="display:none;">
-                    <div class="registration_error_icon"></div>
-                    <span id="email-client-text"></span>
-                </div>
             </div>
 
             <div class="registration_input_block">
@@ -84,15 +65,11 @@
                         autocomplete="username"
                 />
                 <label for="username">Ім'я користувача</label>
-                <div class="registration_error_text" id="username-client-error" style="display:none;">
-                    <div class="registration_error_icon"></div>
-                    <span id="username-client-text"></span>
-                </div>
             </div>
 
             <div class="registration_input_block">
                 <input
-                        type="password"
+                        type="text"
                         id="password"
                         name="password"
                         placeholder=" "
@@ -104,7 +81,7 @@
 
             <div class="registration_input_block">
                 <input
-                        type="password"
+                        type="text"
                         id="password-confirm"
                         name="password-confirm"
                         placeholder=" "
@@ -112,10 +89,22 @@
                         autocomplete="new-password"
                 />
                 <label for="password-confirm">Підтвердьте пароль</label>
-                <div class="registration_error_text" id="password-confirm-client-error" style="display:none;">
+            </div>
+
+            <#if message?has_content>
+                <div class="registration_error_text" id="server-error" style="display: flex;">
                     <div class="registration_error_icon"></div>
-                    <span id="password-confirm-client-text"></span>
+                    <span id="server-error-text">${message.summary}</span>
                 </div>
+            <#else>
+                <div class="registration_error_text" id="server-error" style="display:none;">
+                    <div class="registration_error_icon"></div>
+                    <span id="server-error-text"></span>
+                </div>
+            </#if>
+            <div class="registration_error_text" id="client-error" style="display:none;">
+                <div class="registration_error_icon"></div>
+                <span id="client-error-text"></span>
             </div>
 
             <div class="registration_block">

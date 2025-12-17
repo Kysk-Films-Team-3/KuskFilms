@@ -12,17 +12,65 @@
     const usernameErrorText = document.getElementById('username-client-text');
     const passwordError = document.getElementById('password-client-error');
     const passwordErrorText = document.getElementById('password-client-text');
+    const globalError = document.getElementById('login-global-error');
+    const globalErrorText = document.getElementById('login-error-text');
+    
+    function translateServerError() {
+        if (globalErrorText && globalErrorText.textContent.trim()) {
+            const errorText = globalErrorText.textContent.toLowerCase();
+            
+            if (errorText.includes('invalid username or password') || 
+                errorText.includes('invalid username') ||
+                errorText.includes('invalid password') ||
+                errorText.includes('неверное имя пользователя или пароль') ||
+                errorText.includes('неверный пароль') ||
+                errorText.includes('неверное имя пользователя') ||
+                errorText.includes('user not found') ||
+                errorText.includes('пользователь не найден')) {
+                globalErrorText.textContent = 'Невірне ім\'я користувача або пароль.';
+            } else if (errorText.includes('account is disabled') ||
+                       errorText.includes('account disabled') ||
+                       errorText.includes('аккаунт отключен') ||
+                       errorText.includes('аккаунт заблокирован')) {
+                globalErrorText.textContent = 'Обліковий запис відключено.';
+            } else if (errorText.includes('account is temporarily disabled') ||
+                       errorText.includes('temporarily disabled')) {
+                globalErrorText.textContent = 'Обліковий запис тимчасово відключено.';
+            }
+            
+            if (globalError && globalError.style.display !== 'none') {
+                usernameEl.classList.add('error');
+                passwordEl.classList.add('error');
+                passwordError.style.display = 'none';
+            }
+        }
+    }
+    
+    translateServerError();
+    setTimeout(() => {
+        translateServerError();
+    }, 100);
+    
+    if (globalError && globalError.style.display !== 'none') {
+        usernameEl.classList.add('error');
+        passwordEl.classList.add('error');
+        passwordError.style.display = 'none';
+    }
 
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const savedEmail = localStorage.getItem('lastUsername');
     const savedRemember = localStorage.getItem('rememberMe');
 
-    if (savedEmail) usernameEl.value = savedEmail;
+    if (savedEmail && usernameEl) {
+        usernameEl.value = savedEmail;
+    }
     if (savedRemember === 'true') {
-    rememberCheckbox.classList.add('login_checked');
-    rememberInput.value = 'true';
-}
+        rememberCheckbox.classList.add('login_checked');
+        if (rememberInput) rememberInput.value = 'true';
+    } else {
+        if (rememberInput) rememberInput.value = 'false';
+    }
 
     eyeBtn.addEventListener('click', () => {
     const visible = passwordEl.type === 'text';
@@ -32,7 +80,9 @@
 
     rememberCheckbox.addEventListener('click', () => {
     rememberCheckbox.classList.toggle('login_checked');
-    rememberInput.value = rememberCheckbox.classList.contains('login_checked') ? 'true' : 'false';
+    if (rememberInput) {
+        rememberInput.value = rememberCheckbox.classList.contains('login_checked') ? 'true' : 'false';
+    }
 });
 
     function checkFormValidity() {
@@ -61,6 +111,9 @@
 
     if (!passwordValid) {
     passwordEl.classList.add('error');
+    if (globalError) {
+        globalError.style.display = 'none';
+    }
     passwordError.style.display = 'flex';
     passwordErrorText.textContent = 'Ваш пароль має містити від 4 до 60 символів.';
 } else {
@@ -70,12 +123,23 @@
 }
 }
 
+
     usernameEl.addEventListener('input', () => {
+    if (globalError && globalError.style.display !== 'none') {
+        globalError.style.display = 'none';
+        usernameEl.classList.remove('error');
+        passwordEl.classList.remove('error');
+    }
     checkFormValidity();
     showErrors();
 });
 
     passwordEl.addEventListener('input', () => {
+    if (globalError && globalError.style.display !== 'none') {
+        globalError.style.display = 'none';
+        usernameEl.classList.remove('error');
+        passwordEl.classList.remove('error');
+    }
     checkFormValidity();
     showErrors();
 });
@@ -88,15 +152,27 @@
 } else {
     const remember = rememberCheckbox.classList.contains('login_checked');
     if (remember) {
-    localStorage.setItem('lastUsername', usernameEl.value.trim());
-} else {
-    localStorage.removeItem('lastUsername');
-}
-    localStorage.setItem('rememberMe', remember);
+        localStorage.setItem('lastUsername', usernameEl.value.trim());
+        localStorage.setItem('rememberMe', 'true');
+    } else {
+        localStorage.removeItem('lastUsername');
+        localStorage.setItem('rememberMe', 'false');
+    }
+    if (rememberInput) {
+        rememberInput.value = remember ? 'true' : 'false';
+    }
 }
 });
 
     checkFormValidity();
+    
+    if (globalError) {
+        const observer = new MutationObserver(() => {
+            translateServerError();
+        });
+        observer.observe(globalError, { childList: true, subtree: true, characterData: true });
+        observer.observe(globalError, { attributes: true, attributeFilter: ['style'] });
+    }
 });
 
 

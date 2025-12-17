@@ -3,9 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const firstNameEl = document.getElementById('firstName');
     const lastNameEl = document.getElementById('lastName');
-    const emailEl = document.getElementById('email'); // <-- НОВЕ ПОЛЕ
-    const usernameEl = document.getElementById('username'); // <-- Тепер це Ім'я користувача
-
+    const emailEl = document.getElementById('email');
+    const usernameEl = document.getElementById('username');
     const passwordEl = document.getElementById('password');
     const passwordConfirmEl = document.getElementById('password-confirm');
 
@@ -13,25 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const rememberCheckbox = document.getElementById('rememberCheckbox');
     const rememberInput = document.getElementById('rememberMeInput');
 
-    const firstNameError = document.getElementById('firstName-client-error');
-    const firstNameErrorText = document.getElementById('firstName-client-text');
-    const lastNameError = document.getElementById('lastName-client-error');
-    const lastNameErrorText = document.getElementById('lastName-client-text');
-    const emailError = document.getElementById('email-client-error'); // <-- НОВИЙ БЛОК
-    const emailErrorText = document.getElementById('email-client-text'); // <-- НОВИЙ БЛОК
-    const usernameError = document.getElementById('username-client-error');
-    const usernameErrorText = document.getElementById('username-client-text');
-    const passwordConfirmError = document.getElementById('password-confirm-client-error');
-    const passwordConfirmErrorText = document.getElementById('password-confirm-client-text');
+    const clientError = document.getElementById('client-error');
+    const clientErrorText = document.getElementById('client-error-text');
+    const serverError = document.getElementById('server-error');
+    const serverErrorText = document.getElementById('server-error-text');
 
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const savedUsername = localStorage.getItem('lastUsername');
     const savedRemember = localStorage.getItem('rememberMe');
-    if (savedUsername && usernameEl) usernameEl.value = savedUsername;
     if (savedRemember === 'true') {
         rememberCheckbox.classList.add('registration_checked');
         if (rememberInput) rememberInput.value = 'true';
+    } else {
+        if (rememberInput) rememberInput.value = 'false';
     }
 
     rememberCheckbox.addEventListener('click', () => {
@@ -40,158 +33,142 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rememberInput) rememberInput.value = isChecked ? 'true' : 'false';
     });
 
-    function isFieldValid(el) {
-        if (!el) return false;
-        return el.value.trim().length > 0;
-    }
-
-    function isEmailValid() {
-        if (!emailEl) return false;
-        return emailRe.test(emailEl.value.trim());
-    }
-
-    function arePasswordsValid() {
-        if (!passwordEl || !passwordConfirmEl) return false;
-        const password = passwordEl.value;
-        const passwordConfirm = passwordConfirmEl.value;
-
-        if (password.length === 0 && passwordConfirm.length === 0) {
-            hidePasswordError();
-            return false;
-        }
-        if (password === passwordConfirm) {
-            hidePasswordError();
-            return true;
-        } else {
-            if (password.length > 0 && passwordConfirm.length > 0) {
-                showPasswordError('Паролі не співпадають.');
-            }
-            return false;
-        }
-    }
-
     function checkFormValidity() {
-        const firstNameValid = isFieldValid(firstNameEl);
-        const lastNameValid = isFieldValid(lastNameEl);
-        const emailValid = isEmailValid(); // <-- НОВА ПЕРЕВІРКА
-        const usernameValid = isFieldValid(usernameEl); // <-- Тепер це просто перевірка на заповненість
-        const passwordsValid = (passwordEl.value.length > 0 && passwordConfirmEl.value.length > 0 && passwordEl.value === passwordConfirmEl.value);
+        const firstNameValid = firstNameEl && firstNameEl.value.trim().length > 0;
+        const lastNameValid = lastNameEl && lastNameEl.value.trim().length > 0;
+        const emailValid = emailEl && emailRe.test(emailEl.value.trim());
+        const usernameValid = usernameEl && usernameEl.value.trim().length > 0;
+        const passwordValid = passwordEl && passwordEl.value.length > 0;
+        const passwordConfirmValid = passwordConfirmEl && passwordConfirmEl.value.length > 0;
+        const passwordsMatch = passwordEl && passwordConfirmEl && passwordEl.value === passwordConfirmEl.value;
 
-        const allValid = firstNameValid && lastNameValid && emailValid && usernameValid && passwordsValid;
+        const allValid = firstNameValid && lastNameValid && emailValid && usernameValid && passwordValid && passwordConfirmValid && passwordsMatch;
 
         submitBtn.classList.toggle('valid', allValid);
         submitBtn.classList.toggle('disabled', !allValid);
-        submitBtn.disabled = !allValid;
+
         return allValid;
     }
 
-    function showError(el, errorEl, errorTextEl, msg) {
-        if (el) el.classList.add('error');
-        if (errorEl) errorEl.style.display = 'flex';
-        if (errorTextEl) errorTextEl.textContent = msg;
-    }
-    function hideError(el, errorEl) {
-        if (el) el.classList.remove('error');
-        if (errorEl) errorEl.style.display = 'none';
-    }
+    function showErrors() {
+        const firstNameValid = firstNameEl && firstNameEl.value.trim().length > 0;
+        const lastNameValid = lastNameEl && lastNameEl.value.trim().length > 0;
+        const emailValid = emailEl && emailRe.test(emailEl.value.trim());
+        const usernameValid = usernameEl && usernameEl.value.trim().length > 0;
+        const passwordValid = passwordEl && passwordEl.value.length > 0;
+        const passwordConfirmValid = passwordConfirmEl && passwordConfirmEl.value.length > 0;
+        const passwordsMatch = passwordEl && passwordConfirmEl && passwordEl.value === passwordConfirmEl.value;
 
-    function showPasswordError(msg) {
-        if (passwordConfirmEl) passwordConfirmEl.classList.add('error');
-        if (passwordConfirmError) {
-            passwordConfirmError.style.display = 'flex';
-            if (passwordConfirmErrorText) passwordConfirmErrorText.textContent = msg;
+        const allValid = firstNameValid && lastNameValid && emailValid && usernameValid && passwordValid && passwordConfirmValid && passwordsMatch;
+
+        if (!allValid) {
+            if (serverError) {
+                serverError.style.display = 'none';
+            }
+            if (clientError && clientErrorText) {
+                clientErrorText.textContent = 'Будь ласка заповніть всі поля.';
+                clientError.style.display = 'flex';
+            }
+            [firstNameEl, lastNameEl, emailEl, usernameEl, passwordEl, passwordConfirmEl].forEach(el => {
+                if (el) el.classList.add('error');
+            });
+        } else {
+            if (clientError) {
+                clientError.style.display = 'none';
+            }
+            [firstNameEl, lastNameEl, emailEl, usernameEl, passwordEl, passwordConfirmEl].forEach(el => {
+                if (el) el.classList.remove('error');
+            });
         }
     }
-    function hidePasswordError() {
-        if (passwordConfirmEl) passwordConfirmEl.classList.remove('error');
-        if (passwordConfirmError) {
-            passwordConfirmError.style.display = 'none';
+
+    function translateServerError() {
+        if (serverError && serverErrorText) {
+            const isErrorVisible = serverError.style.display === 'flex' || window.getComputedStyle(serverError).display !== 'none';
+            const errorText = (serverErrorText.textContent || serverErrorText.innerHTML || '').toLowerCase();
+            const hasErrorText = errorText.trim().length > 0;
+            
+            if (isErrorVisible || hasErrorText) {
+                [firstNameEl, lastNameEl, emailEl, usernameEl, passwordEl, passwordConfirmEl].forEach(el => {
+                    if (el) el.classList.add('error');
+                });
+                
+                if (clientError) {
+                    clientError.style.display = 'none';
+                }
+                
+                if (hasErrorText && !errorText.includes('заповніть') && !errorText.includes('вкажіть')) {
+                    serverErrorText.textContent = 'Користувач вже існує.';
+                } else if (hasErrorText) {
+                    serverErrorText.textContent = 'Будь ласка заповніть всі поля.';
+                }
+                
+                if (serverError) {
+                    serverError.style.display = 'flex';
+                }
+            }
         }
     }
 
-    if (firstNameEl) {
-        firstNameEl.addEventListener('input', () => {
-            hideError(firstNameEl, firstNameError);
-            checkFormValidity();
-        });
-    }
-    if (lastNameEl) {
-        lastNameEl.addEventListener('input', () => {
-            hideError(lastNameEl, lastNameError);
-            checkFormValidity();
-        });
-    }
-    if (emailEl) {
-        emailEl.addEventListener('input', () => {
-            hideError(emailEl, emailError);
-            checkFormValidity();
-        });
-    }
-    if (usernameEl) {
-        usernameEl.addEventListener('input', () => {
-            hideError(usernameEl, usernameError);
-            checkFormValidity();
-        });
-    }
-    if (passwordEl) {
-        passwordEl.addEventListener('input', () => {
-            arePasswordsValid();
-            checkFormValidity();
-        });
-    }
-    if (passwordConfirmEl) {
-        passwordConfirmEl.addEventListener('input', () => {
-            arePasswordsValid();
-            checkFormValidity();
-        });
-    }
+    translateServerError();
+    setTimeout(() => {
+        translateServerError();
+    }, 100);
+
+    [firstNameEl, lastNameEl, emailEl, usernameEl, passwordEl, passwordConfirmEl].forEach(el => {
+        if (el) {
+            el.addEventListener('input', () => {
+                if (clientError && clientError.style.display !== 'none') {
+                    clientError.style.display = 'none';
+                }
+                if (serverError && serverError.style.display !== 'none') {
+                    serverError.style.display = 'none';
+                }
+                if (el) el.classList.remove('error');
+                checkFormValidity();
+            });
+        }
+    });
 
     checkFormValidity();
 
     form.addEventListener('submit', (e) => {
-        let valid = true;
-
-        if (!isFieldValid(firstNameEl)) {
+        const allValid = checkFormValidity();
+        
+        if (!allValid) {
             e.preventDefault();
-            showError(firstNameEl, firstNameError, firstNameErrorText, "Будь ласка, введіть ваше ім'я.");
-            valid = false;
-        }
-        if (!isFieldValid(lastNameEl)) {
-            e.preventDefault();
-            showError(lastNameEl, lastNameError, lastNameErrorText, "Будь ласка, введіть ваше прізвище.");
-            valid = false;
-        }
-        if (!isEmailValid()) {
-            e.preventDefault();
-            showError(emailEl, emailError, emailErrorText, 'Будь ласка, введіть дійсну електронну адресу.');
-            valid = false;
-        }
-        if (!isFieldValid(usernameEl)) {
-            e.preventDefault();
-            showError(usernameEl, usernameError, usernameErrorText, "Будь ласка, введіть ім'я користувача.");
-            valid = false;
-        }
-        if (!arePasswordsValid() || passwordEl.value.length === 0) {
-            e.preventDefault();
-            showError(passwordConfirmEl, passwordConfirmError, passwordConfirmErrorText, 'Будь ласка, введіть та підтвердьте ваш пароль.');
-            valid = false;
-        }
-
-        if (!valid) return;
-
-        const username = usernameEl.value.trim();
-        const remember = rememberCheckbox.classList.contains('registration_checked');
-        if (remember) {
-            localStorage.setItem('lastUsername', username);
+            showErrors();
         } else {
-            localStorage.removeItem('lastUsername');
-        }
-        localStorage.setItem('rememberMe', remember ? 'true' : 'false');
+            [firstNameEl, lastNameEl, emailEl, usernameEl, passwordEl, passwordConfirmEl].forEach(el => {
+                if (el) el.classList.remove('error');
+            });
+            if (clientError) {
+                clientError.style.display = 'none';
+            }
+            if (serverError) {
+                serverError.style.display = 'none';
+            }
 
-        if (!valid) {
-            e.preventDefault();
-            return;
+            const username = usernameEl.value.trim();
+            const remember = rememberCheckbox.classList.contains('registration_checked');
+            if (remember) {
+                localStorage.setItem('lastUsername', username);
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                localStorage.removeItem('lastUsername');
+                localStorage.setItem('rememberMe', 'false');
+            }
+            if (rememberInput) {
+                rememberInput.value = remember ? 'true' : 'false';
+            }
         }
     });
 
+    if (serverError) {
+        const observer = new MutationObserver(() => {
+            translateServerError();
+        });
+        observer.observe(serverError, { childList: true, subtree: true, characterData: true });
+        observer.observe(serverError, { attributes: true, attributeFilter: ['style'] });
+    }
 });

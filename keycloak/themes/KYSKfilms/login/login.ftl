@@ -11,9 +11,6 @@
     <div class="login_layout">
 
         <div class="login_title">Вхід</div>
-        <div class="login_error_global" id="login-global-error" style="display:none;">
-            <span id="login-error-text"></span>
-        </div>
         <form class="login_form" method="post" action="${url.loginAction}">
 
             <div class="login_input_block">
@@ -49,12 +46,26 @@
                         <span id="eyeIcon" class="login_eye_icon login_eye_open"></span>
                     </button>
                 </div>
-                <div class="login_error_text" id="password-client-error" style="display:none;">
-                    <div class="login_error_icon"></div>
-                    <span id="password-client-text"></span>
-                </div>
+                <#if message?has_content>
+                    <div class="login_error_text" id="login-global-error" style="display: flex;">
+                        <div class="login_error_icon"></div>
+                        <span id="login-error-text">${message.summary}</span>
+                    </div>
+                    <div class="login_error_text" id="password-client-error" style="display:none;">
+                        <div class="login_error_icon"></div>
+                        <span id="password-client-text"></span>
+                    </div>
+                <#else>
+                    <div class="login_error_text" id="login-global-error" style="display:none;">
+                        <div class="login_error_icon"></div>
+                        <span id="login-error-text"></span>
+                    </div>
+                    <div class="login_error_text" id="password-client-error" style="display:none;">
+                        <div class="login_error_icon"></div>
+                        <span id="password-client-text"></span>
+                    </div>
+                </#if>
             </div>
-
 
             <div class="login_block">
                 <button type="submit" class="login_button disabled">Вхід</button>
@@ -63,7 +74,7 @@
         </form>
 
         <div class="login_forgot_block">
-            <button type="button" class="login_forgot_link"  onclick="window.location.href='${url.resourcesPath}/forgot.html'">Забув пароль?</button>
+            <a href="${url.loginResetCredentialsUrl}" class="login_forgot_link">Забув пароль?</a>
         </div>
 
         <div class="login_remember_block">
