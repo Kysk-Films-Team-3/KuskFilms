@@ -24,4 +24,13 @@ interface TitleRepository : JpaRepository<Title, Int>, JpaSpecificationExecutor<
 
     // 4. Получить самый рейтинговый контент определенного типа (Для Промо)
     fun findFirstByTypeOrderByRatingDesc(type: com.kyskfilms.title.entity.enums.TitleType): Title?
+
+    @Query("""
+        SELECT t FROM Title t 
+        JOIN t.genres g 
+        WHERE g.id IN (SELECT g2.id FROM Title t2 JOIN t2.genres g2 WHERE t2.id = :originalId) 
+        AND t.id != :originalId 
+        ORDER BY t.rating DESC
+    """)
+    fun findRecommendations(@Param("originalId") originalId: Int, pageable: Pageable): List<Title>
 }

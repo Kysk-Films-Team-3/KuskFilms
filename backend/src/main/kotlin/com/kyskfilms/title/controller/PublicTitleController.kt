@@ -22,6 +22,9 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
+import com.kyskfilms.comment.repository.CommentRepository // <-- Добавь
+import com.kyskfilms.user.service.UserProfileService // <-- Если нужно проверять премиум
+
 
 @RestController
 @RequestMapping("/api/public/titles")
@@ -30,6 +33,7 @@ class PublicTitleController(
     private val genreRepository: GenreRepository,
     private val videoFileRepository: VideoFileRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val commentRepository: CommentRepository,
 
     @Value("\${app.backend-url:http://localhost:8081}")
     private val backendUrl: String,

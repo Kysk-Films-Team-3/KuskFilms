@@ -1,5 +1,7 @@
 package com.kyskfilms.payment
 
+import com.kyskfilms.payment.dto.PremiumPageDto
+import com.kyskfilms.payment.dto.PremiumUiLabelsDto
 import com.kyskfilms.user.service.UserProfileService
 import com.stripe.model.checkout.Session
 import com.stripe.net.Webhook
@@ -54,5 +56,26 @@ class PaymentController(
             println("⚠️ Webhook Error: ${e.message}")
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook Error")
         }
+    }
+
+    @GetMapping
+    fun getPremiumPageData(): ResponseEntity<PremiumPageDto> {
+        return ResponseEntity.ok(
+            PremiumPageDto(
+                planName = "Kysk преміум",
+                price = "15€",
+                benefits = listOf(
+                    "Більше 70 000 фільмів, серіалів та мультфільмів",
+                    "Каталог фільмів і серіалів Viju і Paramount",
+                    "Батьківський контроль",
+                    "Завантаження та перегляд без інтернету"
+                ),
+                ui = PremiumUiLabelsDto(
+                    backButton = "До налаштувань",
+                    pageTitle = "Підтвердіть вибір",
+                    ctaButton = "Оформити"
+                )
+            )
+        )
     }
 }
