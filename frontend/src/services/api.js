@@ -219,13 +219,29 @@ export const transformPromo = (promo) => {
     };
 };
 
-export const fetchTitles = async (page = 0) => {
+export const fetchTitles = async (params = {}) => {
     const baseURL = api.defaults.baseURL || '';
-    let url = `/api/public/titles?page=${page}`;
+    const {
+        page = 0,
+        size = 20,
+        genre = null,
+        year = null,
+        ratingFrom = null,
+        sort = null,
+        search = null
+    } = params;
+
+    let url = `/api/public/titles?page=${page}&size=${size}`;
 
     if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-        url = `/public/titles?page=${page}`;
+        url = `/public/titles?page=${page}&size=${size}`;
     }
+
+    if (genre) url += `&genre=${encodeURIComponent(genre)}`;
+    if (year) url += `&year=${year}`;
+    if (ratingFrom !== null) url += `&ratingFrom=${ratingFrom}`;
+    if (sort) url += `&sort=${encodeURIComponent(sort)}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
 
     const response = await api.get(url);
     return response.data;

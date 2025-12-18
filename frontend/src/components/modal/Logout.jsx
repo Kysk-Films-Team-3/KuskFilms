@@ -24,7 +24,7 @@ export const Logout = ({ onClose }) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (logoutRef.current && !logoutRef.current.contains(event.target)) {
-                handleClose();
+                onClose?.();
             }
         };
 
@@ -35,7 +35,7 @@ export const Logout = ({ onClose }) => {
             document.removeEventListener('mousedown', handleClickOutside);
             document.body.style.overflow = '';
         };
-    }, []);
+    }, [onClose]);
 
     return (
         <div className="logout_overlay" role="dialog" aria-modal="true">

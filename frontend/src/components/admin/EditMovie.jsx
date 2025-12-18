@@ -406,6 +406,18 @@ export const EditMovie = () => {
     const handleToggleReview = (review) => setSelectedReview(review);
     const handleCloseReviewModal = () => setSelectedReview(null);
 
+    useEffect(() => {
+        if (selectedReview) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [selectedReview]);
+
     // Закрытие модалок
     useEffect(() => {
         const handleClickOutside = (e) => {

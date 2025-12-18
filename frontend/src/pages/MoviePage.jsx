@@ -119,6 +119,18 @@ export const MoviePage = ({ onCommentModalClick }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, [movie, handleCastScroll, handleReviewsScroll, handleAlsoWatchScroll]);
 
+    useEffect(() => {
+        if (selectedReview) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [selectedReview]);
+
     if (loading) {
         return (
             <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>

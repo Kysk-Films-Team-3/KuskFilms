@@ -19,6 +19,8 @@ export const ActorModal = ({ actor, onClose }) => {
     const sortRef = useRef(null);
 
     useEffect(() => {
+        if (!actor) return;
+
         const handleClickOutside = (event) => {
             if (categoryRef.current && !categoryRef.current.contains(event.target)) {
                 setIsCategoryOpen(false);
@@ -26,11 +28,19 @@ export const ActorModal = ({ actor, onClose }) => {
             if (sortRef.current && !sortRef.current.contains(event.target)) {
                 setIsSortOpen(false);
             }
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.body.style.overflow = '';
+        };
+    }, [actor, onClose]);
 
     useEffect(() => {
         setCategory(t('actorModal.categories.all'));

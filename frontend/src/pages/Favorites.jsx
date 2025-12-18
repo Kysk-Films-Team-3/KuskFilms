@@ -6,15 +6,8 @@ export function Favorites() {
     const { favorites, toggleFavorite, loading, loadFavorites } = useFavorites();
 
     useEffect(() => {
-        console.log("Favorites component - loading:", loading);
-        console.log("Favorites component - favorites:", favorites);
-        console.log("Favorites component - favorites length:", favorites.length);
-        console.log("Favorites component - favorites структура:", favorites.map(f => ({ id: f.id, title: f.title, isSaved: f.isSaved })));
-        
-        if (!loading) {
-            loadFavorites();
-        }
-    }, [loading, loadFavorites]);
+        loadFavorites();
+    }, [loadFavorites]);
 
     if (loading) {
         return (
@@ -73,8 +66,10 @@ function FavoriteCard({ film, toggleFavorite }) {
             </div>
 
             <div className="favorite_actor_card_text">
-                {film.rating && (
-                    <div className="favorite_actor_card_rating">{film.rating}</div>
+                {film.rating && film.rating > 0 && (
+                    <div className="favorite_actor_card_rating">
+                        {typeof film.rating === 'number' ? film.rating.toFixed(1) : parseFloat(film.rating).toFixed(1)}
+                    </div>
                 )}
 
                 {film.title && (

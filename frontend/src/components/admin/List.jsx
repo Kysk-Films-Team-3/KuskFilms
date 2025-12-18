@@ -89,6 +89,7 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
         const handleClickOutside = (e) => {
             if (modalRef.current && !modalRef.current.contains(e.target)) {
                 setIsDropdownOpen(false);
+                onClose();
             }
         };
 
@@ -105,7 +106,7 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
             window.removeEventListener('scroll', handleScroll, true);
             document.body.style.overflow = '';
         };
-    }, [isOpen]);
+    }, [isOpen, onClose]);
 
     useEffect(() => {
         setSearchQuery('');

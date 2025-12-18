@@ -192,6 +192,7 @@
     margin: 0;
     padding: 0;
     top: 0;
+    cursor: pointer;
 }
 
 .films_rating_slider_wrapper::before {
@@ -220,14 +221,18 @@
 
 .films_rating_slider_min {
     pointer-events: auto;
-    z-index: 1;
+    z-index: 2;
     opacity: 0;
     cursor: pointer;
+    clip-path: polygon(0 0, calc(var(--max-percent, 50%) - 2%) 0, calc(var(--max-percent, 50%) - 2%) 100%, 0 100%);
 }
 
 .films_rating_slider_max {
     pointer-events: auto;
-    z-index: 2;
+    z-index: 1;
+    opacity: 0;
+    cursor: pointer;
+    clip-path: polygon(calc(var(--min-percent, 0%) + 2%) 0, 100% 0, 100% 100%, calc(var(--min-percent, 0%) + 2%) 100%);
 }
 
 .films_rating_value_min,
@@ -282,10 +287,10 @@
     cursor: pointer;
     transition: background 0.3s ease;
     position: relative;
-    z-index: 6;
+    z-index: 10;
     box-shadow: none;
     margin-top: -26.5px;
-    opacity: 0;
+    opacity: 1;
     pointer-events: auto;
 }
 
@@ -303,7 +308,7 @@
     transition: background 0.3s ease;
     box-shadow: none;
     margin-top: -26.5px;
-    opacity: 0;
+    opacity: 1;
     pointer-events: auto;
 }
 
