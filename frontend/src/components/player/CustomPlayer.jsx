@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { VideoPlayer } from "./VideoPlayer";
+import { getPlayerConfig } from "../../services/api";
 import "./CustomPlayer.css";
 
-export default function CustomPlayer({ src }) {
+export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
     const videoRef = useRef(null);
 
     const [isPaused, setIsPaused] = useState(false);
@@ -15,9 +16,46 @@ export default function CustomPlayer({ src }) {
     const [showSettings, setShowSettings] = useState(false);
     const [menu, setMenu] = useState("root");
     const [playbackRate, setPlaybackRate] = useState(1);
-    const [subtitleLang, setSubtitleLang] = useState("uk");
-    const [quality, setQuality] = useState("1080p");
+    const [subtitleLang, setSubtitleLang] = useState("off");
+    const [quality, setQuality] = useState("Auto");
     const menuRef = useRef(null);
+    const [playerConfig, setPlayerConfig] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [selectedSeason, setSelectedSeason] = useState(null);
+    const [selectedEpisode, setSelectedEpisode] = useState(null);
+    const [showSeasonSelector, setShowSeasonSelector] = useState(false);
+    const [showEpisodeSelector, setShowEpisodeSelector] = useState(false);
+
+    useEffect(() => {
+        const loadConfig = async () => {
+            try {
+                setLoading(true);
+                const config = await getPlayerConfig(titleId, episodeId);
+                setPlayerConfig(config);
+                
+                if (config.type === 'SERIES') {
+                    setSelectedSeason(config.currentSeason || (config.seasons && config.seasons.length > 0 ? config.seasons[0].seasonNumber : null));
+                    setSelectedEpisode(config.currentEpisode || (config.seasons && config.seasons.length > 0 && config.seasons[0].episodes && config.seasons[0].episodes.length > 0 ? config.seasons[0].episodes[0].episodeNumber : null));
+                }
+                
+                if (config.playbackSpeeds && config.playbackSpeeds.length > 0) {
+                    const defaultSpeed = config.playbackSpeeds.find(s => s === "1x") || config.playbackSpeeds[Math.floor(config.playbackSpeeds.length / 2)];
+                    setPlaybackRate(parseFloat(defaultSpeed.replace('x', '')));
+                }
+                if (config.qualities && config.qualities.length > 0) {
+                    setQuality(config.qualities[0]);
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки конфига плеера:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (titleId) {
+            loadConfig();
+        }
+    }, [titleId, episodeId]);
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -29,36 +67,34 @@ export default function CustomPlayer({ src }) {
                 setShowSettings(false);
                 setMenu("root");
             }
+            
+            if (showSeasonSelector || showEpisodeSelector) {
+                const seasonSelector = document.querySelector('.player-season-selector');
+                if (seasonSelector && !seasonSelector.contains(e.target)) {
+                    setShowSeasonSelector(false);
+                    setShowEpisodeSelector(false);
+                }
+            }
         }
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [showSettings]);
+    }, [showSettings, showSeasonSelector, showEpisodeSelector]);
 
-    useEffect(() => {
-        const v = videoRef.current;
-        if (!v) return;
-
-        const onPlay = () => setIsPaused(false);
-        const onPause = () => setIsPaused(true);
-        const onTime = () => {
-            setCurrentTime(v.currentTime);
-            setProgress((v.currentTime / v.duration) * 100 || 0);
-        };
-        const onMeta = () => setDuration(v.duration);
-
-        v.addEventListener("play", onPlay);
-        v.addEventListener("pause", onPause);
-        v.addEventListener("timeupdate", onTime);
-        v.addEventListener("loadedmetadata", onMeta);
-
-        return () => {
-            v.removeEventListener("play", onPlay);
-            v.removeEventListener("pause", onPause);
-            v.removeEventListener("timeupdate", onTime);
-            v.removeEventListener("loadedmetadata", onMeta);
-        };
-    }, []);
+    const handleEpisodeChange = async (episodeId) => {
+        try {
+            setLoading(true);
+            const config = await getPlayerConfig(titleId, episodeId);
+            setPlayerConfig(config);
+            setSelectedSeason(config.currentSeason || null);
+            setSelectedEpisode(config.currentEpisode || null);
+            setShowEpisodeSelector(false);
+        } catch (error) {
+            console.error("Ошибка загрузки конфига серии:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const togglePlay = () => {
         const v = videoRef.current;
@@ -102,7 +138,7 @@ export default function CustomPlayer({ src }) {
 
     useEffect(() => {
         const v = videoRef.current;
-        if (!v) return;
+        if (!v || !playerConfig?.streamUrl) return;
 
         const onPlay = () => setIsPaused(false);
         const onPause = () => setIsPaused(true);
@@ -111,13 +147,19 @@ export default function CustomPlayer({ src }) {
             setCurrentTime(v.currentTime);
             setProgress((v.currentTime / v.duration) * 100 || 0);
 
-            localStorage.setItem(`video-progress-${src}`, v.currentTime);
+            const progressKey = playerConfig.type === 'SERIES' 
+                ? `video-progress-${titleId}-${episodeId || selectedEpisode}` 
+                : `video-progress-${titleId}`;
+            localStorage.setItem(progressKey, v.currentTime);
         };
 
         const onMeta = () => {
             setDuration(v.duration);
 
-            const saved = localStorage.getItem(`video-progress-${src}`);
+            const progressKey = playerConfig.type === 'SERIES' 
+                ? `video-progress-${titleId}-${episodeId || selectedEpisode}` 
+                : `video-progress-${titleId}`;
+            const saved = localStorage.getItem(progressKey);
             if (saved) {
                 const sec = Number(saved);
                 if (!isNaN(sec) && sec < v.duration) {
@@ -137,7 +179,7 @@ export default function CustomPlayer({ src }) {
             v.removeEventListener("timeupdate", onTime);
             v.removeEventListener("loadedmetadata", onMeta);
         };
-    }, [src]);
+    }, [playerConfig?.streamUrl, titleId, episodeId, selectedEpisode, playerConfig?.type]);
 
     useEffect(() => {
         const v = videoRef.current;
@@ -206,8 +248,86 @@ export default function CustomPlayer({ src }) {
         else document.exitFullscreen();
     };
 
+    if (loading || !playerConfig) {
+        return (
+            <div className="player-ui" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                Завантаження...
+            </div>
+        );
+    }
+
+    const currentSeasonData = playerConfig.seasons?.find(s => s.seasonNumber === selectedSeason);
+    const currentEpisodeData = currentSeasonData?.episodes?.find(e => e.episodeNumber === selectedEpisode);
+
     return (
         <div className="player-ui">
+            {playerConfig.type === 'SERIES' && playerConfig.seasons && playerConfig.seasons.length > 0 && (
+                <div className="player-season-selector">
+                    <div className="player-selector-wrapper">
+                        <div 
+                            className="player-season-dropdown"
+                            onClick={() => {
+                                setShowSeasonSelector(!showSeasonSelector);
+                                setShowEpisodeSelector(false);
+                            }}
+                        >
+                            <span>Сезон {selectedSeason || playerConfig.currentSeason || 1}</span>
+                            <span className="dropdown-arrow"></span>
+                        </div>
+                        {showSeasonSelector && (
+                            <div className="player-dropdown-menu">
+                                {playerConfig.seasons.map(season => (
+                                    <div
+                                        key={season.seasonNumber}
+                                        className={`player-dropdown-item ${selectedSeason === season.seasonNumber ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setSelectedSeason(season.seasonNumber);
+                                            setShowSeasonSelector(false);
+                                            if (season.episodes && season.episodes.length > 0) {
+                                                setSelectedEpisode(season.episodes[0].episodeNumber);
+                                                handleEpisodeChange(season.episodes[0].id);
+                                            }
+                                        }}
+                                    >
+                                        Сезон {season.seasonNumber}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="player-selector-wrapper">
+                        <div 
+                            className="player-episode-dropdown"
+                            onClick={() => {
+                                setShowEpisodeSelector(!showEpisodeSelector);
+                                setShowSeasonSelector(false);
+                            }}
+                        >
+                            <span>Серія {selectedEpisode || playerConfig.currentEpisode || 1}</span>
+                            <span className="dropdown-arrow"></span>
+                        </div>
+                        {showEpisodeSelector && currentSeasonData && (
+                            <div className="player-dropdown-menu">
+                                {currentSeasonData.episodes.map(episode => {
+                                    const isActive = selectedEpisode === episode.episodeNumber && 
+                                                   selectedSeason === currentSeasonData.seasonNumber;
+                                    return (
+                                        <div
+                                            key={episode.id}
+                                            className={`player-dropdown-item ${isActive ? 'active' : ''}`}
+                                            onClick={() => {
+                                                handleEpisodeChange(episode.id);
+                                            }}
+                                        >
+                                            Серія {episode.episodeNumber} {episode.title ? `- ${episode.title}` : ''}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <div className="video-click-area" onClick={onVideoClick}></div>
 
@@ -215,7 +335,7 @@ export default function CustomPlayer({ src }) {
                 <div className="center-play" onClick={togglePlay}></div>
             )}
 
-            <VideoPlayer src={src} ref={videoRef} />
+            <VideoPlayer src={playerConfig.streamUrl} ref={videoRef} />
 
             <div className="progress-wrapper">
                 <div className="progress-track"></div>
@@ -282,9 +402,10 @@ export default function CustomPlayer({ src }) {
                                         <span className="value">
                         {subtitleLang === "off"
                             ? <Trans i18nKey="player.off" />
-                            : subtitleLang === "uk"
-                                ? <Trans i18nKey="player.uk" />
-                                : <Trans i18nKey="player.eng" />}
+                            : playerConfig.subtitles?.find(s => {
+                                const langKey = s.language.toLowerCase().includes('ukr') || s.language.toLowerCase().includes('укра') ? 'uk' : 'eng';
+                                return langKey === subtitleLang;
+                            })?.language || (subtitleLang === "uk" ? <Trans i18nKey="player.uk" /> : <Trans i18nKey="player.eng" />)}
                     </span>
                                         <span className="arrow arrow-right"></span>
                                         </div>
@@ -307,20 +428,25 @@ export default function CustomPlayer({ src }) {
                                         <Trans i18nKey="player.speed" />
                                     </div>
 
-                                    {[0.25, 0.5, 0.75, 1, 1.25, 1.75, 2].map((rate) => (
-                                        <div
-                                            key={rate}
-                                            className={`settings_sub_option ${
-                                                playbackRate === rate ? "active" : ""
-                                            }`}
-                                            onClick={() => {
-                                                setPlaybackRate(rate);
-                                                videoRef.current.playbackRate = rate;
-                                            }}
-                                        >
-                                            {rate}
-                                        </div>
-                                    ))}
+                                    {(playerConfig.playbackSpeeds || ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x"]).map((speed) => {
+                                        const rate = parseFloat(speed.replace('x', ''));
+                                        return (
+                                            <div
+                                                key={speed}
+                                                className={`settings_sub_option ${
+                                                    playbackRate === rate ? "active" : ""
+                                                }`}
+                                                onClick={() => {
+                                                    setPlaybackRate(rate);
+                                                    if (videoRef.current) {
+                                                        videoRef.current.playbackRate = rate;
+                                                    }
+                                                }}
+                                            >
+                                                {speed}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
 
@@ -333,30 +459,27 @@ export default function CustomPlayer({ src }) {
 
                                     <div
                                         className={`settings_sub_option ${
-                                            subtitleLang === "uk" ? "active" : ""
-                                        }`}
-                                        onClick={() => setSubtitleLang("uk")}
-                                    >
-                                        <Trans i18nKey="player.ukrainian" />
-                                    </div>
-
-                                    <div
-                                        className={`settings_sub_option ${
-                                            subtitleLang === "eng" ? "active" : ""
-                                        }`}
-                                        onClick={() => setSubtitleLang("eng")}
-                                    >
-                                        <Trans i18nKey="player.english" />
-                                    </div>
-
-                                    <div
-                                        className={`settings_sub_option ${
                                             subtitleLang === "off" ? "active" : ""
                                         }`}
                                         onClick={() => setSubtitleLang("off")}
                                     >
                                         <Trans i18nKey="player.turnOff" />
                                     </div>
+
+                                    {(playerConfig.subtitles || []).map((subtitle, index) => {
+                                        const langKey = subtitle.language.toLowerCase().includes('ukr') || subtitle.language.toLowerCase().includes('укра') ? 'uk' : 'eng';
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`settings_sub_option ${
+                                                    subtitleLang === langKey ? "active" : ""
+                                                }`}
+                                                onClick={() => setSubtitleLang(langKey)}
+                                            >
+                                                {subtitle.language}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
 
@@ -367,7 +490,7 @@ export default function CustomPlayer({ src }) {
                                         <Trans i18nKey="player.quality" />
                                     </div>
                                 <div className="grap">
-                                    {["144p","240p","360p","480p","720p","1080p"].map((q) => (
+                                    {(playerConfig.qualities || ["Auto", "1080p", "720p", "480p"]).map((q) => (
                                         <div
                                             key={q}
                                             className={`settings_sub_option ${quality === q ? "active" : ""}`}

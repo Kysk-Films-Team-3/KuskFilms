@@ -22,7 +22,7 @@ import { ErrorPage } from "../pages/ErrorPage";
 import { PaymentSuccess } from '../pages/PaymentSuccess';
 import { PaymentCancel } from '../pages/PaymentCancel';
 import { AdminPage } from '../pages/AdminPage';
-import { EditMovie } from '../components/admin/EditMovie'; // <--- 1. ДОБАВЛЕН ИМПОРТ
+import { EditMovie } from '../components/admin/EditMovie';
 import { Layout } from '../layout/Layout';
 import { PrivateRoute } from './PrivateRoute';
 
@@ -56,7 +56,6 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/payment/success" element={<PaymentSuccess onProfileUpdate={onProfileUpdate} />} />
                 <Route path="/payment/cancel" element={<PaymentCancel />} />
 
-                {/* Админ-панель (Главная) */}
                 <Route
                     path="/admin"
                     element={
@@ -66,7 +65,6 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                     }
                 />
 
-                {/* 2. ДОБАВЛЕН МАРШРУТ СОЗДАНИЯ ФИЛЬМА */}
                 <Route
                     path="/admin/movie/new"
                     element={

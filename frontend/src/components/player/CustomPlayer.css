@@ -483,3 +483,129 @@
 .fullscreen-btn:hover {
     background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1763395181/Full_alt_npdwqr.png");
 }
+
+.player-season-selector {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.player-selector-wrapper {
+    position: relative;
+}
+
+.player-season-dropdown,
+.player-episode-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2A2B3A;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 0 20px;
+    padding-right: 45px;
+    color: #F8F8FE;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    min-width: 150px;
+    height: 44px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.player-season-dropdown:hover,
+.player-episode-dropdown:hover {
+    background-color: #343545;
+    border: 1px solid #4E55D4;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    transition: transform 0.3s ease;
+}
+
+.player-season-dropdown:hover .dropdown-arrow,
+.player-episode-dropdown:hover .dropdown-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.player-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: #2A2B3A;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.player-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.player-dropdown-menu::-webkit-scrollbar-track {
+    background: #1a1a24;
+    border-radius: 3px;
+}
+
+.player-dropdown-menu::-webkit-scrollbar-thumb {
+    background: #4E55D4;
+    border-radius: 3px;
+}
+
+.player-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #5d65e5;
+}
+
+.player-dropdown-item {
+    padding: 15px 20px;
+    color: #F8F8FE;
+    font-size: 16px;
+    font-weight: 300;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    background-color: #2A2B3A;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-dropdown-item:first-child {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.player-dropdown-item:last-child {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom: none;
+}
+
+.player-dropdown-item:hover {
+    background-color: #343545;
+}
+
+.player-dropdown-item.active {
+    background-color: #4E55D4;
+    color: #F8F8FE;
+    font-weight: 400;
+}

@@ -13,14 +13,12 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
     const navigate = useNavigate();
     const modalRef = useRef(null);
 
-    // Состояния данных
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(CATEGORY_PERSONS);
     const [persons, setPersons] = useState([]);
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Состояния UI
     const [isEditing, setIsEditing] = useState(false);
     const [selectedPersons, setSelectedPersons] = useState([]);
     const [selectedMovies, setSelectedMovies] = useState([]);
@@ -30,7 +28,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
     const dropdownWrapperRef = useRef(null);
     const [dropdownOpensUpward, setDropdownOpensUpward] = useState(false);
 
-    // --- 1. ЗАГРУЗКА ДАННЫХ ---
     useEffect(() => {
         if (!isOpen) return;
 
@@ -38,7 +35,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
             setLoading(true);
             try {
                 if (selectedCategory === CATEGORY_MOVIES) {
-                    // Используем /public/titles (axios сам добавит /api в начало)
                     const url = searchQuery
                         ? `/public/titles?search=${searchQuery}&size=100`
                         : `/public/titles?size=100`;
@@ -48,7 +44,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
                     const mappedMovies = (response.data.content || response.data).map(movie => ({
                         id: movie.id,
                         name: movie.title,
-                        // Формируем ссылку на картинку
                         image: movie.posterUrl
                             ? (movie.posterUrl.startsWith('http') ? movie.posterUrl : `/kyskfilms/${movie.posterUrl}`)
                             : 'https://via.placeholder.com/200x300?text=No+Poster'
@@ -82,7 +77,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
         return () => clearTimeout(timeoutId);
     }, [isOpen, selectedCategory, searchQuery]);
 
-    // --- UI ЭФФЕКТЫ ---
     useEffect(() => {
         if (!isOpen) return;
 
@@ -119,35 +113,27 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
         setSearchQuery(e.target.value);
     };
 
-    // --- КЛИКИ ПО ЭЛЕМЕНТАМ (ИСПРАВЛЕНО) ---
-
     const handlePersonClick = (personId) => {
         if (isEditing) {
-            // Режим выбора для удаления
             setSelectedPersons(prev =>
                 prev.includes(personId) ? prev.filter(id => id !== personId) : [...prev, personId]
             );
         } else {
-            // Обычный режим: Открыть редактирование актера
-            // Передаем ID актера, если нужно (пока просто открываем модалку)
             if (onOpenEditActor) onOpenEditActor(personId);
         }
     };
 
     const handleMovieClick = (movieId) => {
         if (isEditing) {
-            // Режим выбора для удаления
             setSelectedMovies(prev =>
                 prev.includes(movieId) ? prev.filter(id => id !== movieId) : [...prev, movieId]
             );
         } else {
-            // Обычный режим: Переход на страницу редактирования фильма
-            onClose(); // Закрываем список
-            navigate(`/admin/movie/${movieId}`); // Переходим на страницу
+            onClose();
+            navigate(`/admin/movie/${movieId}`);
         }
     };
 
-    // --- УДАЛЕНИЕ ---
     const handleDeleteClick = () => {
         const hasSelection = isMoviesMode
             ? selectedMovies.length > 0
@@ -198,7 +184,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
         onClose();
     };
 
-    // Функция-заглушка для битых картинок
     const handleImageError = (e) => {
         e.target.onerror = null;
         e.target.src = 'https://via.placeholder.com/200x300?text=No+Image';
@@ -357,7 +342,7 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
                                     <div
                                         key={item.id}
                                         className="admin_list_item"
-                                        onClick={() => handlePersonClick(item.id)} // Теперь кликабельно и здесь
+                                        onClick={() => handlePersonClick(item.id)}
                                     >
                                         <div className="admin_list_avatar">
                                             <img src={item.image} alt={item.name} onError={handleImageError} />
