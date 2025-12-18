@@ -8,7 +8,7 @@ export const ActorRecommendations = ({ actor, onClose }) => {
     const modalRef = useRef(null);
     const [hoveredId, setHoveredId] = useState(null);
     const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
-    const { favorites, toggleFavorite } = useFavorites();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -86,22 +86,10 @@ export const ActorRecommendations = ({ actor, onClose }) => {
                                 <div className="actor_card_header">
                                     <div
                                         className={`actor_card_save actor_film_action ${
-                                            favorites.some((fav) => fav.id === item.id) ? 'active' : ''
+                                            isFavorite(item.id) ? 'active' : ''
                                         }`}
                                         data-tooltip={t('tooltip.watch')}
-                                        onClick={() =>
-                                            toggleFavorite({
-                                                id: item.id,
-                                                image: item.image,
-                                                hoverImage: item.hoverImage,
-                                                rating: item.rating,
-                                                linedate: item.linedate,
-                                                line1: item.line1,
-                                                line2: item.line2,
-                                                season: item.season,
-                                                source: 'home',
-                                            })
-                                        }
+                                        onClick={async () => await toggleFavorite(item.id)}
 
                                     />
                                     <div

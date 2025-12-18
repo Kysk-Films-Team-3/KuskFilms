@@ -1,102 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useFavorites } from '../context/FavoritesContext';
-import { Trans, useTranslation } from 'react-i18next';
 import './Favorites.css';
 
 export function Favorites() {
-    const { favorites, toggleFavorite } = useFavorites();
-    const homeFilms = favorites.filter(f => f.source === 'home');
-    const recFilms = favorites.filter(f => f.source === 'recommendation');
-    const otherFilms = favorites.filter(f => f.source !== 'home' && f.source !== 'recommendation');
-    const { i18n, t } = useTranslation();
+    const { favorites, toggleFavorite, loading, loadFavorites } = useFavorites();
 
+    useEffect(() => {
+        console.log("Favorites component - loading:", loading);
+        console.log("Favorites component - favorites:", favorites);
+        console.log("Favorites component - favorites length:", favorites.length);
+        console.log("Favorites component - favorites структура:", favorites.map(f => ({ id: f.id, title: f.title, isSaved: f.isSaved })));
+        
+        if (!loading) {
+            loadFavorites();
+        }
+    }, [loading, loadFavorites]);
+
+    if (loading) {
+        return (
+            <div className="favorite_page">
+                <div className="favorite_title"></div>
+                <div className="favorite_subtitle"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="favorite_page">
-            <div className="favorite_title">
-                <Trans i18nKey="favorites.title">Обране</Trans>
-            </div>
+            <div className="favorite_title"></div>
 
             {favorites.length === 0 ? (
-                <div className="favorite_subtitle">
-                    <Trans i18nKey="favorites.empty">Обраного поки що немає</Trans>
-                </div>
+                <div className="favorite_subtitle"></div>
             ) : (
-                <>
-                    {homeFilms.length > 0 && (
-                        <>
-                            <div className="favorite_list">
-                                {homeFilms.map(film => (
-                                    <FavoriteCard
-                                        key={`home-${film.id}`}
-                                        film={film}
-                                        toggleFavorite={toggleFavorite}
-                                    />
-                                ))}
-                            </div>
-                        </>
-                    )}
-
-                    {recFilms.length > 0 && (
-                        <>
-                            <div className="favorite_subsection_title">
-                                <Trans i18nKey="favorites.recommendations">З рекомендацій</Trans>
-                            </div>
-                            <div className="favorite_list">
-                                {recFilms.map(film => (
-                                    <FavoriteCard
-                                        key={`rec-${film.id}`}
-                                        film={film}
-                                        toggleFavorite={toggleFavorite}
-                                    />
-                                ))}
-                            </div>
-                        </>
-                    )}
-
-                    {otherFilms.length > 0 && (
-                        <div className="favorite_list">
-                            {otherFilms.map(film => (
-                                <FavoriteCard
-                                    key={`other-${film.id}`}
-                                    film={film}
-                                    toggleFavorite={toggleFavorite}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </>
+                <div className="favorite_list">
+                    {favorites.map(film => (
+                        <FavoriteCard
+                            key={film.id}
+                            film={film}
+                            toggleFavorite={toggleFavorite}
+                        />
+                    ))}
+                </div>
             )}
         </div>
     );
 }
 
 function FavoriteCard({ film, toggleFavorite }) {
-    const [hovered, setHovered] = useState(false);
-    const { t } = useTranslation();
-
     if (!film) return null;
 
+    const handleToggle = async () => {
+        await toggleFavorite(film.id);
+    };
+
     return (
-        <div
-            className="favorite_actor_card"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
+        <div className="favorite_actor_card">
             <div className="favorite_actor_card_img_wrapper">
                 <img
-                    src={hovered && film.hoverImage ? film.hoverImage : film.image}
-                    alt={film.title || 'Без назви'}
+                    src={film.posterUrl || ''}
+                    alt={film.title || ''}
                     className="favorite_actor_card_img"
                 />
 
                 <div className="favorite_actor_card_header">
                     <div
                         className={`favorite_actor_card_save favorite_actor_film_action ${
-                            film.saved ? 'active' : ''
+                            film.isSaved ? 'active' : ''
                         }`}
-                        data-tooltip={t("favorites.removeFromFavorites")}
-                        onClick={() => toggleFavorite(film)}
+                        onClick={handleToggle}
                     />
                 </div>
             </div>
@@ -106,22 +77,13 @@ function FavoriteCard({ film, toggleFavorite }) {
                     <div className="favorite_actor_card_rating">{film.rating}</div>
                 )}
 
-                {(film.linedate || film.line1) && (
+                {film.title && (
+                    <div className="favorite_actor_card_title">{film.title}</div>
+                )}
+
+                {film.genres && film.genres.length > 0 && (
                     <div className="favorite_actor_card_linedate">
-                        {film.linedate && <Trans i18nKey={film.linedate} />}
-                        {film.line1 && <Trans i18nKey={film.line1} />}
-                    </div>
-                )}
-
-                {film.line2 && (
-                    <div className="favorite_actor_card_line2">
-                        <Trans i18nKey={film.line2} />
-                    </div>
-                )}
-
-                {film.season && (
-                    <div className="favorite_actor_card_line2">
-                        <Trans i18nKey={film.season} />
+                        {film.genres.join(", ")}
                     </div>
                 )}
             </div>

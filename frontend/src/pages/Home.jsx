@@ -45,7 +45,7 @@ export const Home = ({ onOpenActorRecs }) => {
     const [promoData, setPromoData] = useState(null);
     const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
     const { t } = useTranslation();
-    const { favorites, toggleFavorite } = useFavorites();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -485,21 +485,11 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
                                                 <div className="home_film_header">
                                                     <div
-                                                        className={`home_film_save home_film_action ${favorites.some(f => f.id === film.id) ? "active" : ""}`}
+                                                        className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
                                                         data-tooltip={t('tooltip.watch')}
-                                                        onClick={(e) => {
+                                                        onClick={async (e) => {
                                                             e.stopPropagation();
-                                                            toggleFavorite({
-                                                                id: film.id,
-                                                                image: film.image,
-                                                                hoverImage: film.hoverImage,
-                                                                rating: film.rating,
-                                                                linedate: film.linedate,
-                                                                line1: film.line1,
-                                                                line2: film.line2,
-                                                                season: film.season,
-                                                                source: 'home',
-                                                            });
+                                                            await toggleFavorite(film.id);
                                                         }}
                                                     />
 
@@ -610,21 +600,11 @@ export const Home = ({ onOpenActorRecs }) => {
                                                         <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
                                                         <div className="home_film_header">
                                                             <div
-                                                                className={`home_film_save home_film_action ${favorites.some(f => f.id === film.id) ? "active" : ""}`}
+                                                                className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
                                                                 data-tooltip={t('tooltip.watch')}
-                                                                onClick={(e) => {
+                                                                onClick={async (e) => {
                                                                     e.stopPropagation();
-                                                                    toggleFavorite({
-                                                                        id: film.id,
-                                                                        image: film.image,
-                                                                        hoverImage: film.hoverImage,
-                                                                        rating: film.rating,
-                                                                        linedate: `films.${film.id}.linedate`,
-                                                                        line1: `films.${film.id}.line1`,
-                                                                        line2: film.line2 ? `films.${film.id}.line2` : undefined,
-                                                                        season: film.season ? `films.${film.id}.season` : undefined,
-                                                                        source: 'home',
-                                                                    });
+                                                                    await toggleFavorite(film.id);
                                                                 }}
                                                             />
 
@@ -707,8 +687,12 @@ export const Home = ({ onOpenActorRecs }) => {
                                             )}
                                             <div className="home_ad_info_button"></div>
                                             <div
-                                                className={`home_ad_save_button ${promoData.isSaved ? "active" : ""}`}
-                                                onClick={() => setPromoData({...promoData, isSaved: !promoData.isSaved})}
+                                                className={`home_ad_save_button ${isFavorite(promoData.id) ? "active" : ""}`}
+                                                onClick={async () => {
+                                                    if (promoData.id) {
+                                                        await toggleFavorite(promoData.id);
+                                                    }
+                                                }}
                                             ></div>
                                         </div>
                                     </div>
@@ -747,21 +731,11 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
                                                 <div className="home_film_header">
                                                     <div
-                                                        className={`home_film_save home_film_action ${savedFilms.includes(film.id) ? "active" : ""}`}
+                                                        className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
                                                         data-tooltip={t('tooltip.watch')}
-                                                        onClick={(e) => {
+                                                        onClick={async (e) => {
                                                             e.stopPropagation();
-                                                            toggleFavorite({
-                                                                id: film.id,
-                                                                image: film.image,
-                                                                hoverImage: film.hoverImage,
-                                                                rating: film.rating,
-                                                                linedate: film.linedate,
-                                                                line1: film.line1,
-                                                                line2: film.line2,
-                                                                season: film.season,
-                                                                source: 'home',
-                                                            });
+                                                            await toggleFavorite(film.id);
                                                         }}
                                                     />
 

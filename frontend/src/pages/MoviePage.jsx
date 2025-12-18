@@ -3,11 +3,13 @@ import { useParams } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import PlayerOverlay from "../components/player/PlayerOverlay";
 import { fetchTitleById } from "../services/api";
+import { useFavorites } from "../context/FavoritesContext";
 import "./MoviePage.css";
 
 export const MoviePage = ({ onCommentModalClick }) => {
     const { id } = useParams();
     const { t } = useTranslation();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const [isPlayerOpen, setIsPlayerOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [movie, setMovie] = useState(null);
@@ -243,7 +245,15 @@ export const MoviePage = ({ onCommentModalClick }) => {
                         </button>
 
                         <button className="movie_trailer_button" onClick={() => alert(t("moviePage.trailerNotAvailable"))}><Trans i18nKey="moviePage.trailer" /></button>
-                        <div className="movie_save_button"></div>
+                        <div 
+                            className={`movie_save_button ${movie && isFavorite(movie.id) ? "active" : ""}`}
+                            onClick={async () => {
+                                if (movie && movie.id) {
+                                    await toggleFavorite(movie.id);
+                                }
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        ></div>
                     </div>
                 </div>
             </div>

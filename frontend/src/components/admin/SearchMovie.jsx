@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api'; // Импорт API
+import { api } from '../../services/api';
 import './SearchMovie.css';
 
 export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
@@ -10,10 +10,9 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
     const modalRef = useRef(null);
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedMovies, setSelectedMovies] = useState([]); // Храним ID выбранных фильмов
-    const [movies, setMovies] = useState([]); // Список фильмов с бэкенда
+    const [selectedMovies, setSelectedMovies] = useState([]);
+    const [movies, setMovies] = useState([]);
 
-    // Блокировка прокрутки
     useEffect(() => {
         if (!isOpen) return;
         document.body.style.overflow = 'hidden';
@@ -22,13 +21,11 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
         };
     }, [isOpen]);
 
-    // Загрузка фильмов с API
     useEffect(() => {
         if (!isOpen) return;
 
         const fetchMovies = async () => {
             try {
-                // ИСПРАВЛЕНО: Убран лишний /api, так как он есть в baseURL axios
                 const url = searchQuery
                     ? `/public/titles?search=${searchQuery}&size=20`
                     : `/public/titles?size=20`;
@@ -36,11 +33,9 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                 const response = await api.get(url);
                 const data = response.data.content || response.data;
 
-                // Маппинг данных
                 const mappedMovies = data.map(movie => ({
                     id: movie.id,
                     name: movie.title,
-                    // Обработка пути к картинке для Nginx/MinIO
                     image: movie.posterUrl
                         ? (movie.posterUrl.startsWith('http') ? movie.posterUrl : `/kyskfilms/${movie.posterUrl}`)
                         : 'https://via.placeholder.com/200x300?text=No+Poster'
@@ -52,7 +47,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
             }
         };
 
-        // Debounce для поиска (задержка 300мс)
         const timeoutId = setTimeout(() => {
             fetchMovies();
         }, 300);
@@ -60,7 +54,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
         return () => clearTimeout(timeoutId);
     }, [isOpen, searchQuery]);
 
-    // Обработчик клика по фильму
     const handleMovieClick = (movieId) => {
         setSelectedMovies(prev => {
             if (prev.includes(movieId)) {
@@ -71,9 +64,7 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
         });
     };
 
-    // Сохранение выбора
     const handleSave = () => {
-        // Находим полные объекты фильмов по выбранным ID
         const selected = movies.filter(movie => selectedMovies.includes(movie.id));
         if (onSelectMovies && selected.length > 0) {
             onSelectMovies(selected);
@@ -85,7 +76,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
         setSelectedMovies([]);
     };
 
-    // Заглушка для картинок (если файл в MinIO удален)
     const handleImageError = (e) => {
         e.target.onerror = null;
         e.target.src = 'https://via.placeholder.com/200x300?text=No+Poster';
@@ -121,13 +111,11 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                     </div>
 
                     <div className="search_movie_grid">
-                        {/* Кнопка добавления нового фильма */}
                         {!searchQuery && (
                             <div
                                 className="search_movie_placeholder"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // Закрываем модалку и переходим на создание
                                     if (onClose) onClose();
                                     navigate('/admin/movie/new');
                                 }}
@@ -146,7 +134,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                             </div>
                         )}
 
-                        {/* Пустое состояние */}
                         {movies.length === 0 && searchQuery && (
                             <div className="search_movie_empty_state">
                                 <div className="search_movie_empty_icon"></div>
@@ -157,7 +144,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                             </div>
                         )}
 
-                        {/* Список фильмов */}
                         {movies.map((movie) => (
                             <div
                                 key={movie.id}

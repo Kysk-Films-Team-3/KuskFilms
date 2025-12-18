@@ -470,3 +470,124 @@ export const fetchFooterData = async () => {
         throw error;
     }
 };
+
+export const getCatalogPageData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/catalog';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/catalog';
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки данных каталога:", error);
+        throw error;
+    }
+};
+
+export const getNewPopularPageData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/new-popular';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/new-popular';
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки данных страницы новинок:", error);
+        throw error;
+    }
+};
+
+export const getFilmsPageMeta = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/titles/page-meta';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/titles/page-meta';
+        }
+
+        console.log("Загрузка метаданных страницы Films, baseURL:", baseURL, "url:", url);
+        const response = await api.get(url);
+        console.log("Метаданные страницы Films:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки метаданных страницы Films:", error);
+        throw error;
+    }
+};
+
+export const getFavorites = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/favorites';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/favorites';
+        }
+
+        console.log("Запрос к favorites, baseURL:", baseURL, "url:", url);
+        const response = await api.get(url);
+        console.log("Ответ от API:", response.data);
+        
+        if (response.data && response.data.content) {
+            return response.data.content;
+        }
+        if (Array.isArray(response.data)) {
+            return response.data;
+        }
+        return [];
+    } catch (error) {
+        console.error("Ошибка загрузки избранного:", error);
+        if (error.response?.status === 401) {
+            return [];
+        }
+        if (error.response?.status === 404) {
+            console.error("Эндпоинт /api/favorites не найден (404)");
+            return [];
+        }
+        throw error;
+    }
+};
+
+export const toggleFavorite = async (titleId) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/favorites/${titleId}`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/favorites/${titleId}`;
+        }
+
+        console.log("POST запрос к favorites, baseURL:", baseURL, "url:", url, "titleId:", titleId);
+        const response = await api.post(url);
+        console.log("Ответ от toggleFavorite:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка переключения избранного:", error);
+        console.error("Статус ошибки:", error.response?.status);
+        console.error("Данные ошибки:", error.response?.data);
+        console.error("URL запроса:", error.config?.url);
+        if (error.response?.status === 401) {
+            if (keycloak && !keycloak.authenticated) {
+                keycloak.login();
+            }
+            throw new Error("Требуется авторизация");
+        }
+        if (error.response?.status === 500) {
+            console.error("Ошибка 500 на сервере при переключении избранного");
+            console.error("Детали ошибки с сервера:", error.response?.data);
+            const errorMessage = error.response?.data?.message || error.response?.data?.error || "Ошибка сервера при переключении избранного";
+            throw new Error(errorMessage);
+        }
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Ошибка при переключении избранного";
+        throw new Error(errorMessage);
+    }
+};

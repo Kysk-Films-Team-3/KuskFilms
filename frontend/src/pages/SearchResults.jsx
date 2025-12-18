@@ -9,7 +9,7 @@ export const SearchResults = () => {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
-    const { favorites, toggleFavorite } = useFavorites();
+    const { isFavorite, toggleFavorite } = useFavorites();
     
     const [films, setFilms] = useState([]);
     const [actors, setActors] = useState([]);
@@ -163,23 +163,13 @@ export const SearchResults = () => {
                                         <div className="search_film_card_header">
                                             <div
                                                 className={`search_film_card_save search_film_action ${
-                                                    favorites.some((fav) => fav.id === film.id) ? 'active' : ''
+                                                    isFavorite(film.id) ? 'active' : ''
                                                 }`}
                                                 data-tooltip={t('tooltip.watch')}
-                                                onClick={(e) => {
+                                                onClick={async (e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
-                                                    toggleFavorite({
-                                                        id: film.id,
-                                                        image: film.image,
-                                                        hoverImage: film.hoverImage,
-                                                        rating: film.rating,
-                                                        linedate: film.linedate,
-                                                        line1: film.line1,
-                                                        line2: film.line2,
-                                                        season: film.season,
-                                                        source: 'search',
-                                                    });
+                                                    await toggleFavorite(film.id);
                                                 }}
                                             />
                                             <div

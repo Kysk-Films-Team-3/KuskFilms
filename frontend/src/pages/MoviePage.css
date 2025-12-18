@@ -168,7 +168,16 @@ transition: transform 0.3s ease;
     background-image: url('https://res.cloudinary.com/da9jqs8yq/image/upload/v1763840065/Component_119_y5yclj.png');
     background-size: contain;
     background-repeat: no-repeat;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-image 0.3s ease;
+    cursor: pointer;
+}
+
+.movie_save_button.active {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724378/Save_ad_active.png");
+}
+
+.movie_save_button.active:hover {
+    background-image: url("https://res.cloudinary.com/da9jqs8yq/image/upload/v1756724377/Save_ad_active_hover.png");
 }
 
 .movie_description_block{

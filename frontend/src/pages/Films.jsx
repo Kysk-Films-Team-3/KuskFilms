@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
 import { useFavorites } from '../context/FavoritesContext';
-import { fakeContent, fakeCategories } from '../services/api';
+import { fakeContent, fakeCategories, getFilmsPageMeta } from '../services/api';
 import './Films.css';
 
 export const Films = () => {
-    const { t } = useTranslation();
-    const { favorites, toggleFavorite } = useFavorites();
-    const [sortBy, setSortBy] = useState('За новизною');
-    const [genre, setGenre] = useState(t('filmsPage.genre'));
-    const [year, setYear] = useState(t('filmsPage.year'));
+    const { isFavorite, toggleFavorite } = useFavorites();
+    const [pageMeta, setPageMeta] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [sortBy, setSortBy] = useState('Сортування');
+    const [genre, setGenre] = useState('Жанр');
+    const [year, setYear] = useState('Рік');
     const [ratingMin, setRatingMin] = useState(0);
     const [ratingMax, setRatingMax] = useState(10);
     const [isSortOpen, setIsSortOpen] = useState(false);
@@ -51,17 +52,37 @@ export const Films = () => {
         }
     }, [ratingMin, ratingMax]);
 
-    const genres = [
-        t('filmsPage.genres.action'),
-        t('filmsPage.genres.drama'),
-        t('filmsPage.genres.comedy'),
-        t('filmsPage.genres.thriller'),
-        t('filmsPage.genres.horror'),
-        t('filmsPage.genres.fantasy'),
-        t('filmsPage.genres.detective'),
-        t('filmsPage.genres.romance')
-    ];
-    const years = Array.from({ length: 30 }, (_, i) => 2025 - i);
+    useEffect(() => {
+        const loadPageMeta = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                console.log('Загрузка метаданных страницы Films...');
+                const meta = await getFilmsPageMeta();
+                console.log('Метаданные загружены:', meta);
+                setPageMeta(meta);
+                
+                if (meta && meta.filters) {
+                    const sortOptions = Object.values(meta.filters.sortOptions || {});
+                    if (sortOptions.length > 0) {
+                        setSortBy(sortOptions[0]);
+                    }
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки метаданных страницы Films:', err);
+                console.error('Детали ошибки:', err.response?.data || err.message);
+                setError(err.message || 'Ошибка загрузки данных');
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadPageMeta();
+    }, []);
+
+    const genres = pageMeta?.filters?.genres || [];
+    const years = pageMeta?.filters?.years || [];
+    const sortOptions = pageMeta?.filters?.sortOptions || {};
 
     useEffect(() => {
         const loadFilms = async () => {
@@ -76,7 +97,7 @@ export const Films = () => {
                         sub.films.forEach(film => {
                             extractedFilms.push({
                                 id: film.id,
-                                name: film.title || t('filmsPage.filmDefault', { id: film.id }),
+                                name: film.title || `Фільм ${film.id}`,
                                 image: film.image,
                                 hoverImage: film.hoverImage || film.image,
                                 rating: parseFloat(film.rating) || 0,
@@ -108,20 +129,48 @@ export const Films = () => {
     }, []);
 
     const handleReset = () => {
-        setSortBy('За новизною');
-        setGenre(t('filmsPage.genre'));
-        setYear(t('filmsPage.year'));
+        if (pageMeta && pageMeta.filters && pageMeta.filters.sortOptions) {
+            const sortOptions = Object.values(pageMeta.filters.sortOptions);
+            setSortBy(sortOptions.length > 0 ? sortOptions[0] : null);
+        }
+        setGenre('Жанр');
+        setYear('Рік');
         setRatingMin(0);
         setRatingMax(10);
     };
+
+    if (loading) {
+        return (
+            <div className="films_page">
+                <div className="films_container">
+                    <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !pageMeta) {
+        return (
+            <div className="films_page">
+                <div className="films_container">
+                    <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+                        {error || 'Ошибка загрузки данных'}
+                    </div>
+                    <div style={{ padding: '10px', textAlign: 'center', color: '#999', fontSize: '12px' }}>
+                        Проверьте консоль браузера для деталей
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="films_page">
             <div className="films_container">
                 <div className="films_header">
-                    <h1 className="films_title"><Trans i18nKey="filmsPage.title" /></h1>
+                    <h1 className="films_title">{pageMeta.title || ''}</h1>
                     <p className="films_description">
-                        <Trans i18nKey="filmsPage.description" />
+                        {pageMeta.description || ''}
                     </p>
                 </div>
 
@@ -136,15 +185,23 @@ export const Films = () => {
                                     setIsYearOpen(false);
                                 }}
                             >
-                                <Trans i18nKey={`filmsPage.sort.${sortBy === 'За новизною' ? 'newest' : sortBy === 'За популярністю' ? 'popular' : sortBy === 'За рейтингом' ? 'rating' : 'alphabet'}`} />
+                                {sortBy || 'Сортування'}
                                 <span className={`films_filter_arrow ${isSortOpen ? 'open' : ''}`}></span>
                             </button>
                             {isSortOpen && (
                                 <div className="films_filter_menu">
-                                    <button className={sortBy === 'За новизною' ? 'selected' : ''} onClick={() => { setSortBy('За новизною'); setIsSortOpen(false); }}><Trans i18nKey="filmsPage.sort.newest" /></button>
-                                    <button className={sortBy === 'За популярністю' ? 'selected' : ''} onClick={() => { setSortBy('За популярністю'); setIsSortOpen(false); }}><Trans i18nKey="filmsPage.sort.popular" /></button>
-                                    <button className={sortBy === 'За рейтингом' ? 'selected' : ''} onClick={() => { setSortBy('За рейтингом'); setIsSortOpen(false); }}><Trans i18nKey="filmsPage.sort.rating" /></button>
-                                    <button className={sortBy === 'За алфавітом' ? 'selected' : ''} onClick={() => { setSortBy('За алфавітом'); setIsSortOpen(false); }}><Trans i18nKey="filmsPage.sort.alphabet" /></button>
+                                    {Object.entries(sortOptions).map(([key, value]) => (
+                                        <button 
+                                            key={key}
+                                            className={sortBy === value ? 'selected' : ''} 
+                                            onClick={() => { 
+                                                setSortBy(value); 
+                                                setIsSortOpen(false); 
+                                            }}
+                                        >
+                                            {value}
+                                        </button>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -198,7 +255,7 @@ export const Films = () => {
                     </div>
 
                     <div className="films_rating_slider_group">
-                        <span className="films_rating_label"><Trans i18nKey="filmsPage.rating" /></span>
+                        <span className="films_rating_label">Рейтинг</span>
                         <div className="films_rating_slider_container">
                             <div 
                                 className="films_rating_slider_wrapper" 
@@ -279,7 +336,7 @@ export const Films = () => {
                                 >{ratingMax}</span>
                             </div>
                         </div>
-                        <button className="films_reset_button" onClick={handleReset}><Trans i18nKey="filmsPage.reset" /></button>
+                        <button className="films_reset_button" onClick={handleReset}>Скинути</button>
                     </div>
                 </div>
 
@@ -305,28 +362,16 @@ export const Films = () => {
                                     <div className="films_film_card_header">
                                         <div
                                             className={`films_film_card_save films_film_action ${
-                                                favorites.some((fav) => fav.id === film.id) ? 'active' : ''
+                                                isFavorite(film.id) ? 'active' : ''
                                             }`}
-                                            data-tooltip={t('tooltip.watch')}
-                                            onClick={(e) => {
+                                            onClick={async (e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                toggleFavorite({
-                                                    id: film.id,
-                                                    image: film.image,
-                                                    hoverImage: film.hoverImage,
-                                                    rating: film.rating,
-                                                    linedate: film.linedate,
-                                                    line1: film.line1,
-                                                    line2: film.line2,
-                                                    season: film.season,
-                                                    source: 'films',
-                                                });
+                                                await toggleFavorite(film.id);
                                             }}
                                         />
                                         <div
                                             className="films_film_card_repost films_film_action"
-                                            data-tooltip={t('tooltip.share')}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
@@ -358,12 +403,12 @@ export const Films = () => {
                                     </div>
                                 </Link>
                                 <h3 className="films_film_title">
-                                    {t(`filmsPage.filmTitles.${film.id}`, { defaultValue: film.name })}
+                                    {film.name}
                                 </h3>
                             </div>
                         ))
                     ) : (
-                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1' }}><Trans i18nKey="filmsPage.loading" /></div>
+                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1' }}>Загрузка...</div>
                     )}
                 </div>
             </div>

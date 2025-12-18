@@ -7,7 +7,7 @@ import './ActorModal.css';
 
 export const ActorModal = ({ actor, onClose }) => {
     const { t } = useTranslation();
-    const { favorites, toggleFavorite } = useFavorites();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const modalRef = useRef(null);
     const [category, setCategory] = useState(t('actorModal.categories.all'));
     const [sortBy, setSortBy] = useState(t('actorModal.sort.newest'));
@@ -229,23 +229,13 @@ export const ActorModal = ({ actor, onClose }) => {
                                             <div className="actor_film-card-header">
                                                 <div
                                                     className={`actor_film-card-save actor_film-action ${
-                                                        favorites.some((fav) => fav.id === film.id) ? 'active' : ''
+                                                        isFavorite(film.id) ? 'active' : ''
                                                     }`}
                                                     data-tooltip={t('tooltip.watch')}
-                                                    onClick={(e) => {
+                                                    onClick={async (e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
-                                                        toggleFavorite({
-                                                            id: film.id,
-                                                            image: film.image,
-                                                            hoverImage: film.hoverImage,
-                                                            rating: film.rating,
-                                                            linedate: film.linedate,
-                                                            line1: film.line1,
-                                                            line2: film.line2,
-                                                            season: film.season,
-                                                            source: 'actorModal',
-                                                        });
+                                                        await toggleFavorite(film.id);
                                                     }}
                                                 />
                                                 <div

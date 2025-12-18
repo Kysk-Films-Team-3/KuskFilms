@@ -1,106 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { fetchTitles } from '../services/api';
+import { getCatalogPageData } from '../services/api';
 import './Catalog.css';
 
 export const Catalog = () => {
-    const { t } = useTranslation();
-    const [movies, setMovies] = useState([]);
+    const [pageData, setPageData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const categories = [
-        {
-            id: 1,
-            nameKey: 'catalog.categories.films',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_1_rh1fm0.png',
-            route: '/catalog/films'
-        },
-        {
-            id: 2,
-            nameKey: 'catalog.categories.series',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_yht5ma.png',
-            route: '/catalog/series'
-        },
-        {
-            id: 3,
-            nameKey: 'catalog.categories.cartoons',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_2_ggpsar.png',
-            route: '/catalog/cartoons'
-        },
-        {
-            id: 4,
-            nameKey: 'catalog.categories.animatedSeries',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_3_ugj2av.png',
-            route: '/catalog/animated-series'
-        },
-        {
-            id: 5,
-            nameKey: 'catalog.categories.interviews',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_4_bklkvb.png',
-            route: '/catalog/interviews'
-        },
-        {
-            id: 6,
-            nameKey: 'catalog.categories.anime',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296950/Frame_101_5_bgxy78.png',
-            route: '/catalog/anime'
-        },
-        {
-            id: 7,
-            nameKey: 'catalog.categories.concerts',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296950/Frame_101_6_eirbrh.png',
-            route: '/catalog/concerts'
-        },
-        {
-            id: 8,
-            nameKey: 'catalog.categories.reality',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296949/Frame_101_7_pi6shs.png',
-            route: '/catalog/reality'
-        },
-        {
-            id: 9,
-            nameKey: 'catalog.categories.cooking',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296950/Frame_101_8_fdi1xx.png',
-            route: '/catalog/cooking'
-        },
-        {
-            id: 10,
-            nameKey: 'catalog.categories.programs',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_9_nrphno.png',
-            route: '/catalog/programs'
-        },
-        {
-            id: 11,
-            nameKey: 'catalog.categories.opera',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_10_e75n8w.png',
-            route: '/catalog/opera'
-        },
-        {
-            id: 12,
-            nameKey: 'catalog.categories.nature',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_11_jcuelv.png',
-            route: '/catalog/nature'
-        },
-        {
-            id: 13,
-            nameKey: 'catalog.categories.art',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_12_kpqgvb.png',
-            route: '/catalog/art'
-        },
-        {
-            id: 14,
-            nameKey: 'catalog.categories.fitness',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296951/Frame_101_13_jxysks.png',
-            route: '/catalog/fitness'
-        },
-        {
-            id: 15,
-            nameKey: 'catalog.categories.lectures',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765296952/Frame_101_14_j0mylz.png',
-            route: '/catalog/lectures'
-        }
-    ];
 
     const collectionsRef = useRef(null);
     const [scrollState, setScrollState] = useState({
@@ -109,28 +14,6 @@ export const Catalog = () => {
         isScrollable: false
     });
 
-    const collections = [
-        {
-            id: 1,
-            nameKey: 'catalog.collectionsList.dystopia',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765288109/Frame_101_lkkf1x.png'
-        },
-        {
-            id: 2,
-            nameKey: 'catalog.collectionsList.antiheroes',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765288110/Frame_101_1_vek5dj.png'
-        },
-        {
-            id: 3,
-            nameKey: 'catalog.collectionsList.powerOfFriendship',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765288110/Frame_101_2_ijcn0y.png'
-        },
-        {
-            id: 4,
-            nameKey: 'catalog.collectionsList.romance',
-            image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1765290991/Frame_101_p1jsxz.png'
-        }
-    ];
 
     const scrollCollections = (direction) => {
         if (!collectionsRef.current) return;
@@ -250,7 +133,7 @@ export const Catalog = () => {
             if (rafId) cancelAnimationFrame(rafId);
             if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
         };
-    }, [collections]);
+    }, [pageData?.collections]);
 
     const isDown = useRef(false);
     const startX = useRef(0);
@@ -289,56 +172,123 @@ export const Catalog = () => {
     };
 
     useEffect(() => {
-        const fetchMovies = async () => {
+        const loadPageData = async () => {
             try {
                 setLoading(true);
-
-                const data = await fetchTitles(0);
-
-                if (data && Array.isArray(data.content)) {
-                    setMovies(data.content);
-                    setError(null);
-                } else {
-                    console.error("API повернул невідомі данні:", data);
-                    setError(t("catalog.errorFormat"));
-                }
+                setError(null);
+                console.log('Загрузка данных каталога...');
+                const data = await getCatalogPageData();
+                console.log('Данные каталога загружены:', data);
+                console.log('Жанры:', data?.genres);
+                console.log('Количество жанров:', data?.genres?.length);
+                console.log('Коллекции:', data?.collections);
+                console.log('Количество коллекций:', data?.collections?.length);
+                setPageData(data);
             } catch (err) {
-                console.error("API не відповів:", err);
-                setError(t("catalog.error"));
+                console.error('Ошибка загрузки данных каталога:', err);
+                console.error('Детали ошибки:', err.response?.data || err.message);
+                setError(err.message || 'Ошибка загрузки данных');
+                setPageData(null);
             } finally {
                 setLoading(false);
             }
         };
+        loadPageData();
+    }, []);
 
-        fetchMovies();
-    }, [t]);
+    if (loading) {
+        return (
+            <div className="catalog_page">
+                <div className="catalog_container">
+                    <div className="catalog_title"></div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="catalog_page">
+                <div className="catalog_container">
+                    <div className="catalog_title"></div>
+                    <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+                        Ошибка: {error}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!pageData) {
+        return (
+            <div className="catalog_page">
+                <div className="catalog_container">
+                    <div className="catalog_title"></div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}>Нет данных</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="catalog_page">
             <div className="catalog_container">
-                <div className="catalog_title"><Trans i18nKey="catalog.title" /></div>
+                <div className="catalog_title">{pageData.title || ''}</div>
                 
-                <div className="catalog_grid">
-                    {categories.map((category) => (
-                        <div key={category.id} className="catalog_category_card">
-                            <div className="category_image_wrapper">
-                                <img 
-                                    src={category.image} 
-                                    alt={t(category.nameKey)}
-                                    className="category_image"
-                                />
+                {process.env.NODE_ENV === 'development' && (
+                    <div style={{ padding: '10px', background: '#333', color: '#fff', margin: '10px 0' }}>
+                        <div>Жанры: {pageData.genres ? JSON.stringify(pageData.genres.map(g => ({ name: g.name, slug: g.slug }))) : 'null'}</div>
+                        <div>Количество жанров: {pageData.genres?.length || 0}</div>
+                        <div>Коллекции: {pageData.collections ? JSON.stringify(pageData.collections.map(c => ({ title: c.title, itemsCount: c.items?.length }))) : 'null'}</div>
+                        <div>Количество коллекций: {pageData.collections?.length || 0}</div>
+                    </div>
+                )}
+                
+                {pageData.genres && pageData.genres.length > 0 ? (
+                    <div className="catalog_grid">
+                        {pageData.genres.map((genre, index) => (
+                            <div key={index} className="catalog_category_card">
+                                <div className="category_image_wrapper">
+                                    {genre.iconUrl ? (
+                                        <img 
+                                            src={genre.iconUrl} 
+                                            alt={genre.name}
+                                            className="category_image"
+                                            onError={(e) => {
+                                                console.error('Ошибка загрузки иконки жанра:', genre.iconUrl);
+                                                e.target.style.display = 'none';
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="category_image" style={{ 
+                                            backgroundColor: '#333', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center',
+                                            color: '#fff'
+                                        }}>
+                                            {genre.name}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="category_name">{genre.name}</div>
                             </div>
-                            <div className="category_name"><Trans i18nKey={category.nameKey} /></div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                        Жанры временно недоступны
+                    </div>
+                )}
             </div>
             
-            <div className="catalog_collections_section">
-                <div className="catalog_collections_header">
-                    <h2 className="catalog_collections_title"><Trans i18nKey="catalog.collections" /></h2>
-                    <div className="catalog_collections_arrow"></div>
-                </div>
+            {pageData.collectionsTitle && (
+                <div className="catalog_collections_section">
+                    <div className="catalog_collections_header">
+                        <h2 className="catalog_collections_title">{pageData.collectionsTitle}</h2>
+                        <div className="catalog_collections_arrow"></div>
+                    </div>
                 <div
                     className={`catalog_collections_scroll_btn left ${!scrollState.isScrollable || scrollState.isAtStart ? 'hidden' : ''}`}
                     onClick={() => scrollCollections('left')}
@@ -356,27 +306,58 @@ export const Catalog = () => {
                         onMouseMove={handleMouseMove}
                         onScroll={handleScrollDebounced}
                     >
-                    <div
-                        className="catalog_collections_list"
-                    >
-                        {collections.map((collection) => (
-                            <div key={collection.id} className="catalog_collection_item">
-                                <div className="catalog_collection_card">
-                                    <div className="catalog_collection_badge"><Trans i18nKey="catalog.collectionBadge" /></div>
-                                    <img
-                                        src={collection.image}
-                                        alt={t(collection.nameKey)}
-                                        className="catalog_collection_image"
-                                        draggable="false"
-                                        onDragStart={(e) => e.preventDefault()}
-                                    />
-                                    <h3 className="catalog_collection_name"><Trans i18nKey={collection.nameKey} /></h3>
-                                </div>
+                    <div className="catalog_collections_list">
+                        {pageData.collections && pageData.collections.length > 0 ? (
+                            pageData.collections.map((collection, index) => {
+                                const collectionImage = collection.items?.find(item => item.posterUrl)?.posterUrl || 
+                                                       (collection.items && collection.items.length > 0 ? collection.items[0].posterUrl : null);
+                                
+                                return (
+                                    <div key={index} className="catalog_collection_item">
+                                        <div className="catalog_collection_card">
+                                            <div className="catalog_collection_badge"></div>
+                                            {collectionImage ? (
+                                                <img
+                                                    src={collectionImage}
+                                                    alt={collection.title}
+                                                    className="catalog_collection_image"
+                                                    draggable="false"
+                                                    onDragStart={(e) => e.preventDefault()}
+                                                    onError={(e) => {
+                                                        console.error('Ошибка загрузки изображения коллекции:', collectionImage);
+                                                        e.target.style.display = 'none';
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="catalog_collection_image" style={{ 
+                                                    backgroundColor: '#333', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center',
+                                                    color: '#fff'
+                                                }}>
+                                                    {collection.title}
+                                                </div>
+                                            )}
+                                            <h3 className="catalog_collection_name">{collection.title}</h3>
+                                            {collection.description && (
+                                                <p className="catalog_collection_description" style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
+                                                    {collection.description}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                                Коллекции временно недоступны
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>
+            )}
         </div>
     );
 };
