@@ -6,6 +6,7 @@ import com.kyskfilms.title.repository.*
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 
 @Service
 class TitleService(
@@ -13,7 +14,11 @@ class TitleService(
     private val categoryRepository: CategoryRepository,
     private val genreRepository: GenreRepository,
     private val seasonRepository: SeasonRepository,
-    private val episodeRepository: EpisodeRepository
+    private val personRepository: PersonRepository,
+    private val episodeRepository: EpisodeRepository,
+
+    // ДОБАВИЛИ РЕПОЗИТОРИЙ ДЛЯ СВЯЗЕЙ
+    private val titlePersonRepository: TitlePersonRepository
 ) {
 
     @Transactional
@@ -32,18 +37,56 @@ class TitleService(
     }
 
     @Transactional
-    fun createTitle(req: CreateTitleRequest): Title {
+    fun createTitle(req: TitleDtos): Title {
         val genres = genreRepository.findAllById(req.genreIds).toMutableSet()
+
+        // Генерируем slug, если не пришел
+        val finalSlug = req.slug?.takeIf { it.isNotBlank() }
+            ?: (req.title.lowercase().replace(" ", "-") + "-" + System.currentTimeMillis())
 
         val title = Title(
             type = req.type,
             title = req.title,
-            slug = req.slug,
+            slug = finalSlug,
             description = req.description,
             releaseDate = req.releaseDate,
+            rating = req.rating ?: BigDecimal.ZERO,
+            posterUrl = req.posterUrl,
+            logoUrl = req.logoUrl,
+            backgroundUrl = req.backgroundUrl,
             genres = genres
         )
-        return titleRepository.save(title)
+
+        val savedTitle = titleRepository.save(title)
+
+        // === СОХРАНЕНИЕ АКТЕРОВ ===
+        // req.actorIds теперь List<Long>, поэтому forEach работает корректно
+        req.actorIds.forEach { actorId ->
+            val person = personRepository.findById(actorId).orElse(null)
+            if (person != null) {
+                val titlePerson = TitlePerson(
+                    title = savedTitle,
+                    person = person,
+                    role = "ACTOR" // Можно вынести в константу
+                )
+                titlePersonRepository.save(titlePerson)
+            }
+        }
+
+        // === СОХРАНЕНИЕ РЕЖИССЕРОВ (если нужно) ===
+        req.directorIds.forEach { directorId ->
+            val person = personRepository.findById(directorId).orElse(null)
+            if (person != null) {
+                val titlePerson = TitlePerson(
+                    title = savedTitle,
+                    person = person,
+                    role = "DIRECTOR"
+                )
+                titlePersonRepository.save(titlePerson)
+            }
+        }
+
+        return savedTitle
     }
 
     @Transactional
@@ -73,7 +116,20 @@ class TitleService(
         return episodeRepository.save(episode)
     }
 
+    @Transactional(readOnly = true)
+    fun getAllGenres(): List<Genre> = genreRepository.findAll()
+
+    @Transactional(readOnly = true)
+    fun getAllPersons(search: String?): List<Person> {
+        return if (search.isNullOrBlank()) {
+            personRepository.findAll()
+        } else {
+            personRepository.findAllByNameContainingIgnoreCase(search)
+        }
+    }
+
     fun getAllTitles(): List<Title> = titleRepository.findAll()
+
     fun getTitleById(id: Int): Title = titleRepository.findById(id)
         .orElseThrow { EntityNotFoundException("Title not found") }
 }

@@ -21,9 +21,11 @@ FROM eclipse-temurin:21-jre
 LABEL maintainer="kyskfilms@example.com"
 LABEL description="KYSKFilms Backend"
 
+# --- ДОБАВЛЕН FFMPEG В СПИСОК ПАКЕТОВ ---
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl netcat-openbsd ca-certificates \
+    curl netcat-openbsd ca-certificates ffmpeg \
     && rm -rf /var/lib/apt/lists/*
+# ----------------------------------------
 
 WORKDIR /app
 
@@ -34,9 +36,8 @@ RUN useradd -m -u 9999 appuser && \
 COPY --from=build --chown=appuser:appuser /app/build/libs/*.jar /app/app.jar
 COPY --chown=appuser:appuser docker-entrypoint.sh /app/docker-entrypoint.sh
 
-# --- ВОТ ЭТА КОМАНДА ЛЕЧИТ ОШИБКУ ---
+# Исправление переносов строк (CRLF -> LF)
 RUN sed -i 's/\r$//' /app/docker-entrypoint.sh
-# ------------------------------------
 
 RUN chmod +x /app/docker-entrypoint.sh
 

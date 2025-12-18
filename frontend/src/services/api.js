@@ -75,15 +75,15 @@ export const getHomePageData = async () => {
     try {
         const baseURL = api.defaults.baseURL || '';
         let url = '/api/public/home';
-        
+
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
             url = '/public/home';
         }
-        
+
         console.log("Base URL:", baseURL);
         console.log("Используемый путь:", url);
         console.log("Полный URL будет:", baseURL + url);
-        
+
         const response = await api.get(url);
         return response.data;
     } catch (error) {
@@ -98,11 +98,11 @@ export const transformCarouselItems = (carouselItems) => {
     if (!carouselItems || !Array.isArray(carouselItems)) {
         return [];
     }
-    
+
     return carouselItems.map((item, index) => {
         const className = `home_slide${(index % 4) + 1}`;
         const link = `/movie/${item.id}`;
-        
+
         let rating = null;
         if (item.rating !== null && item.rating !== undefined) {
             const ratingNum = typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating);
@@ -110,7 +110,7 @@ export const transformCarouselItems = (carouselItems) => {
                 rating = ratingNum.toFixed(1);
             }
         }
-        
+
         return {
             id: item.id,
             className: className,
@@ -130,7 +130,7 @@ export const transformCategories = (categories) => {
     if (!categories || !Array.isArray(categories)) {
         return [];
     }
-    
+
     return categories.map(cat => ({
         id: cat.id,
         name: cat.name,
@@ -144,7 +144,7 @@ export const transformSections = (sections) => {
     if (!sections || !Array.isArray(sections)) {
         return [];
     }
-    
+
     return sections.map(section => ({
         id: section.categoryId,
         title: section.title,
@@ -156,7 +156,7 @@ export const transformSections = (sections) => {
                     rating = ratingNum.toFixed(1);
                 }
             }
-            
+
             return {
                 id: item.id,
                 title: item.title,
@@ -177,7 +177,7 @@ export const transformCelebrities = (celebrities) => {
     if (!celebrities || !Array.isArray(celebrities)) {
         return [];
     }
-    
+
     return celebrities.map((celeb, index) => ({
         id: celeb.actorId || celeb.collectionId,
         collectionId: celeb.collectionId,
@@ -195,7 +195,7 @@ export const transformPromo = (promo) => {
     if (!promo) {
         return null;
     }
-    
+
     let rating = null;
     if (promo.rating !== null && promo.rating !== undefined) {
         const ratingNum = typeof promo.rating === 'string' ? parseFloat(promo.rating) : Number(promo.rating);
@@ -203,7 +203,7 @@ export const transformPromo = (promo) => {
             rating = ratingNum.toFixed(1);
         }
     }
-    
+
     return {
         id: promo.id,
         imageUrl: promo.imageUrl,
@@ -222,11 +222,11 @@ export const transformPromo = (promo) => {
 export const fetchTitles = async (page = 0) => {
     const baseURL = api.defaults.baseURL || '';
     let url = `/api/public/titles?page=${page}`;
-    
+
     if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
         url = `/public/titles?page=${page}`;
     }
-    
+
     const response = await api.get(url);
     return response.data;
 };
@@ -235,16 +235,16 @@ export const fetchTitleById = async (id) => {
     try {
         const baseURL = api.defaults.baseURL || '';
         let url = `/api/public/titles/${id}`;
-        
+
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
             url = `/public/titles/${id}`;
         }
-        
+
         console.log("Загрузка фильма ID:", id);
         console.log("Base URL:", baseURL);
         console.log("Используемый путь:", url);
         console.log("Полный URL будет:", baseURL + url);
-        
+
         const response = await api.get(url);
         return response.data;
     } catch (error) {
@@ -258,7 +258,7 @@ export const fetchTitleById = async (id) => {
 
 export const fetchUserProfile = async () => {
     try {
-        const response = await api.get('/api/users/profile/me');
+        const response = await api.get('/users/profile/me');
         console.log("📥 Профиль загружен:", response.data);
         console.log("📥 isPremium:", response.data?.isPremium);
         if (!response.data) {
@@ -290,7 +290,7 @@ export const fetchUserProfile = async () => {
 export const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post('/api/users/profile/avatar', formData, {
+    const response = await api.post('/users/profile/avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -415,21 +415,21 @@ export const refreshAccessTokenAPI = async () => {
 
 export const createCheckoutSession = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/payment/checkout';
-        
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/payment/checkout';
+        if (!keycloak.authenticated) {
+            keycloak.login();
+            return { success: false, message: "Login required" };
         }
-        
-        const response = await api.post(url);
-        return { success: true, url: response.data.url };
+
+        const response = await api.post('/payment/checkout');
+
+        if (response.data && response.data.url) {
+            return { success: true, url: response.data.url };
+        } else {
+            return { success: false, message: "No URL returned" };
+        }
     } catch (error) {
-        console.error("Ошибка создания сессии оплаты:", error);
-        console.error("URL запроса:", error.config?.url);
-        console.error("Base URL:", api.defaults.baseURL);
-        const errorMessage = error.response?.data?.message || error.message || 'Не вдалося створити сесію оплати';
-        return { success: false, message: errorMessage };
+        console.error("Payment Error:", error);
+        return { success: false, message: error.message };
     }
 };
 
@@ -437,11 +437,11 @@ export const fetchHeaderData = async () => {
     try {
         const baseURL = api.defaults.baseURL || '';
         let url = '/api/public/layout/header';
-        
+
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
             url = '/public/layout/header';
         }
-        
+
         const response = await api.get(url);
         return response.data;
     } catch (error) {
@@ -456,11 +456,11 @@ export const fetchFooterData = async () => {
     try {
         const baseURL = api.defaults.baseURL || '';
         let url = '/api/public/layout/footer';
-        
+
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
             url = '/public/layout/footer';
         }
-        
+
         const response = await api.get(url);
         return response.data;
     } catch (error) {

@@ -1,43 +1,65 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import { api } from '../../services/api'; // Импорт API
 import './SearchActor.css';
-
-const mockActors = [
-    { id: 1, name: 'Джейсон Стетхем', role: 'Актор', image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1756265326/Statham.png' },
-    { id: 2, name: 'Леонардо Ді Капріо', role: 'Актор', image: 'https://via.placeholder.com/150?text=Leonardo+DiCaprio' },
-    { id: 3, name: 'Марго Роббі', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Margot+Robbie' },
-    { id: 4, name: 'Райан Гослінг', role: 'Актор', image: 'https://via.placeholder.com/150?text=Ryan+Gosling' },
-    { id: 5, name: 'Тімоті Шаламе', role: 'Актор', image: 'https://via.placeholder.com/150?text=Timothée+Chalamet' },
-    { id: 6, name: 'Аня Тейлор-Джой', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Anya+Taylor-Joy' },
-    { id: 7, name: 'Елізабет Олсен', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Elizabeth+Olsen' },
-    { id: 8, name: 'Скарлетт Йоханссон', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Scarlett+Johansson' },
-    { id: 9, name: 'Том Гіддлстон', role: 'Актор', image: 'https://via.placeholder.com/150?text=Tom+Hiddleston' },
-    { id: 10, name: 'Бред Пітт', role: 'Актор', image: 'https://via.placeholder.com/150?text=Brad+Pitt' },
-    { id: 11, name: 'Ентоні Гопкінс', role: 'Актор', image: 'https://via.placeholder.com/150?text=Anthony+Hopkins' },
-    { id: 12, name: 'Анджеліна Джолі', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Angelina+Jolie' },
-];
 
 export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }) => {
     const { t } = useTranslation();
     const modalRef = useRef(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedActors, setSelectedActors] = useState([]);
-    const [actors] = useState(mockActors);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedActors, setSelectedActors] = useState([]); // Храним ID выбранных
+    const [actors, setActors] = useState([]); // Список загруженный с сервера
+
+    // Блокировка скролла
     useEffect(() => {
         if (!isOpen) return;
-
         document.body.style.overflow = 'hidden';
-
         return () => {
             document.body.style.overflow = '';
         };
     }, [isOpen]);
 
-    const filteredActors = actors.filter(actor =>
-        actor.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Загрузка актеров с API
+    useEffect(() => {
+        if (!isOpen) return;
 
+        const fetchActors = async () => {
+            try {
+                // Запрос к бэкенду (PersonController)
+                // Используем относительный путь, axios добавит /api сам
+                const url = searchQuery
+                    ? `/persons?search=${searchQuery}`
+                    : `/persons`;
+
+                const response = await api.get(url);
+
+                // Маппинг данных для UI
+                const mappedActors = response.data.map(person => ({
+                    id: person.id,
+                    name: person.name,
+                    role: person.activityType || 'Актор', // Значение по умолчанию если нет в БД
+                    // Обработка пути к фото
+                    image: person.photoUrl
+                        ? (person.photoUrl.startsWith('http') ? person.photoUrl : `/kyskfilms/${person.photoUrl}`)
+                        : 'https://via.placeholder.com/150?text=No+Photo'
+                }));
+
+                setActors(mappedActors);
+            } catch (error) {
+                console.error("Помилка завантаження акторів:", error);
+            }
+        };
+
+        // Debounce (задержка перед запросом)
+        const timeoutId = setTimeout(() => {
+            fetchActors();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [isOpen, searchQuery]);
+
+    // Обработчик выбора
     const handleActorClick = (actorId) => {
         setSelectedActors(prev => {
             if (prev.includes(actorId)) {
@@ -48,7 +70,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         });
     };
 
+    // Сохранение выбора
     const handleSave = () => {
+        // Находим полные объекты выбранных актеров
         const selected = actors.filter(actor => selectedActors.includes(actor.id));
         if (onSelectActors && selected.length > 0) {
             onSelectActors(selected);
@@ -60,6 +84,12 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         setSelectedActors([]);
     };
 
+    // Заглушка для фото (если файл в MinIO удален)
+    const handleImageError = (e) => {
+        e.target.onerror = null;
+        e.target.src = 'https://via.placeholder.com/150?text=No+Photo';
+    };
+
     if (!isOpen) return null;
 
     const handleOverlayClick = (e) => {
@@ -68,13 +98,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         }
     };
 
-    const handleModalClick = (e) => {
-        e.stopPropagation();
-    };
-
     return (
         <div className="search_actor_overlay" role="dialog" aria-modal="true" onClick={handleOverlayClick} onMouseDown={(e) => e.stopPropagation()}>
-            <div className="search_actor_modal" ref={modalRef} onClick={handleModalClick} onMouseDown={(e) => e.stopPropagation()}>
+            <div className="search_actor_modal" ref={modalRef} onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
                 <div className="search_actor_close" onClick={onClose}></div>
 
                 <div className="search_actor_header">
@@ -94,10 +120,11 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                     </div>
 
                     <div className="search_actor_grid">
+                        {/* Кнопка создания нового актера */}
                         {!searchQuery && (
                             <div className="search_actor_placeholder">
                                 <div className="search_actor_avatar_placeholder"></div>
-                                <button 
+                                <button
                                     className="search_actor_create_button"
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -112,7 +139,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                                 </button>
                             </div>
                         )}
-                        {filteredActors.length === 0 && searchQuery && (
+
+                        {/* Пустое состояние */}
+                        {actors.length === 0 && searchQuery && (
                             <div className="search_actor_empty_state">
                                 <div className="search_actor_empty_icon"></div>
                                 <div className="search_actor_empty_title"><Trans i18nKey="admin.searchActor.emptyStateTitle" /></div>
@@ -121,7 +150,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                                 </div>
                             </div>
                         )}
-                        {filteredActors.map((actor) => (
+
+                        {/* Список актеров */}
+                        {actors.map((actor) => (
                             <div
                                 key={actor.id}
                                 className={`search_actor_item ${selectedActors.includes(actor.id) ? 'selected' : ''}`}
@@ -134,7 +165,11 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                                     <div className="search_actor_checkmark selected"></div>
                                 )}
                                 <div className="search_actor_avatar">
-                                    <img src={actor.image} alt={actor.name} />
+                                    <img
+                                        src={actor.image}
+                                        alt={actor.name}
+                                        onError={handleImageError}
+                                    />
                                 </div>
                                 <div className="search_actor_info">
                                     <div className="search_actor_name">{actor.name}</div>
@@ -163,4 +198,3 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         </div>
     );
 };
-

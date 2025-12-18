@@ -35,27 +35,30 @@ class UserProfileController(
     fun getMyProfile(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<UserProfileDto> {
         val userProfile = userProfileService.findOrCreateUserProfile(jwt)
         val username = jwt.getClaimAsString("preferred_username")
-        val minioBaseUrl = "$minioPublicUrl/$bucketName"
+
+        val minioBaseUrl = minioPublicUrl
+
         return ResponseEntity.ok(userProfile.toDto(username, minioBaseUrl))
     }
 
     @PostMapping("/avatar", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Загрузить или обновить аватар пользователя", security = [SecurityRequirement(name = "bearerAuth")])
-
     fun uploadAvatar(
         @AuthenticationPrincipal jwt: Jwt,
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<UserProfileDto> {
 
         val userProfile = userProfileService.findOrCreateUserProfile(jwt)
+
         val avatarPath = minioService.uploadImage(file, "avatars")
 
         userProfile.avatarUrl = avatarPath
         val updatedProfile = userProfileService.updateUserProfile(userProfile)
 
         val username = jwt.getClaimAsString("preferred_username")
-        val minioBaseUrl = "$minioPublicUrl/$bucketName"
+
+        val minioBaseUrl = minioPublicUrl
 
         return ResponseEntity.ok(updatedProfile.toDto(username, minioBaseUrl))
     }
