@@ -1,4 +1,4 @@
-# Файл: backend/src/main/resources/application.yml
+
 
 # ===================================================================
 # KYSKFilms Backend - application.yml (ФИНАЛЬНАЯ ЧИСТАЯ ВЕРСИЯ)
@@ -13,6 +13,10 @@ spring:
   liquibase:
     enabled: false
 
+  servlet:
+    multipart:
+      max-file-size: 10GB        # Максимальный размер одного файла
+      max-request-size: 10GB     # Максимальный размер всего запроса
   # -------------------------------------------
   # Database Configuration
   # -------------------------------------------

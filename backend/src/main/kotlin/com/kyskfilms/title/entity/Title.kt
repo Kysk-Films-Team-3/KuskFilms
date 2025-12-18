@@ -28,7 +28,10 @@ class Title(
     var description: String? = null,
 
     var releaseDate: LocalDate? = null,
-    var posterUrl: String? = null,
+
+    var posterUrl: String? = null,      // Обложка (Cover)
+    var logoUrl: String? = null,        // Логотип (Logo)
+    var backgroundUrl: String? = null,  // Фон (Background)
 
     @Column(precision = 3, scale = 1)
     var rating: BigDecimal = BigDecimal.ZERO,
@@ -46,6 +49,9 @@ class Title(
 
     @OneToMany(mappedBy = "title", cascade = [CascadeType.ALL], orphanRemoval = true)
     var reviews: MutableList<Comment> = mutableListOf(),
+
+    @OneToMany(mappedBy = "title", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var persons: MutableList<TitlePerson> = mutableListOf(),
 
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     var updatedAt: OffsetDateTime = OffsetDateTime.now()

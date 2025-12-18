@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
+import { api } from '../../services/api';
 import './EditMovie.css';
 import './EditMovie_ReviewModal.css';
 
+// === CONSTANTS ===
 const ratings = Array.from({ length: 101 }, (_, i) => (i / 10).toFixed(1));
 const years = Array.from({ length: 125 }, (_, i) => (2025 - i).toString());
 const hours = Array.from({ length: 25 }, (_, i) => i.toString());
@@ -13,113 +15,92 @@ const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0
 export const EditMovie = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+
+    // =================================================================================
+    // 1. DATA STATES (Backend Logic)
+    // =================================================================================
+
+    const [coverFile, setCoverFile] = useState(null);
+    const [logoFile, setLogoFile] = useState(null);
+    const [backgroundFile, setBackgroundFile] = useState(null);
+    const [contentFile, setContentFile] = useState(null);
+
+    const [allGenres, setAllGenres] = useState([]);
+    const [foundPersons, setFoundPersons] = useState([]);
+
+    const [selectedGenres, setSelectedGenres] = useState([]);
+    const [selectedDirectors, setSelectedDirectors] = useState([]);
+    const [selectedActors, setSelectedActors] = useState([]);
+
+    const [actorsAndDirectors, setActorsAndDirectors] = useState([]);
+
+    // =================================================================================
+    // 2. UI STATES (Visual)
+    // =================================================================================
+
     const [coverImage, setCoverImage] = useState(null);
     const [logoImage, setLogoImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
-    const [contentFile, setContentFile] = useState(null);
+
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
     const backgroundInputRef = useRef(null);
     const contentInputRef = useRef(null);
     const episodeCoverInputRefs = useRef({});
     const episodeContentInputRefs = useRef({});
+
     const [formData, setFormData] = useState({
         title: '',
         shortDescription: '',
-        director: '',
-        actors: '',
         rating: '10.0',
         yearStart: '2025',
         yearEnd: '2025',
         durationHours: '0',
         durationMinutes: '00',
-        genre: '',
         description: ''
     });
 
-    const [selectedGenres, setSelectedGenres] = useState([]);
     const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
     const [genreInputValue, setGenreInputValue] = useState('');
-    const genreDropdownRef = useRef(null);
-    const genreInputRef = useRef(null);
-    
-    const genres = ['Драма', 'Кримінальний', 'Пригоди', 'Комедія', 'Трилер', 'Фантастика', 'Ужаси', 'Бойовик', 'Романтика', 'Детектив'];
 
-    const [selectedDirectors, setSelectedDirectors] = useState([]);
     const [isDirectorDropdownOpen, setIsDirectorDropdownOpen] = useState(false);
     const [directorInputValue, setDirectorInputValue] = useState('');
-    const directorDropdownRef = useRef(null);
-    const directorInputRef = useRef(null);
-    
-    const directors = ['Крістофер Нолан', 'Квентін Тарантіно', 'Мартін Скорсезе', 'Стівен Спілберг', 'Деніс Вілнев', 'Рідлі Скотт', 'Джеймс Кемерон', 'Пітер Джексон'];
 
-    const [selectedActors, setSelectedActors] = useState([]);
     const [isActorDropdownOpen, setIsActorDropdownOpen] = useState(false);
     const [actorInputValue, setActorInputValue] = useState('');
+
+    const genreDropdownRef = useRef(null);
+    const genreInputRef = useRef(null);
+    const directorDropdownRef = useRef(null);
+    const directorInputRef = useRef(null);
     const actorDropdownRef = useRef(null);
     const actorInputRef = useRef(null);
-    
-    const actors = ['Леонардо ДіКапріо', 'Том Хенкс', 'Меріл Стріп', 'Дензел Вашингтон', 'Кейт Бланшетт', 'Бред Пітт', 'Анжеліна Джолі', 'Морган Фріман'];
 
     const [catalog, setCatalog] = useState({
-        films: false,
-        series: false,
-        cartoons: false,
-        animatedSeries: false,
-        interview: false,
-        anime: false,
-        concerts: false,
-        realityShow: false,
-        cooking: false,
-        programs: false,
-        opera: false,
-        nature: false,
-        art: false,
-        fitness: false,
-        lectures: false
+        films: false, series: false, cartoons: false, animatedSeries: false,
+        interview: false, anime: false, concerts: false, realityShow: false,
+        cooking: false, programs: false, opera: false, nature: false,
+        art: false, fitness: false, lectures: false
     });
 
-    const [actorsAndDirectors, setActorsAndDirectors] = useState([
-        { id: 1, name: 'Джейсон Стетхем', role: 'Актер', image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1756265326/Statham.png' }
-    ]);
-
     const [contentType, setContentType] = useState('series');
+
     const [episodes, setEpisodes] = useState([
-        { id: 1, season: 1, episode: 1, title: '', description: '', cover: null, content: null }
+        { id: 1, season: 1, episode: 1, title: '', description: '', cover: null, coverFile: null, content: null }
     ]);
     const [availableSeasons, setAvailableSeasons] = useState([1]);
     const [availableEpisodes, setAvailableEpisodes] = useState([1]);
     const [openDropdowns, setOpenDropdowns] = useState({});
 
     const [selectedReview, setSelectedReview] = useState(null);
-    
-    const [reviews, setReviews] = useState([
-        { 
-            id: 1, 
-            author: 'Карина', 
-            date: '3 листопада 2024', 
-            title: 'Один із найулюбленіших фільмів', 
-            rating: 10, 
-            text: 'Люблю мотивуючі та життєствердні фільми, вони завжди діють терапевтично: одразу розумієш, що твої проблеми не такі вже й складні, руки-ноги-голова працюють, отже все інше можна вирішити. Якщо ви зустрічаєте негативні відгуки про цей фільм, то це або не зовсім розумні люди, або вони просто хочуть повипендрюватися в стилі «моя думка не така, як у всіх». Цей фільм однозначно шикарний, і про нього неможливо думати...',
-            fullText: 'Люблю мотивуючі та життєствердні фільми, вони завжди діють терапевтично: одразу розумієш, що твої проблеми не такі вже й складні, руки-ноги-голова працюють, отже все інше можна вирішити. Якщо ви зустрічаєте негативні відгуки про цей фільм, то це або не зовсім розумні люди, або вони просто хочуть повипендрюватися в стилі «моя думка не така, як у всіх». Цей фільм однозначно шикарний, і про нього неможливо думати інакше, це не якесь фестивальне кіно, де думки діляться 50 на 50 після перегляду. «1+1» — шикарне кіно на всі 100 відсотків. Кіно, яке хочеться переглядати, плакати, знову переглядати через кілька років. І завжди воно залишається прекрасним.'
-        },
-        { 
-            id: 2, 
-            author: 'Карина', 
-            date: '3 листопада 2024', 
-            title: 'Один із найулюбленіших фільмів', 
-            rating: 10, 
-            text: 'Це один із найулюбленіших фільмів, які я коли-небудь бачила. Він надихає та підтверджує життя...',
-            fullText: 'Це один із найулюбленіших фільмів, які я коли-небудь бачила. Він надихає та підтверджує життя. Дуже рекомендую всім подивитися цей фільм.'
-        }
-    ]);
+    const [reviews, setReviews] = useState([]);
 
     const [isRatingOpen, setIsRatingOpen] = useState(false);
     const [isYearStartOpen, setIsYearStartOpen] = useState(false);
     const [isYearEndOpen, setIsYearEndOpen] = useState(false);
     const [isDurationHoursOpen, setIsDurationHoursOpen] = useState(false);
     const [isDurationMinutesOpen, setIsDurationMinutesOpen] = useState(false);
-    
+
     const ratingDropdownRef = useRef(null);
     const yearStartDropdownRef = useRef(null);
     const yearEndDropdownRef = useRef(null);
@@ -127,48 +108,252 @@ export const EditMovie = () => {
     const durationMinutesDropdownRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
+    // =================================================================================
+    // 3. API EFFECTS
+    // =================================================================================
+
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const res = await api.get('/genres');
+                setAllGenres(res.data);
+            } catch (err) {
+                console.error("Помилка завантаження жанрів:", err);
+            }
+        };
+        fetchGenres();
+    }, []);
+
+    useEffect(() => {
+        setActorsAndDirectors([
+            ...selectedDirectors.map(d => ({ ...d, role: 'Режисер' })),
+            ...selectedActors.map(a => ({ ...a, role: 'Актор' }))
+        ]);
+    }, [selectedDirectors, selectedActors]);
+
+    const searchPersons = async (query) => {
+        if (!query || query.length < 2) {
+            setFoundPersons([]);
+            return;
+        }
+        try {
+            const res = await api.get(`/persons?search=${query}`);
+            setFoundPersons(res.data);
+        } catch (e) { console.error(e); }
+    };
+
+    // =================================================================================
+    // 4. HANDLERS
+    // =================================================================================
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleCatalogChange = (key) => {
-        setCatalog(prev => ({
-            ...prev,
-            [key]: !prev[key]
-        }));
+        setCatalog(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const handleSave = () => {
-        console.log('Зберегти фільм', { formData, catalog, actorsAndDirectors, episodes, reviews });
+    const handleImageUpload = (e, setPreview, setFile) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+        e.target.value = '';
+    };
+
+    const handleImageReload = (inputRef) => {
+        if (inputRef.current) inputRef.current.click();
+    };
+
+    const handleContentUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (file) setContentFile(file);
+        e.target.value = '';
+    };
+
+    // --- SAVE LOGIC ---
+
+    const uploadImageToServer = async (file) => {
+        if (!file) return null;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const response = await api.post('/admin/titles/upload-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return response.data.url;
+        } catch (error) {
+            console.error("Image upload failed", error);
+            return null;
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            console.log("Початок збереження...");
+
+            const posterUrl = await uploadImageToServer(coverFile);
+            const logoUrl = await uploadImageToServer(logoFile);
+            const backgroundUrl = await uploadImageToServer(backgroundFile);
+
+            const seasonsMap = {};
+            availableSeasons.forEach(num => {
+                seasonsMap[num] = {
+                    seasonNumber: num,
+                    seasonTitle: `Сезон ${num}`,
+                    episodes: []
+                };
+            });
+
+            for (const ep of episodes) {
+                const epPosterUrl = await uploadImageToServer(ep.coverFile);
+                const dto = {
+                    episodeNumber: ep.episode,
+                    title: ep.title || `Episode ${ep.episode}`,
+                    description: ep.description,
+                    posterUrl: epPosterUrl,
+                    releaseDate: `${formData.yearStart}-01-01`
+                };
+                if (seasonsMap[ep.season]) {
+                    seasonsMap[ep.season].episodes.push({
+                        dto,
+                        originalVideoFile: ep.content
+                    });
+                }
+            }
+
+            const payload = {
+                title: formData.title,
+                description: formData.description || formData.shortDescription,
+                type: contentType === 'film' ? 'MOVIE' : 'SERIES',
+                releaseDate: `${formData.yearStart}-01-01`,
+                rating: parseFloat(formData.rating),
+                posterUrl, logoUrl, backgroundUrl,
+
+                genreIds: selectedGenres.map(g => g.id),
+                persons: [
+                    ...selectedActors.map(a => ({ personId: a.id, role: 'ACTOR' })),
+                    ...selectedDirectors.map(d => ({ personId: d.id, role: 'DIRECTOR' }))
+                ],
+
+                seasons: contentType === 'series' ? Object.values(seasonsMap).map(s => ({
+                    seasonNumber: s.seasonNumber,
+                    seasonTitle: s.seasonTitle,
+                    episodes: s.episodes.map(e => e.dto)
+                })) : [],
+                videoUrl: null
+            };
+
+            const createResponse = await api.post('/admin/titles', payload);
+            const savedTitle = createResponse.data;
+            const titleId = savedTitle.id;
+
+            console.log("Title Created, ID:", titleId);
+
+            if (contentType === 'film' && contentFile) {
+                const fd = new FormData(); fd.append('file', contentFile);
+                await api.post(`/titles/${titleId}/feature-video`, fd, { headers: { 'Content-Type': 'multipart/form-data' }});
+            } else if (contentType === 'series') {
+                for (const savedSeason of savedTitle.seasons) {
+                    for (const savedEp of savedSeason.episodes) {
+                        const local = seasonsMap[savedSeason.seasonNumber].episodes
+                            .find(l => l.dto.episodeNumber === savedEp.episodeNumber);
+                        if (local?.originalVideoFile) {
+                            const fd = new FormData(); fd.append('file', local.originalVideoFile);
+                            await api.post(`/episodes/${savedEp.id}/video`, fd, { headers: { 'Content-Type': 'multipart/form-data' }});
+                        }
+                    }
+                }
+            }
+
+            alert("Успішно збережено!");
+            navigate('/');
+        } catch (error) {
+            console.error("Помилка при збереженні:", error);
+            alert("Сталася помилка при збереженні: " + (error.response?.data?.message || error.message));
+        }
     };
 
     const handleDelete = () => {
-        console.log('Видалити фільм');
+        console.log('Функционал удаления пока не реализован');
     };
 
-    const handleAddActor = () => {
-        console.log('Додати актора/режисера');
+    // =================================================================================
+    // 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ UI (Dropdowns, Toggles)
+    // =================================================================================
+
+    const closeAllDropdownsExcept = (exceptStateSetter) => {
+        if (exceptStateSetter !== setIsRatingOpen) setIsRatingOpen(false);
+        if (exceptStateSetter !== setIsYearStartOpen) setIsYearStartOpen(false);
+        if (exceptStateSetter !== setIsYearEndOpen) setIsYearEndOpen(false);
+        if (exceptStateSetter !== setIsDurationHoursOpen) setIsDurationHoursOpen(false);
+        if (exceptStateSetter !== setIsDurationMinutesOpen) setIsDurationMinutesOpen(false);
+        if (exceptStateSetter !== setIsGenreDropdownOpen) setIsGenreDropdownOpen(false);
+        if (exceptStateSetter !== setIsDirectorDropdownOpen) setIsDirectorDropdownOpen(false);
+        if (exceptStateSetter !== setIsActorDropdownOpen) setIsActorDropdownOpen(false);
     };
 
-    const handleRemoveActor = (id) => {
-        setActorsAndDirectors(prev => prev.filter(actor => actor.id !== id));
+    const handleGenreToggle = (genre) => {
+        setSelectedGenres(prev => {
+            if (prev.find(g => g.id === genre.id)) {
+                return prev.filter(g => g.id !== genre.id);
+            } else {
+                return [...prev, genre];
+            }
+        });
     };
+
+    // Универсальная функция
+    const handlePersonToggle = (person, type) => {
+        const setter = type === 'actor' ? setSelectedActors : setSelectedDirectors;
+        const inputSetter = type === 'actor' ? setActorInputValue : setDirectorInputValue;
+        setter(prev => {
+            const exists = prev.find(p => p.id === person.id);
+            return exists ? prev.filter(p => p.id !== person.id) : [...prev, person];
+        });
+        inputSetter('');
+    };
+
+    // !!!!!!! ИСПРАВЛЕНИЕ ОШИБКИ: ДОБАВЛЕНЫ ОБЕРТКИ ДЛЯ JSX !!!!!!!
+    const handleDirectorToggle = (director) => {
+        handlePersonToggle(director, 'director');
+    };
+
+    const handleActorToggle = (actor) => {
+        handlePersonToggle(actor, 'actor');
+    };
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    const handleRemovePersonFromList = (id) => {
+        setSelectedActors(prev => prev.filter(a => a.id !== id));
+        setSelectedDirectors(prev => prev.filter(d => d.id !== id));
+    };
+
+    const handleClearAllGenres = () => setSelectedGenres([]);
+    const handleClearAllDirectors = () => setSelectedDirectors([]);
+    const handleClearAllActors = () => setSelectedActors([]);
+
+    const handleAddNewGenre = () => {
+        console.log('Логика добавления нового жанра (модалка)');
+    };
+
+    // --- EPISODES UI LOGIC ---
 
     const handleAddEpisode = () => {
         setEpisodes(prev => {
             const maxEpisode = prev.length > 0 ? Math.max(...prev.map(ep => ep.episode)) : 0;
-            return [...prev, { 
-                id: prev.length + 1, 
-                season: 1, 
-                episode: maxEpisode + 1, 
-                title: '', 
-                description: '', 
-                cover: null, 
-                content: null 
+            return [...prev, {
+                id: Date.now(),
+                season: 1,
+                episode: maxEpisode + 1,
+                title: '',
+                description: '',
+                cover: null, coverFile: null, content: null
             }];
         });
     };
@@ -209,6 +394,8 @@ export const EditMovie = () => {
         setEpisodes(prev => prev.filter(ep => ep.id !== id));
     };
 
+    // --- REVIEWS UI LOGIC ---
+
     const handleDeleteReview = (id) => {
         setReviews(prev => prev.filter(review => review.id !== id));
         if (selectedReview && selectedReview.id === id) {
@@ -216,121 +403,54 @@ export const EditMovie = () => {
         }
     };
 
-    const handleToggleReview = (review) => {
-        setSelectedReview(review);
-    };
+    const handleToggleReview = (review) => setSelectedReview(review);
+    const handleCloseReviewModal = () => setSelectedReview(null);
 
-    const handleCloseReviewModal = () => {
-        setSelectedReview(null);
-    };
-
-    useEffect(() => {
-        if (selectedReview) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [selectedReview]);
-
-    const handleImageUpload = (e, setImage) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-        e.target.value = '';
-    };
-
-    const handleImageReload = (inputRef) => {
-        if (inputRef.current) {
-            inputRef.current.click();
-        }
-    };
-
-    const handleContentUpload = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setContentFile(file);
-        }
-        e.target.value = '';
-    };
-
+    // Закрытие модалок
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (!e.target.closest('.edit_movie_season_list_wrapper') && 
+            if (dropdownMenuClickRef.current) {
+                dropdownMenuClickRef.current = false;
+                return;
+            }
+            const clickedMenu = e.target.closest('.edit_movie_dropdown_menu');
+            const clickedOption = e.target.closest('.edit_movie_dropdown_option');
+            const clickedWrapper = e.target.closest('.edit_movie_dropdown_wrapper');
+            const clickedGenreMenu = e.target.closest('.edit_movie_genre_dropdown_menu');
+            const clickedGenreOption = e.target.closest('.edit_movie_genre_option');
+            const clickedGenreWrapper = e.target.closest('.edit_movie_genre_dropdown_wrapper');
+
+            if (clickedMenu || clickedOption || clickedGenreMenu || clickedGenreOption) {
+                return;
+            }
+
+            if (!clickedWrapper && !clickedGenreWrapper) {
+                closeAllDropdownsExcept(null);
+            }
+
+            if (!e.target.closest('.edit_movie_season_list_wrapper') &&
                 !e.target.closest('.edit_movie_episode_list_wrapper')) {
                 setOpenDropdowns({});
             }
         };
 
+        const handleScroll = (e) => {
+            const target = e.target;
+            if (target && typeof target.closest === 'function') {
+                const clickedMenu = target.closest('.edit_movie_dropdown_menu');
+                const clickedGenreMenu = target.closest('.edit_movie_genre_dropdown_menu');
+                if (clickedMenu || clickedGenreMenu) return;
+            }
+            closeAllDropdownsExcept(null);
+        };
+
         document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('scroll', handleScroll, true);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll, true);
         };
     }, []);
-
-    const closeAllDropdownsExcept = (exceptStateSetter) => {
-        if (exceptStateSetter !== setIsRatingOpen) setIsRatingOpen(false);
-        if (exceptStateSetter !== setIsYearStartOpen) setIsYearStartOpen(false);
-        if (exceptStateSetter !== setIsYearEndOpen) setIsYearEndOpen(false);
-        if (exceptStateSetter !== setIsDurationHoursOpen) setIsDurationHoursOpen(false);
-        if (exceptStateSetter !== setIsDurationMinutesOpen) setIsDurationMinutesOpen(false);
-        if (exceptStateSetter !== setIsGenreDropdownOpen) setIsGenreDropdownOpen(false);
-        if (exceptStateSetter !== setIsDirectorDropdownOpen) setIsDirectorDropdownOpen(false);
-        if (exceptStateSetter !== setIsActorDropdownOpen) setIsActorDropdownOpen(false);
-    };
-
-    const handleGenreToggle = (genre) => {
-        setSelectedGenres(prev => {
-            if (prev.includes(genre)) {
-                return prev.filter(g => g !== genre);
-            } else {
-                return [...prev, genre];
-            }
-        });
-    };
-
-    const handleDirectorToggle = (director) => {
-        setSelectedDirectors(prev => {
-            if (prev.includes(director)) {
-                return prev.filter(d => d !== director);
-            } else {
-                return [...prev, director];
-            }
-        });
-    };
-
-    const handleActorToggle = (actor) => {
-        setSelectedActors(prev => {
-            if (prev.includes(actor)) {
-                return prev.filter(a => a !== actor);
-            } else {
-                return [...prev, actor];
-            }
-        });
-    };
-
-    const handleClearAllGenres = () => {
-        setSelectedGenres([]);
-    };
-
-    const handleClearAllDirectors = () => {
-        setSelectedDirectors([]);
-    };
-
-    const handleClearAllActors = () => {
-        setSelectedActors([]);
-    };
-
-    const handleAddNewGenre = () => {
-        console.log('Додати новий жанр');
-    };
 
     const renderDropdown = (label, value, options, isOpen, setIsOpen, onChange, id, dropdownRef) => {
         const handleToggle = () => {
@@ -344,8 +464,7 @@ export const EditMovie = () => {
             if (!isOpen || !dropdownRef.current) return false;
             const rect = dropdownRef.current.getBoundingClientRect();
             const spaceBelow = window.innerHeight - rect.bottom;
-            const estimatedMenuHeight = 200;
-            return spaceBelow < estimatedMenuHeight + 10;
+            return spaceBelow < 200 + 10;
         };
 
         const opensUpward = getOpensUpward();
@@ -353,14 +472,14 @@ export const EditMovie = () => {
         return (
             <div className="edit_movie_dropdown_block">
                 <div className="edit_movie_dropdown_wrapper" ref={dropdownRef}>
-                    <div 
+                    <div
                         className={`edit_movie_dropdown ${isOpen ? 'open' : ''} ${value ? 'has-value' : ''}`}
                         onClick={handleToggle}
                     >
                         <span className="edit_movie_dropdown_value">{value || ''}</span>
                     </div>
                     {isOpen && (
-                        <div 
+                        <div
                             className={`edit_movie_dropdown_menu ${opensUpward ? 'opens-upward' : ''}`}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -368,10 +487,7 @@ export const EditMovie = () => {
                                 <div
                                     key={index}
                                     className={`edit_movie_dropdown_option ${value === option ? 'selected' : ''}`}
-                                    onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
+                                    onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -394,64 +510,9 @@ export const EditMovie = () => {
         );
     };
 
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (dropdownMenuClickRef.current) {
-                dropdownMenuClickRef.current = false;
-                return;
-            }
-
-            const clickedMenu = e.target.closest('.edit_movie_dropdown_menu');
-            const clickedOption = e.target.closest('.edit_movie_dropdown_option');
-            const clickedWrapper = e.target.closest('.edit_movie_dropdown_wrapper');
-            const clickedGenreMenu = e.target.closest('.edit_movie_genre_dropdown_menu');
-            const clickedGenreOption = e.target.closest('.edit_movie_genre_option');
-            const clickedGenreWrapper = e.target.closest('.edit_movie_genre_dropdown_wrapper');
-            
-            if (clickedMenu || clickedOption || clickedGenreMenu || clickedGenreOption) {
-                return;
-            }
-            
-            if (!clickedWrapper && !clickedGenreWrapper) {
-                setIsRatingOpen(false);
-                setIsYearStartOpen(false);
-                setIsYearEndOpen(false);
-                setIsDurationHoursOpen(false);
-                setIsDurationMinutesOpen(false);
-                setIsGenreDropdownOpen(false);
-                setIsDirectorDropdownOpen(false);
-                setIsActorDropdownOpen(false);
-            }
-        };
-
-        const handleScroll = (e) => {
-            const target = e.target;
-            if (target && typeof target.closest === 'function') {
-                const clickedMenu = target.closest('.edit_movie_dropdown_menu');
-                const clickedGenreMenu = target.closest('.edit_movie_genre_dropdown_menu');
-                
-                if (clickedMenu || clickedGenreMenu) {
-                    return;
-                }
-            }
-            
-            setIsRatingOpen(false);
-            setIsYearStartOpen(false);
-            setIsYearEndOpen(false);
-            setIsDurationHoursOpen(false);
-            setIsDurationMinutesOpen(false);
-            setIsGenreDropdownOpen(false);
-            setIsDirectorDropdownOpen(false);
-            setIsActorDropdownOpen(false);
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('scroll', handleScroll, true);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('scroll', handleScroll, true);
-        };
-    }, []);
+    // =================================================================================
+    // 8. RENDER JSX
+    // =================================================================================
 
     return (
         <div className="edit_movie_page">
@@ -464,6 +525,7 @@ export const EditMovie = () => {
                 <div className="edit_movie_title"><Trans i18nKey="admin.editMovie.title" /></div>
 
                 <div className="edit_movie_content">
+                    {/* --- IMAGES SECTION --- */}
                     <div className="edit_movie_images">
                         <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.images" /></div>
 
@@ -475,7 +537,7 @@ export const EditMovie = () => {
                                     type="file"
                                     accept="image/*"
                                     style={{ display: 'none' }}
-                                    onChange={(e) => handleImageUpload(e, setCoverImage)}
+                                    onChange={(e) => handleImageUpload(e, setCoverImage, setCoverFile)}
                                 />
                                 {coverImage ? (
                                     <>
@@ -483,19 +545,14 @@ export const EditMovie = () => {
                                             <img src={coverImage} alt="Cover" className="edit_movie_image_preview" />
                                         </div>
                                         <div className="edit_movie_image_buttons">
-                                            <button 
+                                            <button
                                                 className="edit_movie_reload_button"
                                                 onClick={() => handleImageReload(coverInputRef)}
                                             >
                                                 <Trans i18nKey="admin.editMovie.reload" />
                                                 <span className="edit_movie_reload_icon"></span>
                                             </button>
-                                            <button className="edit_movie_delete_button" onClick={() => {
-                                                setCoverImage(null);
-                                                if (coverInputRef.current) {
-                                                    coverInputRef.current.value = '';
-                                                }
-                                            }}>
+                                            <button className="edit_movie_delete_button" onClick={() => { setCoverImage(null); setCoverFile(null); }}>
                                                 <span className="edit_movie_delete_icon"></span>
                                                 <Trans i18nKey="admin.editMovie.delete" />
                                             </button>
@@ -503,7 +560,7 @@ export const EditMovie = () => {
                                     </>
                                 ) : (
                                     <div className="edit_movie_cover_placeholder">
-                                        <button 
+                                        <button
                                             className="edit_movie_upload_button"
                                             onClick={() => handleImageReload(coverInputRef)}
                                         >
@@ -521,7 +578,7 @@ export const EditMovie = () => {
                                     type="file"
                                     accept="image/*"
                                     style={{ display: 'none' }}
-                                    onChange={(e) => handleImageUpload(e, setLogoImage)}
+                                    onChange={(e) => handleImageUpload(e, setLogoImage, setLogoFile)}
                                 />
                                 {logoImage ? (
                                     <>
@@ -529,19 +586,14 @@ export const EditMovie = () => {
                                             <img src={logoImage} alt="Logo" className="edit_movie_image_preview" />
                                         </div>
                                         <div className="edit_movie_image_buttons">
-                                            <button 
+                                            <button
                                                 className="edit_movie_reload_button"
                                                 onClick={() => handleImageReload(logoInputRef)}
                                             >
                                                 <Trans i18nKey="admin.editMovie.reload" />
                                                 <span className="edit_movie_reload_icon"></span>
                                             </button>
-                                            <button className="edit_movie_delete_button" onClick={() => {
-                                                setLogoImage(null);
-                                                if (logoInputRef.current) {
-                                                    logoInputRef.current.value = '';
-                                                }
-                                            }}>
+                                            <button className="edit_movie_delete_button" onClick={() => { setLogoImage(null); setLogoFile(null); }}>
                                                 <span className="edit_movie_delete_icon"></span>
                                                 Видалити
                                             </button>
@@ -549,7 +601,7 @@ export const EditMovie = () => {
                                     </>
                                 ) : (
                                     <div className="edit_movie_logo_placeholder">
-                                        <button 
+                                        <button
                                             className="edit_movie_upload_button"
                                             onClick={() => handleImageReload(logoInputRef)}
                                         >
@@ -568,7 +620,7 @@ export const EditMovie = () => {
                                 type="file"
                                 accept="image/*"
                                 style={{ display: 'none' }}
-                                onChange={(e) => handleImageUpload(e, setBackgroundImage)}
+                                onChange={(e) => handleImageUpload(e, setBackgroundImage, setBackgroundFile)}
                             />
                             {backgroundImage ? (
                                 <>
@@ -576,19 +628,14 @@ export const EditMovie = () => {
                                         <img src={backgroundImage} alt="Background" className="edit_movie_image_preview" />
                                     </div>
                                     <div className="edit_movie_image_buttons edit_movie_background_buttons">
-                                        <button 
+                                        <button
                                             className="edit_movie_reload_button"
                                             onClick={() => handleImageReload(backgroundInputRef)}
                                         >
                                             Перезавантажити
                                             <span className="edit_movie_reload_icon"></span>
                                         </button>
-                                        <button className="edit_movie_delete_button" onClick={() => {
-                                            setBackgroundImage(null);
-                                            if (backgroundInputRef.current) {
-                                                backgroundInputRef.current.value = '';
-                                            }
-                                        }}>
+                                        <button className="edit_movie_delete_button" onClick={() => { setBackgroundImage(null); setBackgroundFile(null); }}>
                                             <span className="edit_movie_delete_icon"></span>
                                             Видалити
                                         </button>
@@ -596,7 +643,7 @@ export const EditMovie = () => {
                                 </>
                             ) : (
                                 <div className="edit_movie_background_placeholder">
-                                    <button 
+                                    <button
                                         className="edit_movie_upload_button"
                                         onClick={() => handleImageReload(backgroundInputRef)}
                                     >
@@ -609,6 +656,7 @@ export const EditMovie = () => {
                     </div>
 
                     <div className="edit_movie_info">
+                        {/* --- ОСНОВНАЯ ИНФОРМАЦИЯ --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Основна інформація</div>
 
@@ -636,15 +684,14 @@ export const EditMovie = () => {
                                 />
                             </div>
 
+                            {/* --- ВЫБОР РЕЖИССЕРА (ПОИСК) --- */}
                             <div className="edit_movie_input_group">
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.director" /></label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={directorDropdownRef}>
-                                    <div 
+                                    <div
                                         className={`edit_movie_genre_dropdown ${isDirectorDropdownOpen ? 'open' : ''} ${selectedDirectors.length > 0 || directorInputValue ? 'has-value' : ''}`}
                                         onClick={() => {
-                                            if (directorInputRef.current) {
-                                                directorInputRef.current.focus();
-                                            }
+                                            if (directorInputRef.current) directorInputRef.current.focus();
                                             closeAllDropdownsExcept(setIsDirectorDropdownOpen);
                                             setIsDirectorDropdownOpen(!isDirectorDropdownOpen);
                                         }}
@@ -652,15 +699,12 @@ export const EditMovie = () => {
                                         <div className="edit_movie_search_icon"></div>
                                         <div className="edit_movie_genre_dropdown_content">
                                             {selectedDirectors.map((director, index) => (
-                                                <span 
-                                                    key={index} 
+                                                <span
+                                                    key={index}
                                                     className="edit_movie_genre_tag"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDirectorToggle(director);
-                                                    }}
+                                                    onClick={(e) => { e.stopPropagation(); handleDirectorToggle(director); }}
                                                 >
-                                                    {director}
+                                                    {director.name}
                                                     <span className="edit_movie_genre_tag_close"></span>
                                                 </span>
                                             ))}
@@ -671,9 +715,8 @@ export const EditMovie = () => {
                                                 value={directorInputValue}
                                                 onChange={(e) => {
                                                     setDirectorInputValue(e.target.value);
-                                                    if (!isDirectorDropdownOpen) {
-                                                        setIsDirectorDropdownOpen(true);
-                                                    }
+                                                    searchPersons(e.target.value);
+                                                    if (!isDirectorDropdownOpen) setIsDirectorDropdownOpen(true);
                                                 }}
                                                 onFocus={() => {
                                                     closeAllDropdownsExcept(setIsDirectorDropdownOpen);
@@ -683,66 +726,50 @@ export const EditMovie = () => {
                                                 placeholder={selectedDirectors.length === 0 ? t('admin.editMovie.directors') : ''}
                                             />
                                             {(directorInputValue || selectedDirectors.length > 1) && (
-                                                <span 
+                                                <span
                                                     className="edit_movie_genre_clear"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        if (directorInputValue) {
-                                                            setDirectorInputValue('');
-                                                        }
-                                                        if (selectedDirectors.length > 1) {
-                                                            handleClearAllDirectors();
-                                                        }
+                                                        if (directorInputValue) setDirectorInputValue('');
+                                                        else handleClearAllDirectors();
                                                     }}
                                                 ></span>
                                             )}
                                         </div>
                                     </div>
-                                    {isDirectorDropdownOpen && directorDropdownRef.current && createPortal(
+                                    {isDirectorDropdownOpen && foundPersons.length > 0 && createPortal(
                                         (() => {
                                             const rect = directorDropdownRef.current.getBoundingClientRect();
                                             const spaceBelow = window.innerHeight - rect.bottom;
                                             const estimatedMenuHeight = 200;
                                             const opensUpward = spaceBelow < estimatedMenuHeight + 10;
                                             return (
-                                                <div 
+                                                <div
                                                     className={`edit_movie_genre_dropdown_menu ${opensUpward ? 'opens-upward' : ''}`}
                                                     style={{
                                                         position: 'fixed',
-                                                        ...(opensUpward 
-                                                            ? { bottom: `${window.innerHeight - rect.top + 5}px` }
-                                                            : { top: `${rect.bottom + 5}px` }
-                                                        ),
+                                                        ...(opensUpward ? { bottom: `${window.innerHeight - rect.top + 5}px` } : { top: `${rect.bottom + 5}px` }),
                                                         left: `${rect.left}px`,
                                                         width: `${rect.width}px`,
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
-                                                {directors
-                                                    .filter(director => 
-                                                        director.toLowerCase().includes(directorInputValue.toLowerCase())
-                                                    )
-                                                    .map((director, index) => (
+                                                {foundPersons.map((person, index) => (
                                                         <div
                                                             key={index}
                                                             className="edit_movie_genre_option"
                                                             onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                handleDirectorToggle(director);
+                                                                e.preventDefault(); e.stopPropagation();
+                                                                handleDirectorToggle(person);
                                                             }}
                                                         >
-                                                            <span className={`edit_movie_genre_checkbox ${selectedDirectors.includes(director) ? 'checked' : ''}`}></span>
-                                                            {director}
+                                                            <span className={`edit_movie_genre_checkbox ${selectedDirectors.find(d => d.id === person.id) ? 'checked' : ''}`}></span>
+                                                            {person.name}
                                                         </div>
                                                     ))}
-                                                <button 
+                                                <button
                                                     className="edit_movie_genre_add_button"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        console.log('Додати нового режисера');
-                                                    }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log('Add new director modal'); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
                                                     <Trans i18nKey="admin.editMovie.addNewDirector" />
@@ -755,15 +782,14 @@ export const EditMovie = () => {
                                 </div>
                             </div>
 
+                            {/* --- ВЫБОР АКТЕРОВ (ПОИСК) --- */}
                             <div className="edit_movie_input_group">
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.actors" /></label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={actorDropdownRef}>
-                                    <div 
+                                    <div
                                         className={`edit_movie_genre_dropdown ${isActorDropdownOpen ? 'open' : ''} ${selectedActors.length > 0 || actorInputValue ? 'has-value' : ''}`}
                                         onClick={() => {
-                                            if (actorInputRef.current) {
-                                                actorInputRef.current.focus();
-                                            }
+                                            if (actorInputRef.current) actorInputRef.current.focus();
                                             closeAllDropdownsExcept(setIsActorDropdownOpen);
                                             setIsActorDropdownOpen(!isActorDropdownOpen);
                                         }}
@@ -771,15 +797,12 @@ export const EditMovie = () => {
                                         <div className="edit_movie_search_icon"></div>
                                         <div className="edit_movie_genre_dropdown_content">
                                             {selectedActors.map((actor, index) => (
-                                                <span 
-                                                    key={index} 
+                                                <span
+                                                    key={index}
                                                     className="edit_movie_genre_tag"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleActorToggle(actor);
-                                                    }}
+                                                    onClick={(e) => { e.stopPropagation(); handleActorToggle(actor); }}
                                                 >
-                                                    {actor}
+                                                    {actor.name}
                                                     <span className="edit_movie_genre_tag_close"></span>
                                                 </span>
                                             ))}
@@ -790,9 +813,8 @@ export const EditMovie = () => {
                                                 value={actorInputValue}
                                                 onChange={(e) => {
                                                     setActorInputValue(e.target.value);
-                                                    if (!isActorDropdownOpen) {
-                                                        setIsActorDropdownOpen(true);
-                                                    }
+                                                    searchPersons(e.target.value);
+                                                    if (!isActorDropdownOpen) setIsActorDropdownOpen(true);
                                                 }}
                                                 onFocus={() => {
                                                     closeAllDropdownsExcept(setIsActorDropdownOpen);
@@ -801,67 +823,51 @@ export const EditMovie = () => {
                                                 onClick={(e) => e.stopPropagation()}
                                                 placeholder={selectedActors.length === 0 ? t('admin.editMovie.movieActors') : ''}
                                             />
-                                            {(actorInputValue || selectedActors.length > 1) && (
-                                                <span 
+                                            {(actorInputValue || selectedActors.length > 0) && (
+                                                <span
                                                     className="edit_movie_genre_clear"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        if (actorInputValue) {
-                                                            setActorInputValue('');
-                                                        }
-                                                        if (selectedActors.length > 1) {
-                                                            handleClearAllActors();
-                                                        }
+                                                        if (actorInputValue) setActorInputValue('');
+                                                        else handleClearAllActors();
                                                     }}
                                                 ></span>
                                             )}
                                         </div>
                                     </div>
-                                    {isActorDropdownOpen && actorDropdownRef.current && createPortal(
+                                    {isActorDropdownOpen && foundPersons.length > 0 && createPortal(
                                         (() => {
                                             const rect = actorDropdownRef.current.getBoundingClientRect();
                                             const spaceBelow = window.innerHeight - rect.bottom;
                                             const estimatedMenuHeight = 200;
                                             const opensUpward = spaceBelow < estimatedMenuHeight + 10;
                                             return (
-                                                <div 
+                                                <div
                                                     className={`edit_movie_genre_dropdown_menu ${opensUpward ? 'opens-upward' : ''}`}
                                                     style={{
                                                         position: 'fixed',
-                                                        ...(opensUpward 
-                                                            ? { bottom: `${window.innerHeight - rect.top + 5}px` }
-                                                            : { top: `${rect.bottom + 5}px` }
-                                                        ),
+                                                        ...(opensUpward ? { bottom: `${window.innerHeight - rect.top + 5}px` } : { top: `${rect.bottom + 5}px` }),
                                                         left: `${rect.left}px`,
                                                         width: `${rect.width}px`,
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
-                                                {actors
-                                                    .filter(actor => 
-                                                        actor.toLowerCase().includes(actorInputValue.toLowerCase())
-                                                    )
-                                                    .map((actor, index) => (
+                                                {foundPersons.map((person, index) => (
                                                         <div
                                                             key={index}
                                                             className="edit_movie_genre_option"
                                                             onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                handleActorToggle(actor);
+                                                                e.preventDefault(); e.stopPropagation();
+                                                                handleActorToggle(person);
                                                             }}
                                                         >
-                                                            <span className={`edit_movie_genre_checkbox ${selectedActors.includes(actor) ? 'checked' : ''}`}></span>
-                                                            {actor}
+                                                            <span className={`edit_movie_genre_checkbox ${selectedActors.find(a => a.id === person.id) ? 'checked' : ''}`}></span>
+                                                            {person.name}
                                                         </div>
                                                     ))}
-                                                <button 
+                                                <button
                                                     className="edit_movie_genre_add_button"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        console.log('Додати нового актора');
-                                                    }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log('Add new actor modal'); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
                                                     Новий актор
@@ -877,82 +883,36 @@ export const EditMovie = () => {
                             <div className="edit_movie_details_row">
                                 <div className="edit_movie_detail_item">
                                     <div className="edit_movie_detail_label">Оцінка</div>
-                                    {renderDropdown(
-                                        '',
-                                        formData.rating,
-                                        ratings,
-                                        isRatingOpen,
-                                        setIsRatingOpen,
-                                        (value) => setFormData(prev => ({ ...prev, rating: value })),
-                                        'rating',
-                                        ratingDropdownRef
-                                    )}
+                                    {renderDropdown('', formData.rating, ratings, isRatingOpen, setIsRatingOpen, (v) => setFormData(p => ({ ...p, rating: v })), 'rating', ratingDropdownRef)}
                                 </div>
 
                                 <div className="edit_movie_detail_item">
                                     <div className="edit_movie_detail_label"><Trans i18nKey="admin.editMovie.year" /></div>
                                     <div className="edit_movie_year_inputs">
-                                        {renderDropdown(
-                                            '',
-                                            formData.yearStart,
-                                            years,
-                                            isYearStartOpen,
-                                            setIsYearStartOpen,
-                                            (value) => setFormData(prev => ({ ...prev, yearStart: value })),
-                                            'yearStart',
-                                            yearStartDropdownRef
-                                        )}
+                                        {renderDropdown('', formData.yearStart, years, isYearStartOpen, setIsYearStartOpen, (v) => setFormData(p => ({ ...p, yearStart: v })), 'yearStart', yearStartDropdownRef)}
                                         <span className="edit_movie_dash">-</span>
-                                        {renderDropdown(
-                                            '',
-                                            formData.yearEnd,
-                                            years,
-                                            isYearEndOpen,
-                                            setIsYearEndOpen,
-                                            (value) => setFormData(prev => ({ ...prev, yearEnd: value })),
-                                            'yearEnd',
-                                            yearEndDropdownRef
-                                        )}
+                                        {renderDropdown('', formData.yearEnd, years, isYearEndOpen, setIsYearEndOpen, (v) => setFormData(p => ({ ...p, yearEnd: v })), 'yearEnd', yearEndDropdownRef)}
                                     </div>
                                 </div>
 
                                 <div className="edit_movie_detail_item">
                                     <div className="edit_movie_detail_label"><Trans i18nKey="admin.editMovie.duration" /></div>
                                     <div className="edit_movie_duration_inputs">
-                                        {renderDropdown(
-                                            '',
-                                            formData.durationHours,
-                                            hours,
-                                            isDurationHoursOpen,
-                                            setIsDurationHoursOpen,
-                                            (value) => setFormData(prev => ({ ...prev, durationHours: value })),
-                                            'durationHours',
-                                            durationHoursDropdownRef
-                                        )}
+                                        {renderDropdown('', formData.durationHours, hours, isDurationHoursOpen, setIsDurationHoursOpen, (v) => setFormData(p => ({ ...p, durationHours: v })), 'durationHours', durationHoursDropdownRef)}
                                         <span className="edit_movie_duration_unit">h</span>
-                                        {renderDropdown(
-                                            '',
-                                            formData.durationMinutes,
-                                            minutes,
-                                            isDurationMinutesOpen,
-                                            setIsDurationMinutesOpen,
-                                            (value) => setFormData(prev => ({ ...prev, durationMinutes: value })),
-                                            'durationMinutes',
-                                            durationMinutesDropdownRef
-                                        )}
+                                        {renderDropdown('', formData.durationMinutes, minutes, isDurationMinutesOpen, setIsDurationMinutesOpen, (v) => setFormData(p => ({ ...p, durationMinutes: v })), 'durationMinutes', durationMinutesDropdownRef)}
                                         <span className="edit_movie_duration_unit">min</span>
                                     </div>
                                 </div>
 
+                                {/* --- ВЫБОР ЖАНРОВ (API) --- */}
                                 <div className="edit_movie_detail_item">
                                     <div className="edit_movie_detail_label">Жанр</div>
                                     <div className="edit_movie_genre_dropdown_wrapper" ref={genreDropdownRef}>
-                                        <div 
+                                        <div
                                             className={`edit_movie_genre_dropdown ${isGenreDropdownOpen ? 'open' : ''} ${selectedGenres.length > 0 || genreInputValue ? 'has-value' : ''}`}
                                             onClick={() => {
-                                                if (genreInputRef.current) {
-                                                    genreInputRef.current.focus();
-                                                }
+                                                if (genreInputRef.current) genreInputRef.current.focus();
                                                 closeAllDropdownsExcept(setIsGenreDropdownOpen);
                                                 setIsGenreDropdownOpen(!isGenreDropdownOpen);
                                             }}
@@ -960,15 +920,12 @@ export const EditMovie = () => {
                                             <div className="edit_movie_search_icon"></div>
                                             <div className="edit_movie_genre_dropdown_content">
                                                 {selectedGenres.map((genre, index) => (
-                                                    <span 
-                                                        key={index} 
+                                                    <span
+                                                        key={index}
                                                         className="edit_movie_genre_tag"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleGenreToggle(genre);
-                                                        }}
+                                                        onClick={(e) => { e.stopPropagation(); handleGenreToggle(genre); }}
                                                     >
-                                                        {genre}
+                                                        {genre.name}
                                                         <span className="edit_movie_genre_tag_close"></span>
                                                     </span>
                                                 ))}
@@ -979,9 +936,7 @@ export const EditMovie = () => {
                                                     value={genreInputValue}
                                                     onChange={(e) => {
                                                         setGenreInputValue(e.target.value);
-                                                        if (!isGenreDropdownOpen) {
-                                                            setIsGenreDropdownOpen(true);
-                                                        }
+                                                        if (!isGenreDropdownOpen) setIsGenreDropdownOpen(true);
                                                     }}
                                                     onFocus={() => {
                                                         closeAllDropdownsExcept(setIsGenreDropdownOpen);
@@ -990,17 +945,13 @@ export const EditMovie = () => {
                                                     onClick={(e) => e.stopPropagation()}
                                                     placeholder={selectedGenres.length === 0 ? 'Опис фільму, цікаві факти, короткий зміст' : ''}
                                                 />
-                                                {(genreInputValue || selectedGenres.length > 1) && (
-                                                    <span 
+                                                {(genreInputValue || selectedGenres.length > 0) && (
+                                                    <span
                                                         className="edit_movie_genre_clear"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            if (genreInputValue) {
-                                                                setGenreInputValue('');
-                                                            }
-                                                            if (selectedGenres.length > 1) {
-                                                                handleClearAllGenres();
-                                                            }
+                                                            if (genreInputValue) setGenreInputValue('');
+                                                            if (selectedGenres.length > 0) handleClearAllGenres();
                                                         }}
                                                     ></span>
                                                 )}
@@ -1009,47 +960,36 @@ export const EditMovie = () => {
                                         {isGenreDropdownOpen && genreDropdownRef.current && (() => {
                                             const rect = genreDropdownRef.current.getBoundingClientRect();
                                             const spaceBelow = window.innerHeight - rect.bottom;
-                                            const estimatedMenuHeight = 300;
-                                            const opensUpward = spaceBelow < estimatedMenuHeight + 10;
+                                            const opensUpward = spaceBelow < 300 + 10;
                                             return (
-                                                <div 
+                                                <div
                                                     className={`edit_movie_genre_dropdown_menu ${opensUpward ? 'opens-upward' : ''}`}
                                                     style={{
                                                         position: 'absolute',
-                                                        ...(opensUpward 
-                                                            ? { bottom: `${rect.height + 5}px` }
-                                                            : { top: `${rect.bottom - rect.top + 5}px` }
-                                                        ),
+                                                        ...(opensUpward ? { bottom: `${rect.height + 5}px` } : { top: `${rect.bottom - rect.top + 5}px` }),
                                                         left: '0px',
                                                         width: `${rect.width}px`,
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
-                                                {genres
-                                                    .filter(genre => 
-                                                        genre.toLowerCase().includes(genreInputValue.toLowerCase())
-                                                    )
+                                                {allGenres
+                                                    .filter(genre => genre.name.toLowerCase().includes(genreInputValue.toLowerCase()))
                                                     .map((genre, index) => (
                                                         <div
                                                             key={index}
                                                             className="edit_movie_genre_option"
                                                             onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
+                                                                e.preventDefault(); e.stopPropagation();
                                                                 handleGenreToggle(genre);
                                                             }}
                                                         >
-                                                            <span className={`edit_movie_genre_checkbox ${selectedGenres.includes(genre) ? 'checked' : ''}`}></span>
-                                                            {genre}
+                                                            <span className={`edit_movie_genre_checkbox ${selectedGenres.find(sg => sg.id === genre.id) ? 'checked' : ''}`}></span>
+                                                            {genre.name}
                                                         </div>
                                                     ))}
-                                                <button 
+                                                <button
                                                     className="edit_movie_genre_add_button"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        handleAddNewGenre();
-                                                    }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddNewGenre(); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
                                                     Нова категорія/жанр
@@ -1062,149 +1002,33 @@ export const EditMovie = () => {
                             </div>
                         </div>
 
+                        {/* --- CATALOG CHECKBOXES --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Каталог</div>
                             <div className="edit_movie_catalog">
                                 <div className="edit_movie_catalog_row">
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.films}
-                                            onChange={() => handleCatalogChange('films')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Фільми
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.series}
-                                            onChange={() => handleCatalogChange('series')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Серіали
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.cartoons}
-                                            onChange={() => handleCatalogChange('cartoons')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Мультфільми
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.animatedSeries}
-                                            onChange={() => handleCatalogChange('animatedSeries')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Мультсеріали
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.interview}
-                                            onChange={() => handleCatalogChange('interview')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Інтерв'ю
-                                    </label>
+                                    {['films', 'series', 'cartoons', 'animatedSeries', 'interview'].map(key => (
+                                        <label key={key} className="edit_movie_checkbox_label">
+                                            <input type="checkbox" checked={catalog[key]} onChange={() => handleCatalogChange(key)} />
+                                            <span className="edit_movie_checkbox_custom"></span> {key}
+                                        </label>
+                                    ))}
                                 </div>
                                 <div className="edit_movie_catalog_row">
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.anime}
-                                            onChange={() => handleCatalogChange('anime')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Аніме
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.concerts}
-                                            onChange={() => handleCatalogChange('concerts')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Концерти
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.realityShow}
-                                            onChange={() => handleCatalogChange('realityShow')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Реаліті Шоу
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.cooking}
-                                            onChange={() => handleCatalogChange('cooking')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Кулінарія
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.programs}
-                                            onChange={() => handleCatalogChange('programs')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Програми
-                                    </label>
+                                    {['anime', 'concerts', 'realityShow', 'cooking', 'programs'].map(key => (
+                                        <label key={key} className="edit_movie_checkbox_label">
+                                            <input type="checkbox" checked={catalog[key]} onChange={() => handleCatalogChange(key)} />
+                                            <span className="edit_movie_checkbox_custom"></span> {key}
+                                        </label>
+                                    ))}
                                 </div>
                                 <div className="edit_movie_catalog_row">
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.opera}
-                                            onChange={() => handleCatalogChange('opera')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Опера
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.nature}
-                                            onChange={() => handleCatalogChange('nature')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Природа
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.art}
-                                            onChange={() => handleCatalogChange('art')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Мистецтво
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.fitness}
-                                            onChange={() => handleCatalogChange('fitness')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Фітнес
-                                    </label>
-                                    <label className="edit_movie_checkbox_label">
-                                        <input
-                                            type="checkbox"
-                                            checked={catalog.lectures}
-                                            onChange={() => handleCatalogChange('lectures')}
-                                        />
-                                        <span className="edit_movie_checkbox_custom"></span>
-                                        Лекції
-                                    </label>
+                                    {['opera', 'nature', 'art', 'fitness', 'lectures'].map(key => (
+                                        <label key={key} className="edit_movie_checkbox_label">
+                                            <input type="checkbox" checked={catalog[key]} onChange={() => handleCatalogChange(key)} />
+                                            <span className="edit_movie_checkbox_custom"></span> {key}
+                                        </label>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -1220,12 +1044,13 @@ export const EditMovie = () => {
                             />
                         </div>
 
+                        {/* --- VISUAL ACTORS LIST --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Актори та режирежисери</div>
                             <div className="edit_movie_actors_list">
                                 <div className="edit_movie_actor_item edit_movie_actor_placeholder">
                                     <div className="edit_movie_actor_avatar"></div>
-                                    <button className="edit_movie_add_actor_button" onClick={handleAddActor}>
+                                    <button className="edit_movie_add_actor_button" onClick={() => { setIsActorDropdownOpen(true); if (actorInputRef.current) actorInputRef.current.focus(); }}>
                                         <span className="edit_movie_add_icon"></span>
                                         Додати
                                     </button>
@@ -1233,11 +1058,11 @@ export const EditMovie = () => {
                                 {actorsAndDirectors.map(actor => (
                                     <div key={actor.id} className="edit_movie_actor_item">
                                         <div className="edit_movie_actor_avatar">
-                                            <img src={actor.image} alt={actor.name} />
+                                            <img src={actor.photoUrl || 'https://via.placeholder.com/150'} alt={actor.name} />
                                         </div>
-                                        <button 
-                                            className="edit_movie_actor_delete" 
-                                            onClick={() => handleRemoveActor(actor.id)}
+                                        <button
+                                            className="edit_movie_actor_delete"
+                                            onClick={() => handleRemovePersonFromList(actor.id)}
                                         >
                                             <span className="edit_movie_actor_delete_icon"></span>
                                         </button>
@@ -1248,22 +1073,23 @@ export const EditMovie = () => {
                             </div>
                         </div>
 
+                        {/* --- CONTENT UPLOAD (FILM/SERIES) --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_content_tabs">
-                                <button 
+                                <button
                                     className={`edit_movie_tab ${contentType === 'film' ? 'active' : ''}`}
                                     onClick={() => setContentType('film')}
                                 >
                                     Фільм
                                 </button>
-                                <button 
+                                <button
                                     className={`edit_movie_tab ${contentType === 'series' ? 'active' : ''}`}
                                     onClick={() => setContentType('series')}
                                 >
                                     Серіал
                                 </button>
                             </div>
-                            
+
                             {contentType === 'film' && (
                                 <div className="edit_movie_film_upload_area">
                                     <input
@@ -1276,13 +1102,11 @@ export const EditMovie = () => {
                                     {contentFile ? (
                                         <div className="edit_movie_content_file_info">
                                             <div className="edit_movie_content_file_name">{contentFile.name}</div>
-                                            <button 
+                                            <button
                                                 className="edit_movie_content_delete_button"
                                                 onClick={() => {
                                                     setContentFile(null);
-                                                    if (contentInputRef.current) {
-                                                        contentInputRef.current.value = '';
-                                                    }
+                                                    if (contentInputRef.current) contentInputRef.current.value = '';
                                                 }}
                                             >
                                                 <span className="edit_movie_content_delete_icon"></span>
@@ -1290,12 +1114,10 @@ export const EditMovie = () => {
                                             </button>
                                         </div>
                                     ) : (
-                                        <button 
+                                        <button
                                             className="edit_movie_upload_content_button"
                                             onClick={() => {
-                                                if (contentInputRef.current) {
-                                                    contentInputRef.current.click();
-                                                }
+                                                if (contentInputRef.current) contentInputRef.current.click();
                                             }}
                                         >
                                             <span className="edit_movie_upload_content_icon"></span>
@@ -1304,7 +1126,7 @@ export const EditMovie = () => {
                                     )}
                                 </div>
                             )}
-                            
+
                             {contentType === 'series' && (
                                 <div className="edit_movie_episodes">
                                     {episodes.map(episode => (
@@ -1322,7 +1144,7 @@ export const EditMovie = () => {
                                                             const reader = new FileReader();
                                                             reader.onloadend = () => {
                                                                 setEpisodes(prev => prev.map(ep =>
-                                                                    ep.id === episode.id ? { ...ep, cover: reader.result } : ep
+                                                                    ep.id === episode.id ? { ...ep, cover: reader.result, coverFile: file } : ep
                                                                 ));
                                                             };
                                                             reader.readAsDataURL(file);
@@ -1336,26 +1158,19 @@ export const EditMovie = () => {
                                                             <img src={episode.cover} alt="Episode cover" className="edit_movie_image_preview" />
                                                         </div>
                                                         <div className="edit_movie_image_buttons">
-                                                            <button 
+                                                            <button
                                                                 className="edit_movie_reload_button"
-                                                                onClick={() => {
-                                                                    if (episodeCoverInputRefs.current[episode.id]) {
-                                                                        episodeCoverInputRefs.current[episode.id].click();
-                                                                    }
-                                                                }}
+                                                                onClick={() => episodeCoverInputRefs.current[episode.id].click()}
                                                             >
                                                                 Перезавантажити
                                                                 <span className="edit_movie_reload_icon"></span>
                                                             </button>
-                                                            <button 
-                                                                className="edit_movie_delete_button" 
+                                                            <button
+                                                                className="edit_movie_delete_button"
                                                                 onClick={() => {
                                                                     setEpisodes(prev => prev.map(ep =>
-                                                                        ep.id === episode.id ? { ...ep, cover: null } : ep
+                                                                        ep.id === episode.id ? { ...ep, cover: null, coverFile: null } : ep
                                                                     ));
-                                                                    if (episodeCoverInputRefs.current[episode.id]) {
-                                                                        episodeCoverInputRefs.current[episode.id].value = '';
-                                                                    }
                                                                 }}
                                                             >
                                                                 <span className="edit_movie_delete_icon"></span>
@@ -1365,13 +1180,9 @@ export const EditMovie = () => {
                                                     </>
                                                 ) : (
                                                     <div className="edit_movie_episode_cover_placeholder">
-                                                        <button 
+                                                        <button
                                                             className="edit_movie_upload_button"
-                                                            onClick={() => {
-                                                                if (episodeCoverInputRefs.current[episode.id]) {
-                                                                    episodeCoverInputRefs.current[episode.id].click();
-                                                                }
-                                                            }}
+                                                            onClick={() => episodeCoverInputRefs.current[episode.id].click()}
                                                         >
                                                             Завантажити
                                                             <span className="edit_movie_upload_icon"></span>
@@ -1382,7 +1193,7 @@ export const EditMovie = () => {
                                             <div className="edit_movie_episode_content">
                                                 <div className="edit_movie_episode_controls">
                                                     <div className="edit_movie_season_list_wrapper">
-                                                        <div 
+                                                        <div
                                                             className={`edit_movie_season_dropdown ${openDropdowns[`season-${episode.id}`] ? 'open' : ''}`}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -1412,19 +1223,18 @@ export const EditMovie = () => {
                                                                             }}
                                                                         >
                                                                             <span className="edit_movie_season_list_item_text">{seasonNum} Сезон</span>
-                                                                            <span 
+                                                                            <span
                                                                                 className="edit_movie_season_list_item_delete"
                                                                                 onClick={(e) => handleDeleteSeason(seasonNum, e)}
                                                                             ></span>
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                                <button 
+                                                                <button
                                                                     className="edit_movie_season_list_add_button"
                                                                     onMouseDown={(e) => e.stopPropagation()}
                                                                     onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        e.preventDefault();
+                                                                        e.stopPropagation(); e.preventDefault();
                                                                         handleAddSeason(episode.id);
                                                                     }}
                                                                 >
@@ -1435,7 +1245,7 @@ export const EditMovie = () => {
                                                         )}
                                                     </div>
                                                     <div className="edit_movie_episode_list_wrapper">
-                                                        <div 
+                                                        <div
                                                             className={`edit_movie_episode_dropdown ${openDropdowns[`episode-${episode.id}`] ? 'open' : ''}`}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -1465,19 +1275,18 @@ export const EditMovie = () => {
                                                                             }}
                                                                         >
                                                                             <span className="edit_movie_episode_list_item_text">{episodeNum} Серія</span>
-                                                                            <span 
+                                                                            <span
                                                                                 className="edit_movie_episode_list_item_delete"
                                                                                 onClick={(e) => handleDeleteEpisodeFromList(episodeNum, e)}
                                                                             ></span>
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                                <button 
+                                                                <button
                                                                     className="edit_movie_episode_list_add_button"
                                                                     onMouseDown={(e) => e.stopPropagation()}
                                                                     onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        e.preventDefault();
+                                                                        e.stopPropagation(); e.preventDefault();
                                                                         handleAddEpisodeToList(episode.id);
                                                                     }}
                                                                 >
@@ -1487,7 +1296,7 @@ export const EditMovie = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <button 
+                                                    <button
                                                         className="edit_movie_episode_delete_button"
                                                         onClick={() => handleDeleteEpisode(episode.id)}
                                                     >
@@ -1503,7 +1312,7 @@ export const EditMovie = () => {
                                                         placeholder={t('admin.editMovie.episodeTitle')}
                                                         value={episode.title}
                                                         onChange={(e) => {
-                                                            setEpisodes(prev => prev.map(ep => 
+                                                            setEpisodes(prev => prev.map(ep =>
                                                                 ep.id === episode.id ? { ...ep, title: e.target.value } : ep
                                                             ));
                                                         }}
@@ -1516,7 +1325,7 @@ export const EditMovie = () => {
                                                         placeholder="Короткий опис серии"
                                                         value={episode.description}
                                                         onChange={(e) => {
-                                                            setEpisodes(prev => prev.map(ep => 
+                                                            setEpisodes(prev => prev.map(ep =>
                                                                 ep.id === episode.id ? { ...ep, description: e.target.value } : ep
                                                             ));
                                                         }}
@@ -1540,7 +1349,7 @@ export const EditMovie = () => {
                                                 {episode.content ? (
                                                     <div className="edit_movie_episode_content_file_info">
                                                         <div className="edit_movie_episode_content_file_name">{episode.content.name}</div>
-                                                        <button 
+                                                        <button
                                                             className="edit_movie_episode_content_delete_button"
                                                             onClick={() => {
                                                                 setEpisodes(prev => prev.map(ep =>
@@ -1555,7 +1364,7 @@ export const EditMovie = () => {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <button 
+                                                    <button
                                                         className="edit_movie_upload_content_button"
                                                         onClick={() => {
                                                             if (episodeContentInputRefs.current[episode.id]) {
@@ -1578,6 +1387,7 @@ export const EditMovie = () => {
                             )}
                         </div>
 
+                        {/* --- REVIEWS SECTION --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.reviews" /> <span className="edit_movie_reviews_count">{reviews.length}/20</span></div>
                             <div className="edit_movie_reviews_list">
@@ -1597,7 +1407,7 @@ export const EditMovie = () => {
                                             <div className="edit_movie_review_title">{review.title}</div>
                                             <div className="edit_movie_review_text">{review.text}</div>
                                             {review.fullText && review.fullText !== review.text && (
-                                                <button 
+                                                <button
                                                     className="edit_movie_review_read_more"
                                                     onClick={() => handleToggleReview(review)}
                                                 >
@@ -1605,7 +1415,7 @@ export const EditMovie = () => {
                                                 </button>
                                             )}
                                         </div>
-                                        <button 
+                                        <button
                                             className="edit_movie_review_delete"
                                             onClick={() => handleDeleteReview(review.id)}
                                         >
@@ -1655,4 +1465,3 @@ export const EditMovie = () => {
         </div>
     );
 };
-

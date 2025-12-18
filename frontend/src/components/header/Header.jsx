@@ -15,7 +15,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
     const { i18n } = useTranslation();
     const hasAdminRole = useHasRole("ADMIN");
     const isPremiumPage = location.pathname === '/Premium';
-    
+
     useEffect(() => {
         if (keycloak?.authenticated && keycloak?.tokenParsed) {
             console.log('User roles:', keycloak.tokenParsed.realm_access?.roles);
@@ -46,11 +46,11 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
             try {
                 const headerDataResponse = await fetchHeaderData();
                 setHeaderData(headerDataResponse);
-                
+
                 if (headerDataResponse?.navigation) {
                     setNavigationItems(headerDataResponse.navigation);
                 }
-                
+
                 if (headerDataResponse?.searchSuggestions?.items) {
                     const items = headerDataResponse.searchSuggestions.items;
                     const films = items
@@ -194,13 +194,13 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
             document.body.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
             document.body.style.width = '100%';
-            
+
             document.body.classList.add('search-open');
-            
+
             const mainElement = document.querySelector('.layout-main');
             const footerElement = document.querySelector('.footer, footer');
             const layoutElement = document.querySelector('.layout');
-            
+
             if (mainElement) {
                 mainElement.classList.add('search-blocked');
                 mainElement.style.pointerEvents = 'none';
@@ -213,7 +213,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
             if (layoutElement && !layoutElement.querySelector('.header')) {
                 layoutElement.style.pointerEvents = 'none';
             }
-            
+
             const blockEvent = (e) => {
                 const target = e.target;
                 const isAllowed = target.closest('.header') ||
@@ -221,7 +221,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                 target.closest('.header_search_box') ||
                                 target.closest('.header_search_results') ||
                                 target.closest('.header_search_overlay');
-                
+
                 if (!isAllowed) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -240,7 +240,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                 document.body.style.position = '';
                 document.body.style.width = '';
                 document.body.classList.remove('search-open');
-                
+
                 if (mainElement) {
                     mainElement.classList.remove('search-blocked');
                     mainElement.style.pointerEvents = '';
@@ -253,7 +253,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                 if (layoutElement) {
                     layoutElement.style.pointerEvents = '';
                 }
-                
+
                 events.forEach(eventType => {
                     document.removeEventListener(eventType, blockEvent, { capture: true });
                 });
@@ -264,7 +264,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
     return (
         <>
             {isSearchOpen && createPortal(
-                <div 
+                <div
                     className="header_search_overlay"
                     onClick={(e) => {
                         e.preventDefault();
@@ -286,9 +286,9 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                         {!isSearchOpen && !isPremiumPage && (
                             <nav className="header_nav">
                                 {navigationItems.map(item => (
-                                    <NavLink 
-                                        key={item.id} 
-                                        to={item.link} 
+                                    <NavLink
+                                        key={item.id}
+                                        to={item.link}
                                         end={item.link === '/'}
                                     >
                                         {item.label}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation, Trans } from 'react-i18next';
+import { api } from '../../services/api'; // Импорт API
 import './EditActor.css';
 
+// Константы для дропдаунов
 const activityTypes = ['Актор', 'Акторка', 'Режисер', 'Режисерка'];
 const genders = ['Чоловік', 'Жінка', 'Не вказувати'];
 const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
@@ -16,30 +18,31 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const modalRef = useRef(null);
     const fileInputRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
-    
-    const [name, setName] = useState('Джейсон');
-    const [surname, setSurname] = useState('Стетхем');
+
+    // Стейты данных
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
     const [activityType, setActivityType] = useState('Актор');
     const [gender, setGender] = useState('');
+
+    // Дата рождения
     const [day, setDay] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
+
+    // Место рождения
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
-    const [avatarUrl, setAvatarUrl] = useState(null);
-    const [filmography, setFilmography] = useState([
-        { id: 1, name: 'ДЕДПУЛ РОСОМАХА', image: 'https://via.placeholder.com/200x300?text=Deadpool+Wolverine' },
-        { id: 2, name: 'Барбі', image: 'https://via.placeholder.com/200x300?text=Barbie' },
-        { id: 3, name: 'ВОВК З ВОЛЛ СТРІТ', image: 'https://via.placeholder.com/200x300?text=Wolf+of+Wall+Street' },
-        { id: 4, name: 'WICKED ЧАРОДІЙКА', image: 'https://via.placeholder.com/200x300?text=Wicked' },
-        { id: 5, name: 'СМЕРТЬ ЕДИНОРОГА', image: 'https://via.placeholder.com/200x300?text=Death+of+Unicorn' }
-    ]);
-    const [relatives, setRelatives] = useState([
-        { id: 1, name: 'Джейсон Стетхем', role: 'Актор', image: 'https://res.cloudinary.com/da9jqs8yq/image/upload/v1756265326/Statham.png' },
-        { id: 2, name: 'Тімоті Шаламе', role: 'Акторка', image: 'https://via.placeholder.com/150?text=Timothée+Chalamet' },
-        { id: 3, name: 'Аня Тейлор-Джой', role: 'Режисер', image: 'https://via.placeholder.com/150?text=Anya+Taylor-Joy' }
-    ]);
-    
+
+    // Файл
+    const [avatarUrl, setAvatarUrl] = useState(null); // Превью
+    const [avatarFile, setAvatarFile] = useState(null); // Файл для отправки
+
+    // Связи
+    const [filmography, setFilmography] = useState([]);
+    const [relatives, setRelatives] = useState([]);
+
+    // Стейты UI (Dropdowns)
     const [isActivityOpen, setIsActivityOpen] = useState(false);
     const [isGenderOpen, setIsGenderOpen] = useState(false);
     const [isDayOpen, setIsDayOpen] = useState(false);
@@ -47,7 +50,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [isYearOpen, setIsYearOpen] = useState(false);
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
-    
+
     const activityDropdownRef = useRef(null);
     const genderDropdownRef = useRef(null);
     const dayDropdownRef = useRef(null);
@@ -56,10 +59,176 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const countryDropdownRef = useRef(null);
     const cityDropdownRef = useRef(null);
 
+    // --- 1. ЗАГРУЗКА ДАННЫХ ПРИ ОТКРЫТИИ ---
+    useEffect(() => {
+        if (actor) {
+            // Если редактируем существующего актера
+            setName(actor.name || '');
+            setSurname(actor.surname || '');
+            setActivityType(actor.role || 'Актор');
+            setGender(actor.gender || '');
+
+            // Обработка фото
+            setAvatarUrl(actor.image
+                ? (actor.image.startsWith('http') ? actor.image : `/kyskfilms/${actor.image}`)
+                : null
+            );
+
+            // TODO: Парсинг даты и места рождения, если они приходят с бэка
+            // Пока оставим пустыми, так как на бэке пока простая строка
+
+            if (actor.filmography) setFilmography(actor.filmography);
+            if (actor.relatives) setRelatives(actor.relatives);
+
+        } else {
+            // --- ИСПРАВЛЕНИЕ: ПУСТЫЕ ДАННЫЕ ПРИ СОЗДАНИИ ---
+            setName('');
+            setSurname('');
+            setActivityType('Актор');
+            setGender('');
+            setDay('');
+            setMonth('');
+            setYear('');
+            setCountry('');
+            setCity('');
+            setAvatarUrl(null);
+            setAvatarFile(null);
+            setFilmography([]);
+            setRelatives([]);
+        }
+    }, [actor, isOpen]);
+
+    // --- 2. ОБРАБОТКА ФАЙЛА ---
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        setAvatarFile(file); // Сохраняем файл
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setAvatarUrl(reader.result); // Сохраняем превью
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // --- 3. ЗАГРУЗКА НА СЕРВЕР (MinIO) ---
+    const uploadImageToServer = async (file) => {
+        if (!file) return null;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            // Используем существующий эндпоинт для загрузки картинок
+            const response = await api.post('/admin/titles/upload-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return response.data.url;
+        } catch (error) {
+            console.error("Ошибка загрузки фото:", error);
+            return null;
+        }
+    };
+
+    // --- 4. СОХРАНЕНИЕ ---
+    const handleSave = async () => {
+        try {
+            let uploadedPhotoUrl = avatarUrl;
+
+            // Если выбран новый файл, грузим его
+            if (avatarFile) {
+                const url = await uploadImageToServer(avatarFile);
+                if (url) uploadedPhotoUrl = url;
+            }
+
+            const actorData = {
+                id: actor?.id, // null, если создание
+                name: name.trim(),
+                surname: surname.trim(),
+                activityType,
+                gender,
+                photoUrl: uploadedPhotoUrl,
+
+                // Формируем строки для новых полей
+                birthPlace: (country || city) ? `${city}${city && country ? ', ' : ''}${country}` : null,
+                birthDate: (year && month && day) ? `${year}-01-01` : null // Упрощено, чтобы не ломать парсинг
+            };
+
+            console.log("Saving actor:", actorData);
+
+            // --- ОТПРАВКА НА БЭКЕНД ---
+            await api.post('/admin/persons', actorData);
+
+            if (onSave) onSave(actorData);
+            onClose();
+
+            // Перезагрузка страницы, чтобы обновить список (временное решение)
+            window.location.reload();
+
+        } catch (error) {
+            console.error("Ошибка сохранения:", error);
+            alert("Помилка збереження.");
+        }
+    };
+
+    const handleDelete = async () => {
+        if (actor && window.confirm('Ви впевнені, що хочете видалити цього актора?')) {
+            try {
+                await api.delete(`/admin/persons/${actor.id}`);
+                onClose();
+                window.location.reload();
+            } catch (error) {
+                console.error("Ошибка удаления:", error);
+                alert("Помилка видалення.");
+            }
+        }
+    };
+
+    // --- 5. СВЯЗИ (Фильмы и Родственники) ---
+    const handleAddFilm = () => {
+        if (onOpenSearchMovie) onOpenSearchMovie();
+    };
+
+    // Синхронизация с выбранными фильмами из модалки
+    useEffect(() => {
+        if (selectedMovies && selectedMovies.length > 0) {
+            setFilmography(prev => {
+                const existingIds = prev.map(f => f.id);
+                const newMovies = selectedMovies.filter(movie => !existingIds.includes(movie.id));
+                return [...prev, ...newMovies];
+            });
+            if (onMoviesAdded) onMoviesAdded();
+        }
+    }, [selectedMovies, onMoviesAdded]);
+
+    const handleAddRelative = () => {
+        if (onOpenSearchActor) onOpenSearchActor();
+    };
+
+    // Синхронизация с выбранными актерами из модалки
+    useEffect(() => {
+        if (selectedActors && selectedActors.length > 0) {
+            setRelatives(prev => {
+                const existingIds = prev.map(r => r.id);
+                const newActors = selectedActors.filter(actor => !existingIds.includes(actor.id));
+                return [...prev, ...newActors];
+            });
+            if (onActorsAdded) onActorsAdded();
+        }
+    }, [selectedActors, onActorsAdded]);
+
+    const handleRemoveFilm = (filmId) => {
+        setFilmography(prev => prev.filter(film => film.id !== filmId));
+    };
+
+    const handleRemoveRelative = (relativeId) => {
+        setRelatives(prev => prev.filter(relative => relative.id !== relativeId));
+    };
+
+
+    // --- UI HELPERS ---
+
+    // Закрытие дропдаунов при клике снаружи
     useEffect(() => {
         if (!isOpen) return;
-
-        let isSelectingOption = false;
 
         const handleClickOutside = (e) => {
             if (dropdownMenuClickRef.current) {
@@ -70,40 +239,24 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             const clickedMenu = e.target.closest('.edit_actor_dropdown_menu');
             const clickedOption = e.target.closest('.edit_actor_dropdown_option');
             const clickedWrapper = e.target.closest('.edit_actor_dropdown_wrapper');
-            
-            if (clickedMenu || clickedOption) {
-                return;
-            }
-            
+
+            if (clickedMenu || clickedOption) return;
+
+            // Игнорируем клики в модалках поиска
             const clickedSearchModal = e.target.closest('.search_movie_overlay, .search_actor_overlay');
-            
-            if (clickedSearchModal) {
-                return;
-            }
-            
+            if (clickedSearchModal) return;
+
             if (modalRef.current && !modalRef.current.contains(e.target)) {
-                onClose();
+                onClose(); // Закрываем модалку при клике на фон
             }
-            
+
             if (!clickedWrapper) {
-                setIsActivityOpen(false);
-                setIsGenderOpen(false);
-                setIsDayOpen(false);
-                setIsMonthOpen(false);
-                setIsYearOpen(false);
-                setIsCountryOpen(false);
-                setIsCityOpen(false);
+                closeAllDropdownsExcept(null);
             }
         };
 
         const handleScroll = () => {
-            setIsActivityOpen(false);
-            setIsGenderOpen(false);
-            setIsDayOpen(false);
-            setIsMonthOpen(false);
-            setIsYearOpen(false);
-            setIsCountryOpen(false);
-            setIsCityOpen(false);
+            closeAllDropdownsExcept(null);
         };
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -116,115 +269,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             document.body.style.overflow = '';
         };
     }, [isOpen, onClose]);
-
-    useEffect(() => {
-        if (actor) {
-            setName(actor.name || '');
-            setSurname(actor.surname || '');
-            setActivityType(actor.role || '');
-            setGender(actor.gender || '');
-            setAvatarUrl(actor.image || null);
-            if (actor.filmography) {
-                setFilmography(actor.filmography);
-            }
-            if (actor.relatives) {
-                setRelatives(actor.relatives);
-            }
-        } else {
-            setName('');
-            setSurname('');
-            setActivityType('');
-            setGender('');
-            setDay('');
-            setMonth('');
-            setYear('');
-            setCountry('');
-            setCity('');
-            setAvatarUrl(null);
-        }
-    }, [actor, isOpen]);
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setAvatarUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
-    };
-
-    const handleSave = () => {
-        const actorData = {
-            name,
-            surname,
-            activityType,
-            gender,
-            birthDate: { day, month, year },
-            birthPlace: { country, city },
-            avatarUrl,
-            filmography,
-            relatives
-        };
-
-        if (onSave) {
-            onSave(actorData);
-        }
-        onClose();
-    };
-
-    const handleDelete = () => {
-        if (actor && window.confirm('Ви впевнені, що хочете видалити цього актора?')) {
-            onClose();
-        }
-    };
-
-    const handleAddFilm = () => {
-        if (onOpenSearchMovie) {
-            onOpenSearchMovie();
-        }
-    };
-
-    useEffect(() => {
-        if (selectedMovies && selectedMovies.length > 0) {
-            setFilmography(prev => {
-                const existingIds = prev.map(f => f.id);
-                const newMovies = selectedMovies.filter(movie => !existingIds.includes(movie.id));
-                return [...prev, ...newMovies];
-            });
-            if (onMoviesAdded) {
-                onMoviesAdded();
-            }
-        }
-    }, [selectedMovies, onMoviesAdded]);
-
-    useEffect(() => {
-        if (selectedActors && selectedActors.length > 0) {
-            setRelatives(prev => {
-                const existingIds = prev.map(r => r.id);
-                const newActors = selectedActors.filter(actor => !existingIds.includes(actor.id));
-                return [...prev, ...newActors];
-            });
-            if (onActorsAdded) {
-                onActorsAdded();
-            }
-        }
-    }, [selectedActors, onActorsAdded]);
-
-    const handleRemoveFilm = (filmId) => {
-        setFilmography(prev => prev.filter(film => film.id !== filmId));
-    };
-
-    const handleRemoveRelative = (relativeId) => {
-        setRelatives(prev => prev.filter(relative => relative.id !== relativeId));
-    };
-
-    const handleAddRelative = () => {
-        if (onOpenSearchActor) {
-            onOpenSearchActor();
-        }
-    };
 
     const closeAllDropdownsExcept = (exceptStateSetter) => {
         if (exceptStateSetter !== setIsActivityOpen) setIsActivityOpen(false);
@@ -243,7 +287,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             const spaceBelow = window.innerHeight - rect.bottom;
             const estimatedMenuHeight = 200;
             const opensUpward = spaceBelow < estimatedMenuHeight + 10;
-            
+
             return {
                 top: opensUpward ? undefined : rect.bottom + 5,
                 bottom: opensUpward ? window.innerHeight - rect.top + 5 : undefined,
@@ -254,9 +298,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         };
 
         const handleToggle = () => {
-            if (!isOpen) {
-                closeAllDropdownsExcept(setIsOpen);
-            }
+            if (!isOpen) closeAllDropdownsExcept(setIsOpen);
             setIsOpen(!isOpen);
         };
 
@@ -265,18 +307,18 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         return (
             <div className="edit_actor_input_block">
                 <div className="edit_actor_dropdown_wrapper" ref={dropdownRef}>
-                    <div 
+                    <div
                         className={`edit_actor_dropdown ${isOpen ? 'open' : ''} ${value ? 'has-value' : ''}`}
                         onClick={handleToggle}
                     >
                         <span className="edit_actor_dropdown_value">{value || ''}</span>
                     </div>
                     {isOpen && menuPosition && createPortal(
-                        <div 
+                        <div
                             className={`edit_actor_dropdown_menu ${menuPosition.opensUpward ? 'opens-upward' : ''}`}
                             style={{
                                 position: 'fixed',
-                                ...(menuPosition.opensUpward 
+                                ...(menuPosition.opensUpward
                                     ? { bottom: `${menuPosition.bottom}px` }
                                     : { top: `${menuPosition.top}px` }
                                 ),
@@ -339,8 +381,9 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                         style={{ display: 'none' }}
                         accept="image/png, image/jpeg"
                     />
-                    
+
                     <div className="edit_actor_main_content">
+                        {/* ЛЕВАЯ КОЛОНКА */}
                         <div className="edit_actor_form">
                             <div className="edit_actor_avatar_wrapper">
                                 <div
@@ -364,56 +407,58 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                     </div>
                                 </div>
                             </div>
+
                             <div className="edit_actor_section">
                                 <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.mainInfo" /></div>
-                            <div className="edit_actor_inputs_row">
-                                <div className="edit_actor_input_block">
-                                    <input
-                                        type="text"
-                                        id="editActorName"
-                                        placeholder=" "
-                                        className="edit_actor_input"
-                                        value={name}
-                                        onChange={e => setName(e.target.value)}
-                                    />
-                                    <label htmlFor="editActorName"><Trans i18nKey="admin.editActor.name" /></label>
+                                <div className="edit_actor_inputs_row">
+                                    <div className="edit_actor_input_block">
+                                        <input
+                                            type="text"
+                                            id="editActorName"
+                                            placeholder=" "
+                                            className="edit_actor_input"
+                                            value={name}
+                                            onChange={e => setName(e.target.value)}
+                                        />
+                                        <label htmlFor="editActorName"><Trans i18nKey="admin.editActor.name" /></label>
+                                    </div>
+                                    <div className="edit_actor_input_block">
+                                        <input
+                                            type="text"
+                                            id="editActorSurname"
+                                            placeholder=" "
+                                            className="edit_actor_input"
+                                            value={surname}
+                                            onChange={e => setSurname(e.target.value)}
+                                        />
+                                        <label htmlFor="editActorSurname"><Trans i18nKey="admin.editActor.surname" /></label>
+                                    </div>
                                 </div>
-                                <div className="edit_actor_input_block">
-                                    <input
-                                        type="text"
-                                        id="editActorSurname"
-                                        placeholder=" "
-                                        className="edit_actor_input"
-                                        value={surname}
-                                        onChange={e => setSurname(e.target.value)}
-                                    />
-                                    <label htmlFor="editActorSurname"><Trans i18nKey="admin.editActor.surname" /></label>
+                                <div className="edit_actor_inputs_row">
+                                    {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'editActorActivity', activityDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.gender'), gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'editActorGender', genderDropdownRef)}
                                 </div>
                             </div>
-                            <div className="edit_actor_inputs_row">
-                                {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'editActorActivity', activityDropdownRef)}
-                                {renderDropdown(t('admin.editActor.gender'), gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'editActorGender', genderDropdownRef)}
+
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthDate" /></div>
+                                <div className="edit_actor_inputs_row">
+                                    {renderDropdown(t('admin.editActor.day'), day, days, isDayOpen, setIsDayOpen, setDay, 'editActorDay', dayDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.month'), month, months, isMonthOpen, setIsMonthOpen, setMonth, 'editActorMonth', monthDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.year'), year, years, isYearOpen, setIsYearOpen, setYear, 'editActorYear', yearDropdownRef)}
+                                </div>
+                            </div>
+
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthPlace" /></div>
+                                <div className="edit_actor_inputs_row">
+                                    {renderDropdown(t('admin.editActor.country'), country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'editActorCountry', countryDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.city'), city, cities, isCityOpen, setIsCityOpen, setCity, 'editActorCity', cityDropdownRef)}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="edit_actor_section">
-                            <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthDate" /></div>
-                            <div className="edit_actor_inputs_row">
-                                {renderDropdown(t('admin.editActor.day'), day, days, isDayOpen, setIsDayOpen, setDay, 'editActorDay', dayDropdownRef)}
-                                {renderDropdown(t('admin.editActor.month'), month, months, isMonthOpen, setIsMonthOpen, setMonth, 'editActorMonth', monthDropdownRef)}
-                                {renderDropdown(t('admin.editActor.year'), year, years, isYearOpen, setIsYearOpen, setYear, 'editActorYear', yearDropdownRef)}
-                            </div>
-                        </div>
-
-                        <div className="edit_actor_section">
-                            <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthPlace" /></div>
-                            <div className="edit_actor_inputs_row">
-                                {renderDropdown(t('admin.editActor.country'), country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'editActorCountry', countryDropdownRef)}
-                                {renderDropdown(t('admin.editActor.city'), city, cities, isCityOpen, setIsCityOpen, setCity, 'editActorCity', cityDropdownRef)}
-                            </div>
-                        </div>
-                        </div>
-
+                        {/* ПРАВАЯ КОЛОНКА */}
                         <div className="edit_actor_right_column">
                             <div className="edit_actor_section">
                                 <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.filmography" /></div>
@@ -438,7 +483,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                 <div className="edit_actor_relatives">
                                     <div className="edit_actor_relative_placeholder" onClick={handleAddRelative}>
                                         <div className="edit_actor_relative_avatar"></div>
-                                        <button 
+                                        <button
                                             className="edit_actor_add_relative_button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -472,10 +517,12 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 </div>
 
                 <div className="edit_actor_footer">
-                    <button className="edit_actor_delete_button" onClick={handleDelete}>
-                        <span className="edit_actor_delete_icon"></span>
-                        <Trans i18nKey="admin.editActor.delete" />
-                    </button>
+                    {actor && (
+                        <button className="edit_actor_delete_button" onClick={handleDelete}>
+                            <span className="edit_actor_delete_icon"></span>
+                            <Trans i18nKey="admin.editActor.delete" />
+                        </button>
+                    )}
                     <button className="edit_actor_save_button" onClick={handleSave}>
                         <span className="edit_actor_save_icon"></span>
                         <Trans i18nKey="admin.editActor.save" />
@@ -485,4 +532,3 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         </div>
     );
 };
-

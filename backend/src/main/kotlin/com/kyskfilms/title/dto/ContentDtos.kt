@@ -17,13 +17,25 @@ data class CreateGenreRequest(
 )
 
 data class CreateTitleRequest(
-    val type: TitleType,
     val title: String,
-    val slug: String,
     val description: String? = null,
+    val type: TitleType,
+    val rating: BigDecimal? = null,
     val releaseDate: LocalDate? = null,
-    val genreIds: List<Int> = emptyList()
+
+    // Ссылки на картинки
+    val posterUrl: String? = null,
+    val logoUrl: String? = null,
+    val backgroundUrl: String? = null,
+
+    val slug: String? = null,
+
+    // СВЯЗИ (Исправлено: теперь это списки, а не Any)
+    val genreIds: List<Int> = emptyList(),
+    val actorIds: List<Long> = emptyList(),     // Исправлено с Any на List<Long>
+    val directorIds: List<Long> = emptyList()   // Добавлено для режиссеров
 )
+
 
 data class CreateSeasonRequest(
     val titleId: Int,
@@ -45,7 +57,8 @@ data class TitleDto(
     val posterUrl: String?,
     val rating: BigDecimal,
     val type: TitleType,
-    val genres: List<String>
+    val genres: List<String>,
+    var isSaved: Boolean = false
 )
 
 data class TitleDetailsDto(
