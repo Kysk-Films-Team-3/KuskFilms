@@ -1,31 +1,28 @@
 package com.kyskfilms.comment.entity
 
-import com.kyskfilms.user.entity.UserProfile
 import com.kyskfilms.title.entity.Title
 import jakarta.persistence.*
 import java.time.OffsetDateTime
 
 @Entity
-@Table(name = "reviews")
+@Table(name = "comments")
 class Comment(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keycloak_id", nullable = false)
-    var userProfile: UserProfile,
+    @Column(name = "user_id", nullable = false)
+    val userId: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id", nullable = false)
-    var title: Title,
-
-    @Column(name = "title")
-    var commentTitle: String? = null,
+    val title: Title,
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    var content: String,
+    val text: String,
 
-    val createdAt: OffsetDateTime = OffsetDateTime.now(),
-    var updatedAt: OffsetDateTime = OffsetDateTime.now()
+    val rating: Int? = null,
+
+    @Column(name = "created_at")
+    val createdAt: OffsetDateTime = OffsetDateTime.now()
 )

@@ -1,9 +1,11 @@
 package com.kyskfilms.title.controller
 
+import com.kyskfilms.comment.repository.CommentRepository
 import com.kyskfilms.home.dto.FilterOptionsDto
 import com.kyskfilms.home.dto.MoviesPageMetaDto
 import com.kyskfilms.title.dto.*
 import com.kyskfilms.title.entity.Title
+import com.kyskfilms.title.entity.enums.TitleType
 import com.kyskfilms.title.repository.GenreRepository
 import com.kyskfilms.title.repository.TitleRepository
 import com.kyskfilms.title.service.TitleSpecification
@@ -22,9 +24,6 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
-import com.kyskfilms.comment.repository.CommentRepository // <-- Добавь
-import com.kyskfilms.user.service.UserProfileService // <-- Если нужно проверять премиум
-
 
 @RestController
 @RequestMapping("/api/public/titles")
@@ -34,44 +33,25 @@ class PublicTitleController(
     private val videoFileRepository: VideoFileRepository,
     private val favoriteRepository: FavoriteRepository,
     private val commentRepository: CommentRepository,
-
-    @Value("\${app.backend-url:http://localhost:8081}")
-    private val backendUrl: String,
-
-    @Value("\${minio.public.url}")
-    private val minioUrl: String,
-
-    @Value("\${minio.bucket-name:images}")
-    private val folderName: String
+    @Value("\${app.backend-url:http://localhost:8081}") private val backendUrl: String,
+    @Value("\${minio.public.url}") private val minioUrl: String,
+    @Value("\${minio.bucket-name:images}") private val folderName: String
 ) {
 
-    // === 1. МЕТАДАННЫЕ ДЛЯ СТРАНИЦЫ ФИЛЬМОВ (Дропдауны) ===
+    // 1. Метаданные для каталога (фильтры)
     @GetMapping("/page-meta")
     fun getMoviesPageMeta(): ResponseEntity<MoviesPageMetaDto> {
         val genres = genreRepository.findAll().map { it.name }.sorted()
         val years = titleRepository.findDistinctYears()
-
-        return ResponseEntity.ok(
-            MoviesPageMetaDto(
-                title = "Фільми",
-                description = "Онлайн-кінотеатр KYSK зібрав для своїх передплатників колекцію з тисяч фільмів різних жанрів і напрямків.",
-                filters = FilterOptionsDto(
-                    genres = genres,
-                    years = years,
-                    sortOptions = mapOf(
-                        "newest" to "Новинки",
-                        "rating_desc" to "Високий рейтинг",
-                        "rating_asc" to "Низький рейтинг",
-                        "oldest" to "Старіші"
-                    )
-                )
-            )
-        )
+        return ResponseEntity.ok(MoviesPageMetaDto(
+            title = "Фільми",
+            description = "Колекція фільмів KYSK.",
+            filters = FilterOptionsDto(genres, years, mapOf("newest" to "Новинки", "rating_desc" to "Високий рейтинг"))
+        ))
     }
 
-    // === 2. КАТАЛОГ С ФИЛЬТРАЦИЕЙ ===
+    // 2. Каталог
     @GetMapping
-    @Transactional(readOnly = true)
     fun getAllTitles(
         @RequestParam(required = false) search: String?,
         @RequestParam(required = false) genre: String?,
@@ -81,124 +61,75 @@ class PublicTitleController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
     ): Page<TitleDto> {
-
-        val sortOrder = when (sort) {
-            "newest" -> Sort.by("releaseDate").descending()
-            "oldest" -> Sort.by("releaseDate").ascending()
-            "rating_desc" -> Sort.by("rating").descending()
-            "rating_asc" -> Sort.by("rating").ascending()
-            else -> Sort.by("id").descending()
-        }
-
+        val sortOrder = if (sort == "oldest") Sort.by("releaseDate").ascending() else Sort.by("releaseDate").descending()
         val pageable = PageRequest.of(page, size, sortOrder)
         val spec = TitleSpecification.filter(search, genre, year, ratingFrom)
-
         val titlesPage = titleRepository.findAll(spec, pageable)
-
-        // --- ЛОГИКА ИЗБРАННОГО ---
-        val currentUserId = getCurrentUserId()
-        val savedIds = if (currentUserId != null) {
-            // Если юзер залогинен, берем все ID его лайков
-            favoriteRepository.findAllTitleIdsByUserId(currentUserId)
-        } else {
-            emptySet()
-        }
-
-        // Проставляем isSaved для каждого фильма
-        return titlesPage.map { it.toDto(isSaved = savedIds.contains(it.id)) }
+        val savedIds = getCurrentUserId()?.let { favoriteRepository.findAllTitleIdsByUserId(it) } ?: emptySet()
+        return titlesPage.map { it.toDto(savedIds.contains(it.id)) }
     }
 
-    // === 3. ДЕТАЛЬНАЯ СТРАНИЦА ===
-    @GetMapping("/{id}")
+    // 3. СТРАНИЦА ФИЛЬМА (Полная сборка с UI текстами)
+    @GetMapping("/{id}/page")
     @Transactional(readOnly = true)
-    fun getTitleDetails(@PathVariable id: Int): TitleDetailsDto {
-        val title = titleRepository.findById(id)
-            .orElseThrow { EntityNotFoundException("Title not found with id $id") }
+    fun getTitlePage(@PathVariable id: Int): ResponseEntity<TitlePageResponse> {
+        val title = titleRepository.findById(id).orElseThrow { EntityNotFoundException("Title not found") }
 
-        var streamUrl: String? = null
+        // Логика данных
+        val userId = getCurrentUserId()
+        val isSaved = if (userId != null) favoriteRepository.existsByUserIdAndTitleId(userId, id) else false
 
-        val videoFile = videoFileRepository.findFirstByTitleIdAndTypeAndStatus(
-            titleId = title.id!!,
-            type = VideoType.FEATURE,
-            status = VideoStatus.READY
-        )
+        // Видео
+        val movieFile = videoFileRepository.findFirstByTitleIdAndTypeAndStatus(title.id!!, VideoType.FEATURE, VideoStatus.READY)
+        val streamUrl = movieFile?.objectName?.let { "$backendUrl/api/stream/${it.split("/")[0]}/${it.split("/")[1]}" }
+        val trailerFile = videoFileRepository.findFirstByTitleIdAndTypeAndStatus(title.id!!, VideoType.TRAILER, VideoStatus.READY)
+        val trailerUrl = trailerFile?.objectName?.let { "$backendUrl/api/stream/${it.split("/")[0]}/${it.split("/")[1]}" }
 
-        if (videoFile != null && videoFile.objectName != null) {
-            val parts = videoFile.objectName!!.split("/")
-            if (parts.size == 2) {
-                streamUrl = "$backendUrl/api/stream/${parts[0]}/${parts[1]}"
-            }
+        // Люди
+        val directors = title.persons.filter { it.role == "DIRECTOR" }
+        val actors = title.persons.filter { it.role == "ACTOR" }
+        val directorsText = directors.joinToString(", ") { it.person!!.name }
+        val actorsText = actors.take(3).joinToString(", ") { it.person!!.name } + if (actors.size > 3) "..." else ""
+
+        val castDto = (directors + actors).map {
+            PersonDto(it.person!!.id!!, it.person.name, resolveUrl(it.person.photoUrl), if(it.role=="ACTOR") "Актор" else "Режисер")
         }
 
-        // Проверяем лайк для конкретного фильма
-        val currentUserId = getCurrentUserId()
-        val isSaved = if (currentUserId != null) {
-            favoriteRepository.existsByUserIdAndTitleId(currentUserId, title.id!!)
-        } else false
+        // Отзывы и Рекомендации
+        val reviews = commentRepository.findAllByTitleIdOrderByCreatedAtDesc(id, PageRequest.of(0, 5))
+            .map { ReviewDto(it.id!!, "Користувач", it.text, it.rating ?: 10, it.createdAt.toLocalDate().toString()) }
+        val recommendations = titleRepository.findRecommendations(id, PageRequest.of(0, 5)).map { it.toDto(false) }
 
-        return title.toDetailsDto(streamUrl, isSaved)
-    }
+        return ResponseEntity.ok(TitlePageResponse(
+            id = title.id!!,
+            title = title.title,
+            posterUrl = resolveUrl(title.posterUrl),
+            backgroundUrl = resolveUrl(title.backgroundUrl ?: title.posterUrl),
+            logoUrl = resolveUrl(title.logoUrl),
+            rating = title.rating ?: BigDecimal.ZERO,
+            year = title.releaseDate?.year ?: 2025,
+            genre = title.genres.joinToString(", ") { it.name },
+            duration = if (title.type == TitleType.MOVIE) "2г 15хв" else "${title.seasons.size} сезони",
+            shortDescription = title.description?.take(150)?.plus("...") ?: "",
 
-    // --- HELPER: Получить ID юзера из токена ---
-    private fun getCurrentUserId(): String? {
-        val auth = SecurityContextHolder.getContext().authentication
-        if (auth != null && auth.principal is Jwt) {
-            return (auth.principal as Jwt).subject
-        }
-        return null
-    }
-
-    // --- MAPPERS ---
-
-    private fun Title.toDto(isSaved: Boolean = false): TitleDto {
-        val poster = this.posterUrl?.let { if(it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
-
-        return TitleDto(
-            id = this.id!!,
-            title = this.title,
-            slug = this.slug,
-            posterUrl = poster,
-            rating = this.rating,
-            type = this.type,
-            genres = this.genres.map { it.name },
-            isSaved = isSaved // <-- Передаем статус избранного
-        )
-    }
-
-    private fun Title.toDetailsDto(streamUrl: String?, isSaved: Boolean = false): TitleDetailsDto {
-        val seasonDtos = this.seasons.map { season ->
-            SeasonDto(
-                id = season.id!!,
-                seasonNumber = season.seasonNumber,
-                title = season.seasonTitle,
-                episodes = season.episodes.map { ep ->
-                    EpisodeDto(
-                        id = ep.id!!,
-                        episodeNumber = ep.episodeNumber,
-                        title = ep.title,
-                        description = ep.description,
-                        durationMinutes = ep.durationMinutes,
-                        streamUrl = null
-                    )
-                }
-            )
-        }
-
-        val poster = this.posterUrl?.let { if(it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
-
-        return TitleDetailsDto(
-            id = this.id!!,
-            title = this.title,
-            slug = this.slug,
-            description = this.description,
-            releaseDate = this.releaseDate,
-            posterUrl = poster,
-            rating = this.rating,
-            type = this.type,
-            genres = this.genres.map { it.name },
+            // UI ТЕКСТЫ (Хардкод с бэка)
+            directorsText = directorsText,
+            actorsText = actorsText,
+            subscriptionPrice = "15€/місяць",
+            subscriptionLabel = "у підписці Kysk",
+            hasPremium = false, // Заглушка
+            isSaved = isSaved,
             streamUrl = streamUrl,
-            seasons = seasonDtos,
-
-        )
+            trailerUrl = trailerUrl,
+            fullDescriptionTitle = "Опис",
+            fullDescription = title.description ?: "Опис відсутній",
+            cast = castDto,
+            reviews = reviews,
+            recommendations = recommendations
+        ))
     }
+
+    private fun resolveUrl(path: String?): String? = path?.let { if(it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
+    private fun getCurrentUserId(): String? = (SecurityContextHolder.getContext().authentication?.principal as? Jwt)?.subject
+    private fun Title.toDto(isSaved: Boolean) = TitleDto(this.id!!, this.title, this.slug, resolveUrl(this.posterUrl), this.rating, this.type, this.genres.map { it.name }, isSaved)
 }

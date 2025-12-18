@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api'; // Импорт API
+import { api } from '../../services/api';
 import './SearchActor.css';
 
 export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }) => {
@@ -8,10 +8,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
     const modalRef = useRef(null);
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedActors, setSelectedActors] = useState([]); // Храним ID выбранных
-    const [actors, setActors] = useState([]); // Список загруженный с сервера
+    const [selectedActors, setSelectedActors] = useState([]);
+    const [actors, setActors] = useState([]);
 
-    // Блокировка скролла
     useEffect(() => {
         if (!isOpen) return;
         document.body.style.overflow = 'hidden';
@@ -20,26 +19,21 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         };
     }, [isOpen]);
 
-    // Загрузка актеров с API
     useEffect(() => {
         if (!isOpen) return;
 
         const fetchActors = async () => {
             try {
-                // Запрос к бэкенду (PersonController)
-                // Используем относительный путь, axios добавит /api сам
                 const url = searchQuery
                     ? `/persons?search=${searchQuery}`
                     : `/persons`;
 
                 const response = await api.get(url);
 
-                // Маппинг данных для UI
                 const mappedActors = response.data.map(person => ({
                     id: person.id,
                     name: person.name,
-                    role: person.activityType || 'Актор', // Значение по умолчанию если нет в БД
-                    // Обработка пути к фото
+                    role: person.activityType || 'Актор',
                     image: person.photoUrl
                         ? (person.photoUrl.startsWith('http') ? person.photoUrl : `/kyskfilms/${person.photoUrl}`)
                         : 'https://via.placeholder.com/150?text=No+Photo'
@@ -51,7 +45,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
             }
         };
 
-        // Debounce (задержка перед запросом)
         const timeoutId = setTimeout(() => {
             fetchActors();
         }, 300);
@@ -59,7 +52,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         return () => clearTimeout(timeoutId);
     }, [isOpen, searchQuery]);
 
-    // Обработчик выбора
     const handleActorClick = (actorId) => {
         setSelectedActors(prev => {
             if (prev.includes(actorId)) {
@@ -70,9 +62,7 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         });
     };
 
-    // Сохранение выбора
     const handleSave = () => {
-        // Находим полные объекты выбранных актеров
         const selected = actors.filter(actor => selectedActors.includes(actor.id));
         if (onSelectActors && selected.length > 0) {
             onSelectActors(selected);
@@ -84,7 +74,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
         setSelectedActors([]);
     };
 
-    // Заглушка для фото (если файл в MinIO удален)
     const handleImageError = (e) => {
         e.target.onerror = null;
         e.target.src = 'https://via.placeholder.com/150?text=No+Photo';
@@ -120,7 +109,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                     </div>
 
                     <div className="search_actor_grid">
-                        {/* Кнопка создания нового актера */}
                         {!searchQuery && (
                             <div className="search_actor_placeholder">
                                 <div className="search_actor_avatar_placeholder"></div>
@@ -140,7 +128,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                             </div>
                         )}
 
-                        {/* Пустое состояние */}
                         {actors.length === 0 && searchQuery && (
                             <div className="search_actor_empty_state">
                                 <div className="search_actor_empty_icon"></div>
@@ -151,7 +138,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                             </div>
                         )}
 
-                        {/* Список актеров */}
                         {actors.map((actor) => (
                             <div
                                 key={actor.id}

@@ -6,7 +6,6 @@ import { api } from '../../services/api';
 import './EditMovie.css';
 import './EditMovie_ReviewModal.css';
 
-// === CONSTANTS ===
 const ratings = Array.from({ length: 101 }, (_, i) => (i / 10).toFixed(1));
 const years = Array.from({ length: 125 }, (_, i) => (2025 - i).toString());
 const hours = Array.from({ length: 25 }, (_, i) => i.toString());
@@ -15,10 +14,6 @@ const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0
 export const EditMovie = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-
-    // =================================================================================
-    // 1. DATA STATES (Backend Logic)
-    // =================================================================================
 
     const [coverFile, setCoverFile] = useState(null);
     const [logoFile, setLogoFile] = useState(null);
@@ -33,10 +28,6 @@ export const EditMovie = () => {
     const [selectedActors, setSelectedActors] = useState([]);
 
     const [actorsAndDirectors, setActorsAndDirectors] = useState([]);
-
-    // =================================================================================
-    // 2. UI STATES (Visual)
-    // =================================================================================
 
     const [coverImage, setCoverImage] = useState(null);
     const [logoImage, setLogoImage] = useState(null);
@@ -108,10 +99,6 @@ export const EditMovie = () => {
     const durationMinutesDropdownRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
-    // =================================================================================
-    // 3. API EFFECTS
-    // =================================================================================
-
     useEffect(() => {
         const fetchGenres = async () => {
             try {
@@ -142,10 +129,6 @@ export const EditMovie = () => {
         } catch (e) { console.error(e); }
     };
 
-    // =================================================================================
-    // 4. HANDLERS
-    // =================================================================================
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -175,8 +158,6 @@ export const EditMovie = () => {
         if (file) setContentFile(file);
         e.target.value = '';
     };
-
-    // --- SAVE LOGIC ---
 
     const uploadImageToServer = async (file) => {
         if (!file) return null;
@@ -283,10 +264,6 @@ export const EditMovie = () => {
         console.log('Функционал удаления пока не реализован');
     };
 
-    // =================================================================================
-    // 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ UI (Dropdowns, Toggles)
-    // =================================================================================
-
     const closeAllDropdownsExcept = (exceptStateSetter) => {
         if (exceptStateSetter !== setIsRatingOpen) setIsRatingOpen(false);
         if (exceptStateSetter !== setIsYearStartOpen) setIsYearStartOpen(false);
@@ -308,7 +285,6 @@ export const EditMovie = () => {
         });
     };
 
-    // Универсальная функция
     const handlePersonToggle = (person, type) => {
         const setter = type === 'actor' ? setSelectedActors : setSelectedDirectors;
         const inputSetter = type === 'actor' ? setActorInputValue : setDirectorInputValue;
@@ -319,7 +295,6 @@ export const EditMovie = () => {
         inputSetter('');
     };
 
-    // !!!!!!! ИСПРАВЛЕНИЕ ОШИБКИ: ДОБАВЛЕНЫ ОБЕРТКИ ДЛЯ JSX !!!!!!!
     const handleDirectorToggle = (director) => {
         handlePersonToggle(director, 'director');
     };
@@ -327,7 +302,6 @@ export const EditMovie = () => {
     const handleActorToggle = (actor) => {
         handlePersonToggle(actor, 'actor');
     };
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     const handleRemovePersonFromList = (id) => {
         setSelectedActors(prev => prev.filter(a => a.id !== id));
@@ -341,8 +315,6 @@ export const EditMovie = () => {
     const handleAddNewGenre = () => {
         console.log('Логика добавления нового жанра (модалка)');
     };
-
-    // --- EPISODES UI LOGIC ---
 
     const handleAddEpisode = () => {
         setEpisodes(prev => {
@@ -394,8 +366,6 @@ export const EditMovie = () => {
         setEpisodes(prev => prev.filter(ep => ep.id !== id));
     };
 
-    // --- REVIEWS UI LOGIC ---
-
     const handleDeleteReview = (id) => {
         setReviews(prev => prev.filter(review => review.id !== id));
         if (selectedReview && selectedReview.id === id) {
@@ -418,7 +388,6 @@ export const EditMovie = () => {
         };
     }, [selectedReview]);
 
-    // Закрытие модалок
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (dropdownMenuClickRef.current) {
@@ -522,10 +491,6 @@ export const EditMovie = () => {
         );
     };
 
-    // =================================================================================
-    // 8. RENDER JSX
-    // =================================================================================
-
     return (
         <div className="edit_movie_page">
             <div className="edit_movie_container">
@@ -537,7 +502,6 @@ export const EditMovie = () => {
                 <div className="edit_movie_title"><Trans i18nKey="admin.editMovie.title" /></div>
 
                 <div className="edit_movie_content">
-                    {/* --- IMAGES SECTION --- */}
                     <div className="edit_movie_images">
                         <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.images" /></div>
 
@@ -668,7 +632,6 @@ export const EditMovie = () => {
                     </div>
 
                     <div className="edit_movie_info">
-                        {/* --- ОСНОВНАЯ ИНФОРМАЦИЯ --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Основна інформація</div>
 
@@ -696,7 +659,6 @@ export const EditMovie = () => {
                                 />
                             </div>
 
-                            {/* --- ВЫБОР РЕЖИССЕРА (ПОИСК) --- */}
                             <div className="edit_movie_input_group">
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.director" /></label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={directorDropdownRef}>
@@ -794,7 +756,6 @@ export const EditMovie = () => {
                                 </div>
                             </div>
 
-                            {/* --- ВЫБОР АКТЕРОВ (ПОИСК) --- */}
                             <div className="edit_movie_input_group">
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.actors" /></label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={actorDropdownRef}>
@@ -917,7 +878,6 @@ export const EditMovie = () => {
                                     </div>
                                 </div>
 
-                                {/* --- ВЫБОР ЖАНРОВ (API) --- */}
                                 <div className="edit_movie_detail_item">
                                     <div className="edit_movie_detail_label">Жанр</div>
                                     <div className="edit_movie_genre_dropdown_wrapper" ref={genreDropdownRef}>
@@ -1014,7 +974,6 @@ export const EditMovie = () => {
                             </div>
                         </div>
 
-                        {/* --- CATALOG CHECKBOXES --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Каталог</div>
                             <div className="edit_movie_catalog">
@@ -1056,7 +1015,6 @@ export const EditMovie = () => {
                             />
                         </div>
 
-                        {/* --- VISUAL ACTORS LIST --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Актори та режирежисери</div>
                             <div className="edit_movie_actors_list">
@@ -1085,7 +1043,6 @@ export const EditMovie = () => {
                             </div>
                         </div>
 
-                        {/* --- CONTENT UPLOAD (FILM/SERIES) --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_content_tabs">
                                 <button
@@ -1399,7 +1356,6 @@ export const EditMovie = () => {
                             )}
                         </div>
 
-                        {/* --- REVIEWS SECTION --- */}
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.reviews" /> <span className="edit_movie_reviews_count">{reviews.length}/20</span></div>
                             <div className="edit_movie_reviews_list">

@@ -58,24 +58,4 @@ class PaymentController(
         }
     }
 
-    @GetMapping
-    fun getPremiumPageData(): ResponseEntity<PremiumPageDto> {
-        return ResponseEntity.ok(
-            PremiumPageDto(
-                planName = "Kysk преміум",
-                price = "15€",
-                benefits = listOf(
-                    "Більше 70 000 фільмів, серіалів та мультфільмів",
-                    "Каталог фільмів і серіалів Viju і Paramount",
-                    "Батьківський контроль",
-                    "Завантаження та перегляд без інтернету"
-                ),
-                ui = PremiumUiLabelsDto(
-                    backButton = "До налаштувань",
-                    pageTitle = "Підтвердіть вибір",
-                    ctaButton = "Оформити"
-                )
-            )
-        )
-    }
 }

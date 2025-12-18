@@ -1,10 +1,12 @@
 package com.kyskfilms.payment.dto
 
 data class PremiumPageDto(
-    val planName: String,
-    val price: String,
-    val benefits: List<String>,
-    val ui: PremiumUiLabelsDto
+    val backButton: String,      // "До налаштувань"
+    val title: String,           // "Підтвердіть вибір"
+    val features: List<String>,  // Список ("Більше 70 000...", "Каталог...", "Батьківський...")
+    val planName: String,        // "Kysk преміум"
+    val price: String,           // "15€"
+    val buttonText: String       // "Оформити"
 )
 
 data class PremiumUiLabelsDto(

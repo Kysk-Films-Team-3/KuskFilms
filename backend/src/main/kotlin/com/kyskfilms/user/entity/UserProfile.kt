@@ -13,16 +13,18 @@ data class UserProfile(
     @Column(name = "keycloak_id")
     var keycloakId: UUID,
 
+    // --- ДОБАВЛЕНЫ ПОЛЯ (чтобы убрать ошибку в CommentService) ---
+    var email: String? = null,
+    var username: String? = null,
+
     @Column(name = "avatar_url")
     var avatarUrl: String? = null,
 
-    // ======
     @Column(name = "is_premium")
     var isPremium: Boolean = false,
 
     @Column(name = "subscription_ends_at")
     var subscriptionEndsAt: Instant? = null,
-    // ==================
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -32,12 +34,15 @@ data class UserProfile(
     @Column(name = "updated_at")
     var updatedAt: Instant? = null
 ) {
+    // Конструктор по умолчанию (обязателен для JPA)
     constructor() : this(
         UUID.randomUUID(),
-        null,
-        false, // <--- ИСПРАВЛЕНО (было null)
-        null,
-        null,
-        null
+        null, // email
+        null, // username
+        null, // avatarUrl
+        false, // isPremium
+        null, // subscriptionEndsAt
+        null, // createdAt
+        null  // updatedAt
     )
 }

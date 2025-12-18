@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api'; // Импорт API
+import { api } from '../../services/api';
 import './EditActor.css';
 
-// Константы для дропдаунов
 const activityTypes = ['Актор', 'Акторка', 'Режисер', 'Режисерка'];
 const genders = ['Чоловік', 'Жінка', 'Не вказувати'];
 const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
@@ -19,30 +18,24 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const fileInputRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
-    // Стейты данных
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [activityType, setActivityType] = useState('Актор');
     const [gender, setGender] = useState('');
 
-    // Дата рождения
     const [day, setDay] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
 
-    // Место рождения
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
 
-    // Файл
-    const [avatarUrl, setAvatarUrl] = useState(null); // Превью
-    const [avatarFile, setAvatarFile] = useState(null); // Файл для отправки
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
 
-    // Связи
     const [filmography, setFilmography] = useState([]);
     const [relatives, setRelatives] = useState([]);
 
-    // Стейты UI (Dropdowns)
     const [isActivityOpen, setIsActivityOpen] = useState(false);
     const [isGenderOpen, setIsGenderOpen] = useState(false);
     const [isDayOpen, setIsDayOpen] = useState(false);
@@ -59,29 +52,22 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const countryDropdownRef = useRef(null);
     const cityDropdownRef = useRef(null);
 
-    // --- 1. ЗАГРУЗКА ДАННЫХ ПРИ ОТКРЫТИИ ---
     useEffect(() => {
         if (actor) {
-            // Если редактируем существующего актера
             setName(actor.name || '');
             setSurname(actor.surname || '');
             setActivityType(actor.role || 'Актор');
             setGender(actor.gender || '');
 
-            // Обработка фото
             setAvatarUrl(actor.image
                 ? (actor.image.startsWith('http') ? actor.image : `/kyskfilms/${actor.image}`)
                 : null
             );
 
-            // TODO: Парсинг даты и места рождения, если они приходят с бэка
-            // Пока оставим пустыми, так как на бэке пока простая строка
-
             if (actor.filmography) setFilmography(actor.filmography);
             if (actor.relatives) setRelatives(actor.relatives);
 
         } else {
-            // --- ИСПРАВЛЕНИЕ: ПУСТЫЕ ДАННЫЕ ПРИ СОЗДАНИИ ---
             setName('');
             setSurname('');
             setActivityType('Актор');
@@ -98,26 +84,23 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     }, [actor, isOpen]);
 
-    // --- 2. ОБРАБОТКА ФАЙЛА ---
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        setAvatarFile(file); // Сохраняем файл
+        setAvatarFile(file);
         const reader = new FileReader();
         reader.onloadend = () => {
-            setAvatarUrl(reader.result); // Сохраняем превью
+            setAvatarUrl(reader.result);
         };
         reader.readAsDataURL(file);
     };
 
-    // --- 3. ЗАГРУЗКА НА СЕРВЕР (MinIO) ---
     const uploadImageToServer = async (file) => {
         if (!file) return null;
         const formData = new FormData();
         formData.append('file', file);
         try {
-            // Используем существующий эндпоинт для загрузки картинок
             const response = await api.post('/admin/titles/upload-image', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -128,39 +111,34 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     };
 
-    // --- 4. СОХРАНЕНИЕ ---
     const handleSave = async () => {
         try {
             let uploadedPhotoUrl = avatarUrl;
 
-            // Если выбран новый файл, грузим его
             if (avatarFile) {
                 const url = await uploadImageToServer(avatarFile);
                 if (url) uploadedPhotoUrl = url;
             }
 
             const actorData = {
-                id: actor?.id, // null, если создание
+                id: actor?.id,
                 name: name.trim(),
                 surname: surname.trim(),
                 activityType,
                 gender,
                 photoUrl: uploadedPhotoUrl,
 
-                // Формируем строки для новых полей
                 birthPlace: (country || city) ? `${city}${city && country ? ', ' : ''}${country}` : null,
-                birthDate: (year && month && day) ? `${year}-01-01` : null // Упрощено, чтобы не ломать парсинг
+                birthDate: (year && month && day) ? `${year}-01-01` : null
             };
 
             console.log("Saving actor:", actorData);
 
-            // --- ОТПРАВКА НА БЭКЕНД ---
             await api.post('/admin/persons', actorData);
 
             if (onSave) onSave(actorData);
             onClose();
 
-            // Перезагрузка страницы, чтобы обновить список (временное решение)
             window.location.reload();
 
         } catch (error) {
@@ -182,12 +160,10 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     };
 
-    // --- 5. СВЯЗИ (Фильмы и Родственники) ---
     const handleAddFilm = () => {
         if (onOpenSearchMovie) onOpenSearchMovie();
     };
 
-    // Синхронизация с выбранными фильмами из модалки
     useEffect(() => {
         if (selectedMovies && selectedMovies.length > 0) {
             setFilmography(prev => {
@@ -203,7 +179,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         if (onOpenSearchActor) onOpenSearchActor();
     };
 
-    // Синхронизация с выбранными актерами из модалки
     useEffect(() => {
         if (selectedActors && selectedActors.length > 0) {
             setRelatives(prev => {
@@ -223,10 +198,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         setRelatives(prev => prev.filter(relative => relative.id !== relativeId));
     };
 
-
-    // --- UI HELPERS ---
-
-    // Закрытие дропдаунов при клике снаружи
     useEffect(() => {
         if (!isOpen) return;
 
@@ -242,12 +213,11 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
 
             if (clickedMenu || clickedOption) return;
 
-            // Игнорируем клики в модалках поиска
             const clickedSearchModal = e.target.closest('.search_movie_overlay, .search_actor_overlay');
             if (clickedSearchModal) return;
 
             if (modalRef.current && !modalRef.current.contains(e.target)) {
-                onClose(); // Закрываем модалку при клике на фон
+                onClose();
             }
 
             if (!clickedWrapper) {
@@ -383,7 +353,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                     />
 
                     <div className="edit_actor_main_content">
-                        {/* ЛЕВАЯ КОЛОНКА */}
                         <div className="edit_actor_form">
                             <div className="edit_actor_avatar_wrapper">
                                 <div
@@ -458,7 +427,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                             </div>
                         </div>
 
-                        {/* ПРАВАЯ КОЛОНКА */}
                         <div className="edit_actor_right_column">
                             <div className="edit_actor_section">
                                 <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.filmography" /></div>

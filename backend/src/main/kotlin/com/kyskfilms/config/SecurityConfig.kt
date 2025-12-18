@@ -77,6 +77,7 @@ class SecurityConfig(
 
                     .requestMatchers("/api/payment/webhook").permitAll()
 
+                    .requestMatchers("/api/auth/logout").permitAll()
 
                     // === ВСЁ ОСТАЛЬНОЕ ТРЕБУЕТ ВХОДА ===
                     .anyRequest().authenticated()

@@ -540,6 +540,44 @@ export const getFilmsPageMeta = async () => {
     }
 };
 
+export const getPremiumData = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/public/premium';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/public/premium';
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки данных премиума:", error);
+        throw error;
+    }
+};
+
+export const getPlayerConfig = async (titleId, episodeId = null) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/player/config?titleId=${titleId}`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/player/config?titleId=${titleId}`;
+        }
+
+        if (episodeId) {
+            url += `&episodeId=${episodeId}`;
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Ошибка загрузки конфига плеера:", error);
+        throw error;
+    }
+};
+
 export const getFavorites = async () => {
     try {
         const baseURL = api.defaults.baseURL || '';

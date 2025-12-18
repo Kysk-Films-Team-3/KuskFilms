@@ -20,7 +20,7 @@ export const Films = () => {
     const [ratingMax, setRatingMax] = useState(10);
     const ratingDebounceRef = useRef(null);
     const isDraggingRef = useRef(false);
-    const draggingSliderRef = useRef(null); // 'min' or 'max'
+    const draggingSliderRef = useRef(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isGenreOpen, setIsGenreOpen] = useState(false);
     const [isYearOpen, setIsYearOpen] = useState(false);
@@ -50,7 +50,6 @@ export const Films = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Обновление CSS переменных для визуализации слайдера
     useEffect(() => {
         if (sliderWrapperRef.current) {
             const minPercent = (ratingMin / 10) * 100;
@@ -60,9 +59,7 @@ export const Films = () => {
         }
     }, [ratingMin, ratingMax]);
     
-    // Обработчик клика по треку слайдера
     const handleSliderTrackClick = (e) => {
-        // Игнорируем клики, если они на самих ползунках
         if (e.target.tagName === 'INPUT') return;
         
         if (!sliderWrapperRef.current) return;
@@ -70,30 +67,24 @@ export const Films = () => {
         const rect = sliderWrapperRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const width = rect.width;
-        // Точное вычисление значения по позиции клика
         const clickValue = Math.max(0, Math.min(10, (x / width) * 10));
         
-        // Определяем, какой ползунок ближе к точке клика
         const minPos = (ratingMin / 10) * width;
         const maxPos = (ratingMax / 10) * width;
         const distToMin = Math.abs(x - minPos);
         const distToMax = Math.abs(x - maxPos);
         
-        // Определяем, какой ползунок двигать
         if (distToMin < distToMax) {
-            // Двигаем минимальный ползунок, но не дальше максимального
             const newMin = Math.max(0, Math.min(clickValue, ratingMax));
             setRatingMin(newMin);
             setCurrentPage(0);
         } else {
-            // Двигаем максимальный ползунок, но не раньше минимального
             const newMax = Math.max(ratingMin, Math.min(10, clickValue));
             setRatingMax(newMax);
             setCurrentPage(0);
         }
     };
     
-    // Глобальный обработчик для точного перетаскивания
     useEffect(() => {
         const handleMouseMove = (e) => {
             if (!isDraggingRef.current || !sliderWrapperRef.current || !draggingSliderRef.current) return;
@@ -105,17 +96,14 @@ export const Films = () => {
             
             const rect = sliderWrapperRef.current.getBoundingClientRect();
             let x = clientX - rect.left;
-            // Ограничиваем в пределах слайдера
             x = Math.max(0, Math.min(rect.width, x));
             const width = rect.width;
             const newValue = (x / width) * 10;
             
             if (draggingSliderRef.current === 'min') {
-                // Минимальный ползунок ограничен максимальным (не может превышать его)
                 const clampedValue = Math.max(0, Math.min(newValue, ratingMax));
                 setRatingMin(clampedValue);
             } else if (draggingSliderRef.current === 'max') {
-                // Максимальный ползунок ограничен минимальным (не может быть меньше его)
                 const clampedValue = Math.max(ratingMin, Math.min(10, newValue));
                 setRatingMax(clampedValue);
             }
@@ -155,12 +143,10 @@ export const Films = () => {
                 
                 if (meta && meta.filters) {
                     const sortOptions = meta.filters.sortOptions || {};
-                    // Устанавливаем сортировку по рейтингу по умолчанию
                     if (sortOptions['rating_desc']) {
                         setSortBy(sortOptions['rating_desc']);
                         setSortKey('rating_desc');
                     } else {
-                        // Fallback на первый доступный вариант, если rating_desc отсутствует
                         const sortOptionsArray = Object.entries(sortOptions);
                         if (sortOptionsArray.length > 0) {
                             const [firstKey, firstValue] = sortOptionsArray[0];
@@ -168,9 +154,7 @@ export const Films = () => {
                             setSortKey(firstKey);
                         }
                     }
-                    // Устанавливаем дефолтные значения для отображения из бэкенда
                     if (!genre) {
-                        // Можно использовать первое значение или оставить пустым
                         setGenre('');
                     }
                     if (!year) {
@@ -193,12 +177,10 @@ export const Films = () => {
     const years = pageMeta?.filters?.years || [];
     const sortOptions = pageMeta?.filters?.sortOptions || {};
     
-    // Дефолтные значения для отображения (берутся из бэкенда)
     const defaultSortLabel = sortOptions && Object.keys(sortOptions).length > 0 
         ? Object.values(sortOptions)[0] 
         : '';
 
-    // Загрузка фильмов при изменении параметров (кроме рейтинга)
     useEffect(() => {
         const loadFilms = async () => {
             if (!pageMeta) return;
@@ -270,7 +252,6 @@ export const Films = () => {
                         };
                     })
                     .filter(film => {
-                        // Фильтруем по максимальному рейтингу на клиенте
                         if (ratingMax < 10) {
                             return film.rating <= ratingMax;
                         }
@@ -289,7 +270,6 @@ export const Films = () => {
         loadFilms();
     }, [pageMeta, currentPage, sortKey, selectedGenre, selectedYear]);
     
-    // Отдельный useEffect для рейтинга с debounce
     useEffect(() => {
         if (!pageMeta) return;
         
@@ -361,7 +341,6 @@ export const Films = () => {
                         };
                     })
                     .filter(film => {
-                        // Фильтруем по максимальному рейтингу на клиенте
                         if (ratingMax < 10) {
                             return film.rating <= ratingMax;
                         }
@@ -377,7 +356,6 @@ export const Films = () => {
             }
         };
         
-        // Debounce для рейтинга
         if (ratingDebounceRef.current) {
             clearTimeout(ratingDebounceRef.current);
         }
@@ -396,12 +374,10 @@ export const Films = () => {
     const handleReset = () => {
         if (pageMeta && pageMeta.filters && pageMeta.filters.sortOptions) {
             const sortOptions = pageMeta.filters.sortOptions;
-            // Сбрасываем к сортировке по рейтингу
             if (sortOptions['rating_desc']) {
                 setSortBy(sortOptions['rating_desc']);
                 setSortKey('rating_desc');
             } else {
-                // Fallback на первый доступный вариант
                 const sortOptionsArray = Object.entries(sortOptions);
                 if (sortOptionsArray.length > 0) {
                     const [firstKey, firstValue] = sortOptionsArray[0];
@@ -562,7 +538,6 @@ export const Films = () => {
                                 ref={sliderWrapperRef}
                                 onClick={handleSliderTrackClick}
                                 onMouseDown={(e) => {
-                                    // Если клик не на ползунке, определяем, какой ползунок нужно двигать
                                     if (e.target.tagName !== 'INPUT' && sliderWrapperRef.current) {
                                         const rect = sliderWrapperRef.current.getBoundingClientRect();
                                         const x = e.clientX - rect.left;
@@ -572,7 +547,6 @@ export const Films = () => {
                                         const distToMin = Math.abs(x - minPos);
                                         const distToMax = Math.abs(x - maxPos);
                                         
-                                        // Определяем, какой ползунок ближе
                                         if (distToMin < distToMax) {
                                             isDraggingRef.current = true;
                                             draggingSliderRef.current = 'min';

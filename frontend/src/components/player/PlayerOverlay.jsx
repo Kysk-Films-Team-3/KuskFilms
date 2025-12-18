@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import "./overlay.css";
 import CustomPlayer from "./CustomPlayer";
 
-export default function PlayerOverlay({ open, onClose, hlsUrl }) {
+export default function PlayerOverlay({ open, onClose, titleId, episodeId = null }) {
     const playerRef = useRef(null);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function PlayerOverlay({ open, onClose, hlsUrl }) {
                 <div className="player-close" onClick={onClose}></div>
 
                 <div className="player-content">
-                    <CustomPlayer src={hlsUrl} onClose={onClose} />
+                    <CustomPlayer titleId={titleId} episodeId={episodeId} onClose={onClose} />
                 </div>
 
             </div>

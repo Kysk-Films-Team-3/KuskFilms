@@ -270,11 +270,12 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 </div>
             </div>
 
-            {isPlayerOpen && videoUrl && (
+            {isPlayerOpen && movie && (
                 <PlayerOverlay
                     open={isPlayerOpen}
                     onClose={() => setIsPlayerOpen(false)}
-                    hlsUrl={videoUrl}
+                    titleId={movie.id}
+                    episodeId={movie.type === 'SERIES' && movie.seasons?.[0]?.episodes?.[0]?.id ? movie.seasons[0].episodes[0].id : null}
                 />
             )}
 

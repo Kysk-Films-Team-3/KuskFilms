@@ -1,7 +1,7 @@
 package com.kyskfilms.title.entity
 
 import com.kyskfilms.comment.entity.Comment
-import com.kyskfilms.title.entity.enums.TitleType
+import com.kyskfilms.title.entity.enums.TitleType // <-- Добавлен импорт
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -16,7 +16,7 @@ class Title(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "video_type")
-    var type: TitleType,
+    var type: TitleType, // Теперь TitleType распознается
 
     @Column(nullable = false)
     var title: String,
@@ -29,9 +29,9 @@ class Title(
 
     var releaseDate: LocalDate? = null,
 
-    var posterUrl: String? = null,      // Обложка (Cover)
-    var logoUrl: String? = null,        // Логотип (Logo)
-    var backgroundUrl: String? = null,  // Фон (Background)
+    var posterUrl: String? = null,
+    var logoUrl: String? = null,
+    var backgroundUrl: String? = null,
 
     @Column(precision = 3, scale = 1)
     var rating: BigDecimal = BigDecimal.ZERO,

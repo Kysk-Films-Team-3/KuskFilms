@@ -38,10 +38,19 @@ class PublicPlayerController(
         val title = titleRepository.findById(titleId)
             .orElseThrow { EntityNotFoundException("Title not found") }
 
-        // Общие настройки для всех (статические)
+        // Общие настройки
         val defaultSpeeds = listOf("0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x")
         val defaultQualities = listOf("Auto", "1080p", "720p", "480p")
         val mockSubtitles = getMockSubtitles()
+
+        // --- UI ТЕКСТЫ (Server-Driven UI) ---
+        val uiLabels = PlayerUiDto(
+            speedLabel = "Швидкість",
+            subtitlesLabel = "Субтитри",
+            qualityLabel = "Якість",
+            seasonLabel = "Сезон",
+            episodeLabel = "Серія"
+        )
 
         if (title.type == TitleType.MOVIE) {
             val streamUrl = getStreamUrl(titleId = title.id!!, type = VideoType.FEATURE)
@@ -53,8 +62,9 @@ class PublicPlayerController(
                     posterUrl = resolvePoster(title.posterUrl),
                     subtitles = mockSubtitles,
                     qualities = defaultQualities,
-                    playbackSpeeds = defaultSpeeds, // <--- Передаем скорости
-                    type = "MOVIE"
+                    playbackSpeeds = defaultSpeeds,
+                    type = "MOVIE",
+                    ui = uiLabels // <-- Передаем UI
                 )
             )
         } else {
@@ -89,12 +99,13 @@ class PublicPlayerController(
                     posterUrl = resolvePoster(currentEpisode.posterUrl ?: title.posterUrl),
                     subtitles = mockSubtitles,
                     qualities = defaultQualities,
-                    playbackSpeeds = defaultSpeeds, // <--- Передаем скорости
+                    playbackSpeeds = defaultSpeeds,
                     type = "SERIES",
                     currentSeason = currentEpisode.season.seasonNumber,
                     currentEpisode = currentEpisode.episodeNumber,
                     nextEpisodeId = nextEpisode?.id,
-                    seasons = seasonsDto
+                    seasons = seasonsDto,
+                    ui = uiLabels // <-- Передаем UI
                 )
             )
         }
