@@ -1,5 +1,6 @@
 package com.kyskfilms.title.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore // <--- Импорт
 import jakarta.persistence.*
 import java.time.OffsetDateTime
 
@@ -19,7 +20,7 @@ class Category(
     @Column(columnDefinition = "TEXT")
     var description: String? = null,
 
-
+    @JsonIgnore // <--- ВАЖНО: Разрываем цикл здесь.
     @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL], orphanRemoval = true)
     val genres: List<Genre> = ArrayList(),
 

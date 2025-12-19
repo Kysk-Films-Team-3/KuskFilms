@@ -1,5 +1,6 @@
 package com.kyskfilms.title.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore // <--- ДОБАВИТЬ ИМПОРТ
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -11,6 +12,7 @@ class Season(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
+    @JsonIgnore // <--- ДОБАВИТЬ СЮДА. Чтобы не тянуть Title при запросе сезона
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id", nullable = false)
     var title: Title,

@@ -16,6 +16,7 @@ export const Premium = () => {
         const loadPremiumData = async () => {
             try {
                 const data = await getPremiumData();
+                console.log("Premium Data Loaded:", data); // Для отладки
                 setPremiumData(data);
             } catch (err) {
                 console.error("Ошибка загрузки данных премиума:", err);
@@ -35,15 +36,15 @@ export const Premium = () => {
 
         try {
             const result = await createCheckoutSession();
-            
+
             if (result.success && result.url) {
                 window.location.href = result.url;
             } else {
-                setError(result.message || (premiumData?.ui?.errorCreatingSession || 'Не вдалося створити сесію оплати'));
+                setError(result.message || 'Не вдалося створити сесію оплати');
             }
         } catch (err) {
             console.error("Ошибка при создании сессии оплаты:", err);
-            setError(premiumData?.ui?.errorCreatingSession || 'Не вдалося створити сесію оплати');
+            setError('Не вдалося створити сесію оплати');
         } finally {
             setIsLoading(false);
         }
@@ -53,6 +54,12 @@ export const Premium = () => {
         return <div className="premium_page">Завантаження...</div>;
     }
 
+    // --- FIX: Используем правильные ключи из Java DTO ---
+    // Было: premiumData.ui.backButton -> Стало: premiumData.backButton
+    // Было: premiumData.ui.pageTitle -> Стало: premiumData.title
+    // Было: premiumData.benefits -> Стало: premiumData.features
+    // Было: premiumData.ui.ctaButton -> Стало: premiumData.buttonText
+
     return (
         <div className="premium_page">
             <div className="premium_header">
@@ -61,14 +68,14 @@ export const Premium = () => {
                     className="premium_back"
                 >
                     <div className="premium_back_icon"></div>
-                    {premiumData.ui.backButton}
+                    {premiumData.backButton || "Назад"}
                 </Link>
             </div>
 
             <div className="premium_row">
                 <div className="premium_title_line">
                     <div className="premium_title">
-                        {premiumData.ui.pageTitle}
+                        {premiumData.title}
                     </div>
                     <div className="premium_title">
                         {premiumData.planName}
@@ -77,10 +84,11 @@ export const Premium = () => {
                 </div>
 
                 <div className="premium_left">
-                    {premiumData.benefits.map((benefit, index) => (
+                    {/* FIX: Проверяем наличие features перед map */}
+                    {premiumData.features && premiumData.features.map((feature, index) => (
                         <div key={index} className="premium_line">
                             <span className="premium_feature_text">
-                                {benefit}
+                                {feature}
                             </span>
                             <div className="premium_line_icon"></div>
                         </div>
@@ -89,9 +97,9 @@ export const Premium = () => {
             </div>
 
             {error && (
-                <div style={{ 
-                    color: '#ff4444', 
-                    textAlign: 'center', 
+                <div style={{
+                    color: '#ff4444',
+                    textAlign: 'center',
                     marginTop: '20px',
                     fontSize: '18px'
                 }}>
@@ -100,12 +108,12 @@ export const Premium = () => {
             )}
 
             <div className="premium_button_container">
-                <button 
+                <button
                     className="premium_button"
                     onClick={handleSubscribe}
                     disabled={isLoading}
                 >
-                    {isLoading ? (premiumData.ui.loading || 'Завантаження...') : premiumData.ui.ctaButton}
+                    {isLoading ? 'Завантаження...' : (premiumData.buttonText || "Оформити")}
                 </button>
             </div>
         </div>

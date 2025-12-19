@@ -1,7 +1,5 @@
 package com.kyskfilms.payment
 
-import com.kyskfilms.payment.dto.PremiumPageDto
-import com.kyskfilms.payment.dto.PremiumUiLabelsDto
 import com.kyskfilms.user.service.UserProfileService
 import com.stripe.model.checkout.Session
 import com.stripe.net.Webhook
@@ -11,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/payment")
@@ -42,10 +41,12 @@ class PaymentController(
 
             if ("checkout.session.completed" == event.type) {
                 val session = event.data.`object` as Session
-                // Используем оператор ?. для безопасного доступа к metadata (Java Map может вернуть null)
-                val userId = session.metadata?.get("keycloak_user_id")
+                val userIdString = session.metadata?.get("keycloak_user_id")
 
-                if (userId != null) {
+                if (userIdString != null) {
+                    // --- FIX: Конвертируем String в UUID ---
+                    val userId = UUID.fromString(userIdString)
+
                     userProfileService.activatePremium(userId)
                     println("💰 Premium activated for user: $userId")
                 }
@@ -57,5 +58,4 @@ class PaymentController(
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook Error")
         }
     }
-
 }

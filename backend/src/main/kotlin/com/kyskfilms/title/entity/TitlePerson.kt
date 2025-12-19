@@ -1,5 +1,6 @@
 package com.kyskfilms.title.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore // <--- ДОБАВИТЬ ИМПОРТ
 import jakarta.persistence.*
 
 @Entity
@@ -9,6 +10,7 @@ class TitlePerson(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @JsonIgnore // <--- ДОБАВИТЬ СЮДА
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id")
     var title: Title,

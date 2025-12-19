@@ -1,5 +1,6 @@
 package com.kyskfilms.comment.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore // <--- ДОБАВИТЬ ИМПОРТ
 import com.kyskfilms.title.entity.Title
 import jakarta.persistence.*
 import java.time.OffsetDateTime
@@ -14,6 +15,7 @@ class Comment(
     @Column(name = "user_id", nullable = false)
     val userId: String,
 
+    @JsonIgnore // <--- ДОБАВИТЬ СЮДА
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id", nullable = false)
     val title: Title,

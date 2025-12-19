@@ -35,7 +35,6 @@ class UserProfileController(
     fun getMyProfile(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<UserProfileDto> {
         val userProfile = userProfileService.findOrCreateUserProfile(jwt)
         val username = jwt.getClaimAsString("preferred_username")
-
         val minioBaseUrl = minioPublicUrl
 
         return ResponseEntity.ok(userProfile.toDto(username, minioBaseUrl))
@@ -54,10 +53,11 @@ class UserProfileController(
         val avatarPath = minioService.uploadImage(file, "avatars")
 
         userProfile.avatarUrl = avatarPath
-        val updatedProfile = userProfileService.updateUserProfile(userProfile)
+
+        // --- FIX: Используем метод saveUserProfile вместо updateUserProfile ---
+        val updatedProfile = userProfileService.saveUserProfile(userProfile)
 
         val username = jwt.getClaimAsString("preferred_username")
-
         val minioBaseUrl = minioPublicUrl
 
         return ResponseEntity.ok(updatedProfile.toDto(username, minioBaseUrl))

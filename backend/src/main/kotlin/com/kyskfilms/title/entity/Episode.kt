@@ -1,5 +1,6 @@
-package com.kyskfilms.title.entity // <-- Правильный пакет
+package com.kyskfilms.title.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore // <--- ДОБАВИТЬ ИМПОРТ
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -11,6 +12,7 @@ class Episode(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
+    @JsonIgnore // <--- ДОБАВИТЬ СЮДА
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "season_id", nullable = false)
     var season: Season,
