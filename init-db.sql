@@ -37,7 +37,7 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- =================================================================
 
 CREATE TABLE IF NOT EXISTS user_profiles (
-    keycloak_id VARCHAR(255) PRIMARY KEY,
+    keycloak_id UUID PRIMARY KEY,
     email VARCHAR(255),
     username VARCHAR(255),
     avatar_url VARCHAR(500),

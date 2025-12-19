@@ -85,12 +85,20 @@ app:
 # -------------------------------------------
 logging:
   level:
-    # Можно вернуть на INFO после того, как все заработает
-    org.springframework.security: INFO
-    org.springframework.web: INFO
+    # Глобально показываем только предупреждения и ошибки (убираем лишние INFO от Spring)
+    root: WARN
+
+    # Для нашего кода оставляем INFO (чтобы видеть запуск сервисов)
     com.kyskfilms: INFO
+
+    # Убираем болтливость Hibernate и Security, если они не нужны для отладки
+    org.hibernate: ERROR
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+
+  # Делаем формат логов компактнее (опционально)
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 # -------------------------------------------
 # Swagger / OpenAPI Configuration
