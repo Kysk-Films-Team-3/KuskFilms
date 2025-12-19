@@ -6,6 +6,7 @@ import { Favorites } from '../pages/Favorites';
 import { Catalog } from '../pages/Catalog';
 import { NewAndPopular } from '../pages/NewAndPopular';
 import { Films } from '../pages/Films';
+import { SearchResults } from '../pages/SearchResults';
 import { MoviePage } from '../pages/MoviePage';
 import { AboutPage } from "../pages/AboutPage";
 import { CareerPage } from "../pages/CareerPage";
@@ -36,6 +37,7 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/films" element={<Films />} />
+                <Route path="/search" element={<SearchResults />} />
                 <Route path="/new" element={<NewAndPopular />} />
                 <Route path="/new-popular" element={<NewAndPopular />} />
                 <Route path="/premium" element={<Premium />} />

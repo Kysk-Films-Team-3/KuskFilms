@@ -18,7 +18,6 @@ export const Premium = () => {
                 const data = await getPremiumData();
                 setPremiumData(data);
             } catch (err) {
-                console.error("Ошибка загрузки данных премиума:", err);
             }
         };
         loadPremiumData();
@@ -39,11 +38,10 @@ export const Premium = () => {
             if (result.success && result.url) {
                 window.location.href = result.url;
             } else {
-                setError(result.message || (premiumData?.ui?.errorCreatingSession || 'Не вдалося створити сесію оплати'));
+                setError(result.message || 'Не вдалося створити сесію оплати');
             }
         } catch (err) {
-            console.error("Ошибка при создании сессии оплаты:", err);
-            setError(premiumData?.ui?.errorCreatingSession || 'Не вдалося створити сесію оплати');
+            setError('Не вдалося створити сесію оплати');
         } finally {
             setIsLoading(false);
         }
@@ -61,14 +59,14 @@ export const Premium = () => {
                     className="premium_back"
                 >
                     <div className="premium_back_icon"></div>
-                    {premiumData.ui.backButton}
+                    {premiumData.backButton}
                 </Link>
             </div>
 
             <div className="premium_row">
                 <div className="premium_title_line">
                     <div className="premium_title">
-                        {premiumData.ui.pageTitle}
+                        {premiumData.title}
                     </div>
                     <div className="premium_title">
                         {premiumData.planName}
@@ -77,10 +75,10 @@ export const Premium = () => {
                 </div>
 
                 <div className="premium_left">
-                    {premiumData.benefits.map((benefit, index) => (
+                    {premiumData.features.map((feature, index) => (
                         <div key={index} className="premium_line">
                             <span className="premium_feature_text">
-                                {benefit}
+                                {feature}
                             </span>
                             <div className="premium_line_icon"></div>
                         </div>
@@ -105,7 +103,7 @@ export const Premium = () => {
                     onClick={handleSubscribe}
                     disabled={isLoading}
                 >
-                    {isLoading ? (premiumData.ui.loading || 'Завантаження...') : premiumData.ui.ctaButton}
+                    {isLoading ? 'Завантаження...' : premiumData.buttonText}
                 </button>
             </div>
         </div>

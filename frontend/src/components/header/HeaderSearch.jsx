@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './HeaderSearch.css';
 
-export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle }) => {
+export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle, isSearching = false }) => {
     const { t } = useTranslation();
     const showPopular = searchQuery === '';
     
@@ -244,43 +244,52 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                 </>
             ) : (
                 <div className="search_results_display">
-                    <div className="search_results_columns">
-                        {searchResults.films.length > 0 && (
-                            <div className="search_results_films_column">
-                                <h3><Trans i18nKey="category.films" /></h3>
-                                {searchResults.films.map(film => (
-                                    <Link to={`/movie/${film.id}`} key={film.id} className="search_item_card">
-                                        <img src={film.image} className="search_item_image" alt={film.title} />
-                                        <div className="search_item_info">
-                                            <p className="search_item_title">
-                                                {film.title} <span className="search_item_type">(<Trans i18nKey="category.films" />)</span>
-                                            </p>
-                                            <p className="search_item_rating">6.8 <span className="search_item_year">(2023)</span></p>
-                                            <p className="search_item_genre">USA • Adventure</p>
-                                        </div>
-                                    </Link>
-                                ))}
+                    {isSearching ? (
+                        <p className="no_results_text">Завантаження...</p>
+                    ) : (
+                        <>
+                            <div className="search_results_columns">
+                                {searchResults.films.length > 0 && (
+                                    <div className="search_results_films_column">
+                                        <h3><Trans i18nKey="category.films" /></h3>
+                                        {searchResults.films.map(film => (
+                                            <Link to={`/movie/${film.id}`} key={film.id} className="search_item_card">
+                                                <img src={film.image || 'https://via.placeholder.com/300x450'} className="search_item_image" alt={film.title} />
+                                                <div className="search_item_info">
+                                                    <p className="search_item_title">
+                                                        {film.title} <span className="search_item_type">({film.type || 'MOVIE'})</span>
+                                                    </p>
+                                                    {film.rating && (
+                                                        <p className="search_item_rating">
+                                                            {film.rating.toFixed(1)} 
+                                                            {film.year && <span className="search_item_year"> ({film.year})</span>}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                                {searchResults.actors.length > 0 && (
+                                    <div className="search_results_actors_column">
+                                        <h3><Trans i18nKey="category.series" /></h3>
+                                        {searchResults.actors.map(actor => (
+                                            <Link to={`/actor/${actor.id}`} key={actor.id} className="search_item_card actor">
+                                                <img src={actor.image || 'https://via.placeholder.com/300x450'} className="search_item_image_actor" alt={actor.name} />
+                                                <div className="search_item_info">
+                                                    <p className="search_item_title">
+                                                        {actor.name} <span className="search_item_type">({actor.activityType || 'Actor'})</span>
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                        )}
-                        {searchResults.actors.length > 0 && (
-                            <div className="search_results_actors_column">
-                                <h3><Trans i18nKey="category.series" /></h3>
-                                {searchResults.actors.map(actor => (
-                                    <Link to={`/actor/${actor.id}`} key={actor.id} className="search_item_card actor">
-                                        <img src={actor.image} className="search_item_image_actor" alt={actor.name} />
-                                        <div className="search_item_info">
-                                            <p className="search_item_title">
-                                                {actor.name} <span className="search_item_type">(Actor)</span>
-                                            </p>
-                                            <p className="search_item_birthdate">Barbara Ferreira, 1996</p>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    {searchResults.films.length === 0 && searchResults.actors.length === 0 && (
-                        <p className="no_results_text"><Trans i18nKey="home.errorLoading" /></p>
+                            {searchResults.films.length === 0 && searchResults.actors.length === 0 && searchQuery.length >= 2 && (
+                                <p className="no_results_text">Нічого не знайдено</p>
+                            )}
+                        </>
                     )}
                 </div>
             )}

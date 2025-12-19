@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Trans } from "react-i18next";
 import { VideoPlayer } from "./VideoPlayer";
 import { getPlayerConfig } from "../../services/api";
 import "./CustomPlayer.css";
@@ -21,6 +20,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
     const menuRef = useRef(null);
     const [playerConfig, setPlayerConfig] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [selectedSeason, setSelectedSeason] = useState(null);
     const [selectedEpisode, setSelectedEpisode] = useState(null);
     const [showSeasonSelector, setShowSeasonSelector] = useState(false);
@@ -30,6 +30,13 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
         const loadConfig = async () => {
             try {
                 setLoading(true);
+                setError(null);
+                
+                if (!titleId) {
+                    setError(new Error("Title ID is required"));
+                    return;
+                }
+                
                 const config = await getPlayerConfig(titleId, episodeId);
                 setPlayerConfig(config);
                 
@@ -46,7 +53,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                     setQuality(config.qualities[0]);
                 }
             } catch (error) {
-                console.error("Ошибка загрузки конфига плеера:", error);
+                setError(error);
             } finally {
                 setLoading(false);
             }
@@ -84,13 +91,14 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
     const handleEpisodeChange = async (episodeId) => {
         try {
             setLoading(true);
+            setError(null);
             const config = await getPlayerConfig(titleId, episodeId);
             setPlayerConfig(config);
             setSelectedSeason(config.currentSeason || null);
             setSelectedEpisode(config.currentEpisode || null);
             setShowEpisodeSelector(false);
         } catch (error) {
-            console.error("Ошибка загрузки конфига серии:", error);
+            setError(error);
         } finally {
             setLoading(false);
         }
@@ -168,18 +176,26 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
             }
         };
 
+        const onEnded = () => {
+            if (playerConfig.type === 'SERIES' && playerConfig.nextEpisodeId) {
+                handleEpisodeChange(playerConfig.nextEpisodeId);
+            }
+        };
+
         v.addEventListener("play", onPlay);
         v.addEventListener("pause", onPause);
         v.addEventListener("timeupdate", onTime);
         v.addEventListener("loadedmetadata", onMeta);
+        v.addEventListener("ended", onEnded);
 
         return () => {
             v.removeEventListener("play", onPlay);
             v.removeEventListener("pause", onPause);
             v.removeEventListener("timeupdate", onTime);
             v.removeEventListener("loadedmetadata", onMeta);
+            v.removeEventListener("ended", onEnded);
         };
-    }, [playerConfig?.streamUrl, titleId, episodeId, selectedEpisode, playerConfig?.type]);
+    }, [playerConfig?.streamUrl, titleId, episodeId, selectedEpisode, playerConfig?.type, handleEpisodeChange]);
 
     useEffect(() => {
         const v = videoRef.current;
@@ -221,7 +237,6 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
             }
 
             if (e.key.toLowerCase() === "c") {
-                console.log("toggle subtitles");
             }
 
             if (e.key.toLowerCase() === "s") {
@@ -248,10 +263,16 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
         else document.exitFullscreen();
     };
 
-    if (loading || !playerConfig) {
+    if (loading) {
         return (
             <div className="player-ui" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                Завантаження...
+            </div>
+        );
+    }
+
+    if (error || !playerConfig) {
+        return (
+            <div className="player-ui" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
             </div>
         );
     }
@@ -271,7 +292,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 setShowEpisodeSelector(false);
                             }}
                         >
-                            <span>Сезон {selectedSeason || playerConfig.currentSeason || 1}</span>
+                            <span>{playerConfig.ui?.seasonLabel || 'Сезон'} {selectedSeason || playerConfig.currentSeason || 1}</span>
                             <span className="dropdown-arrow"></span>
                         </div>
                         {showSeasonSelector && (
@@ -289,7 +310,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                             }
                                         }}
                                     >
-                                        Сезон {season.seasonNumber}
+                                        {playerConfig.ui?.seasonLabel || 'Сезон'} {season.seasonNumber}
                                     </div>
                                 ))}
                             </div>
@@ -303,7 +324,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 setShowSeasonSelector(false);
                             }}
                         >
-                            <span>Серія {selectedEpisode || playerConfig.currentEpisode || 1}</span>
+                            <span>{playerConfig.ui?.episodeLabel || 'Серія'} {selectedEpisode || playerConfig.currentEpisode || 1}</span>
                             <span className="dropdown-arrow"></span>
                         </div>
                         {showEpisodeSelector && currentSeasonData && (
@@ -319,7 +340,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                                 handleEpisodeChange(episode.id);
                                             }}
                                         >
-                                            Серія {episode.episodeNumber} {episode.title ? `- ${episode.title}` : ''}
+                                            {playerConfig.ui?.episodeLabel || 'Серія'} {episode.episodeNumber} {episode.title ? `- ${episode.title}` : ''}
                                         </div>
                                     );
                                 })}
@@ -335,6 +356,16 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                 <div className="center-play" onClick={togglePlay}></div>
             )}
 
+            {playerConfig.posterUrl && (
+                <div className="player-poster" style={{ 
+                    position: 'absolute', 
+                    inset: 0, 
+                    backgroundImage: `url(${playerConfig.posterUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: isPaused ? 0.3 : 0
+                }}></div>
+            )}
             <VideoPlayer src={playerConfig.streamUrl} ref={videoRef} />
 
             <div className="progress-wrapper">
@@ -389,7 +420,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 <div className="settings-list">
 
                                     <div className="settings-row" onClick={() => setMenu("speed")}>
-                                        <span className="settings_title"><Trans i18nKey="player.speed" /></span>
+                                        <span className="settings_title">{playerConfig.ui?.speedLabel || 'Швидкість'}</span>
                                         <div className="blocki">
                                         <span className="value">{playbackRate}</span>
                                         <span className="arrow arrow-right"></span>
@@ -397,21 +428,21 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                     </div>
 
                                     <div className="settings-row" onClick={() => setMenu("subtitles")}>
-                                        <span className="settings_title"><Trans i18nKey="player.subtitles" /></span>
+                                        <span className="settings_title">{playerConfig.ui?.subtitlesLabel || 'Субтитри'}</span>
                                         <div className="blocki">
                                         <span className="value">
                         {subtitleLang === "off"
-                            ? <Trans i18nKey="player.off" />
+                            ? 'Вимкнено'
                             : playerConfig.subtitles?.find(s => {
                                 const langKey = s.language.toLowerCase().includes('ukr') || s.language.toLowerCase().includes('укра') ? 'uk' : 'eng';
                                 return langKey === subtitleLang;
-                            })?.language || (subtitleLang === "uk" ? <Trans i18nKey="player.uk" /> : <Trans i18nKey="player.eng" />)}
+                            })?.label || subtitleLang}
                     </span>
                                         <span className="arrow arrow-right"></span>
                                         </div>
                                     </div>
                                     <div className="settings-row" onClick={() => setMenu("quality")}>
-                                        <span className="settings_title"><Trans i18nKey="player.quality" /></span>
+                                        <span className="settings_title">{playerConfig.ui?.qualityLabel || 'Якість'}</span>
                                         <div className="blocki">
                                         <span className="value">{quality}</span>
                                         <span className="arrow arrow-right"></span>
@@ -425,7 +456,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        <Trans i18nKey="player.speed" />
+                                        {playerConfig.ui?.speedLabel || 'Швидкість'}
                                     </div>
 
                                     {(playerConfig.playbackSpeeds || ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x"]).map((speed) => {
@@ -454,7 +485,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        <Trans i18nKey="player.subtitles" />
+                                        {playerConfig.ui?.subtitlesLabel || 'Субтитри'}
                                     </div>
 
                                     <div
@@ -463,20 +494,24 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                         }`}
                                         onClick={() => setSubtitleLang("off")}
                                     >
-                                        <Trans i18nKey="player.turnOff" />
+                                        Вимкнено
                                     </div>
 
                                     {(playerConfig.subtitles || []).map((subtitle, index) => {
-                                        const langKey = subtitle.language.toLowerCase().includes('ukr') || subtitle.language.toLowerCase().includes('укра') ? 'uk' : 'eng';
+                                        const langKey = subtitle.label.toLowerCase().includes('ukr') || subtitle.label.toLowerCase().includes('укра') ? 'uk' : 'eng';
                                         return (
                                             <div
                                                 key={index}
                                                 className={`settings_sub_option ${
                                                     subtitleLang === langKey ? "active" : ""
                                                 }`}
-                                                onClick={() => setSubtitleLang(langKey)}
+                                                onClick={() => {
+                                                    setSubtitleLang(langKey);
+                                                    if (videoRef.current && subtitle.src) {
+                                                    }
+                                                }}
                                             >
-                                                {subtitle.language}
+                                                {subtitle.label}
                                             </div>
                                         );
                                     })}
@@ -487,7 +522,7 @@ export default function CustomPlayer({ titleId, episodeId = null, onClose }) {
                                 <div className="settings_sub_list">
                                     <div className="back_sub_row" onClick={() => setMenu("root")}>
                                         <span className="arrow arrow_sub_back"></span>
-                                        <Trans i18nKey="player.quality" />
+                                        {playerConfig.ui?.qualityLabel || 'Якість'}
                                     </div>
                                 <div className="grap">
                                     {(playerConfig.qualities || ["Auto", "1080p", "720p", "480p"]).map((q) => (

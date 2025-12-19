@@ -105,7 +105,6 @@ export const EditMovie = () => {
                 const res = await api.get('/genres');
                 setAllGenres(res.data);
             } catch (err) {
-                console.error("Помилка завантаження жанрів:", err);
             }
         };
         fetchGenres();
@@ -126,7 +125,7 @@ export const EditMovie = () => {
         try {
             const res = await api.get(`/persons?search=${query}`);
             setFoundPersons(res.data);
-        } catch (e) { console.error(e); }
+        } catch (e) { }
     };
 
     const handleInputChange = (e) => {
@@ -169,14 +168,12 @@ export const EditMovie = () => {
             });
             return response.data.url;
         } catch (error) {
-            console.error("Image upload failed", error);
             return null;
         }
     };
 
     const handleSave = async () => {
         try {
-            console.log("Початок збереження...");
 
             const posterUrl = await uploadImageToServer(coverFile);
             const logoUrl = await uploadImageToServer(logoFile);
@@ -234,7 +231,6 @@ export const EditMovie = () => {
             const savedTitle = createResponse.data;
             const titleId = savedTitle.id;
 
-            console.log("Title Created, ID:", titleId);
 
             if (contentType === 'film' && contentFile) {
                 const fd = new FormData(); fd.append('file', contentFile);
@@ -255,13 +251,11 @@ export const EditMovie = () => {
             alert("Успішно збережено!");
             navigate('/');
         } catch (error) {
-            console.error("Помилка при збереженні:", error);
             alert("Сталася помилка при збереженні: " + (error.response?.data?.message || error.message));
         }
     };
 
     const handleDelete = () => {
-        console.log('Функционал удаления пока не реализован');
     };
 
     const closeAllDropdownsExcept = (exceptStateSetter) => {
@@ -313,7 +307,6 @@ export const EditMovie = () => {
     const handleClearAllActors = () => setSelectedActors([]);
 
     const handleAddNewGenre = () => {
-        console.log('Логика добавления нового жанра (модалка)');
     };
 
     const handleAddEpisode = () => {
@@ -743,7 +736,7 @@ export const EditMovie = () => {
                                                     ))}
                                                 <button
                                                     className="edit_movie_genre_add_button"
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log('Add new director modal'); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
                                                     <Trans i18nKey="admin.editMovie.addNewDirector" />
@@ -840,7 +833,7 @@ export const EditMovie = () => {
                                                     ))}
                                                 <button
                                                     className="edit_movie_genre_add_button"
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log('Add new actor modal'); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
                                                     Новий актор

@@ -28,7 +28,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
             const updatedProfile = await uploadAvatar(file);
             onProfileUpdate(updatedProfile);
         } catch (err) {
-            console.error("Ошибка при загрузке аватара:", err);
             setError(t("profile.errorAvatar"));
         } finally {
             setIsUploading(false);
@@ -50,9 +49,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setError(null);
 
                 const response = await fetchUserProfile();
-                console.log("📋 Профиль в компоненте Profile:", response);
-                console.log("📋 isPremium в компоненте:", response?.isPremium);
-                
                 onProfileUpdate(response);
 
                 setName(keycloak.tokenParsed?.given_name || '');
@@ -60,7 +56,6 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setNickname(response.username || keycloak.tokenParsed?.preferred_username || '');
 
             } catch (err) {
-                console.error("Ошибка загрузки профиля:", err.response || err);
                 setError(t("profile.errorLoad"));
 
                 setName(keycloak.tokenParsed?.given_name || '');
@@ -86,11 +81,8 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
             const updatedProfile = { name, lastName, nickname };
 
-            console.log("Сохранение профиля (пока не реализовано на бэкенде):", updatedProfile);
-
             onClose();
         } catch (err) {
-            console.error("Ошибка сохранения профиля:", err);
             setError(t("profile.errorSave"));
         } finally {
             setLoading(false);

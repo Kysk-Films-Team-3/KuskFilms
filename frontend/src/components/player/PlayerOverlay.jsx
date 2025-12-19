@@ -1,9 +1,15 @@
 import { useEffect, useRef } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import "./overlay.css";
 import CustomPlayer from "./CustomPlayer";
 
-export default function PlayerOverlay({ open, onClose, titleId, episodeId = null }) {
+export default function PlayerOverlay({ open, onClose, titleId: propTitleId, episodeId: propEpisodeId = null }) {
     const playerRef = useRef(null);
+    const params = useParams();
+    const location = useLocation();
+    
+    const titleId = propTitleId || (params.id ? parseInt(params.id) : null);
+    const episodeId = propEpisodeId || (location.search ? new URLSearchParams(location.search).get('episodeId') : null);
 
     useEffect(() => {
         if (!open) return;

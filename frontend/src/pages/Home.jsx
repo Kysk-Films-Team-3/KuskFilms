@@ -134,7 +134,6 @@ export const Home = ({ onOpenActorRecs }) => {
                 setMenuItems(await getMenuItems());
                 setWatchModeItems(await getWatchModeItems());
             } catch (err) {
-                console.error("Помилка завантаження допоміжних даних:", err);
             }
         };
 
@@ -170,7 +169,6 @@ export const Home = ({ onOpenActorRecs }) => {
 
                 await loadAuxiliaryData();
             } catch (err) {
-                console.error("Ошибка загрузки данных:", err);
                 setError(<Trans i18nKey="home.errorLoading" />);
             }
         };

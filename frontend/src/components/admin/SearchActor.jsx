@@ -41,7 +41,6 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
 
                 setActors(mappedActors);
             } catch (error) {
-                console.error("Помилка завантаження акторів:", error);
             }
         };
 

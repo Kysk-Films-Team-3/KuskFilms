@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './Header.css';
-import { fetchHeaderData } from 'services/api';
+import { fetchHeaderData, globalSearch } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 import { HeaderSearch } from './HeaderSearch';
@@ -11,17 +11,13 @@ import { HeaderSearch } from './HeaderSearch';
 export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal, onOpenListModal}) => {
 
     const location = useLocation();
+    const navigate = useNavigate();
     const { keycloak } = useKeycloak();
     const { i18n } = useTranslation();
     const hasAdminRole = useHasRole("ADMIN");
     const isPremiumPage = location.pathname === '/Premium';
 
     useEffect(() => {
-        if (keycloak?.authenticated && keycloak?.tokenParsed) {
-            console.log('User roles:', keycloak.tokenParsed.realm_access?.roles);
-            console.log('Has ADMIN role:', hasAdminRole);
-            console.log('Token parsed:', keycloak.tokenParsed);
-        }
     }, [keycloak?.authenticated, hasAdminRole]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -30,11 +26,13 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
     const [searchResults, setSearchResults] = useState({ films: [], actors: [] });
     const [popularFilms, setPopularFilms] = useState([]);
     const [popularActors, setPopularActors] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
     const [headerData, setHeaderData] = useState(null);
     const [navigationItems, setNavigationItems] = useState([]);
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     const dropdownRef = useRef(null);
     const searchRef = useRef(null);
+    const searchTimeoutRef = useRef(null);
 
     const isLoggedIn = keycloak?.authenticated;
     const avatarUrl = userProfile?.avatarUrl;
@@ -71,7 +69,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     setPopularActors(actors);
                 }
             } catch (error) {
-                console.error("Ошибка загрузки данных хедера:", error);
             }
         })();
     }, []);
@@ -91,42 +88,74 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
         localStorage.setItem('lang', lang);
     };
 
-    const performSearch = (query) => {
-        if (!query) {
+    const performSearch = async (query) => {
+        if (!query || query.trim().length < 2) {
             setSearchResults({ films: [], actors: [] });
             return;
         }
-        const lowerCaseQuery = query.toLowerCase();
-        const filteredFilms = popularFilms.filter(film =>
-            film.title.toLowerCase().includes(lowerCaseQuery)
-        );
-        const filteredActors = popularActors.filter(actor =>
-            actor.name.toLowerCase().includes(lowerCaseQuery)
-        );
 
-        const sortedFilms = filteredFilms.sort((a, b) => {
-            const aStartsWith = a.title.toLowerCase().startsWith(lowerCaseQuery);
-            const bStartsWith = b.title.toLowerCase().startsWith(lowerCaseQuery);
-            if (aStartsWith && !bStartsWith) return -1;
-            if (!aStartsWith && bStartsWith) return 1;
-            return a.title.localeCompare(b.title);
-        });
+        try {
+            setIsSearching(true);
+            const searchData = await globalSearch(query.trim());
+            
+            const films = searchData.titles.map(title => ({
+                id: title.id,
+                title: title.title,
+                image: title.posterUrl || '',
+                rating: title.rating,
+                year: title.year,
+                type: title.type
+            }));
+            
+            const actors = searchData.persons.map(person => ({
+                id: person.id,
+                name: person.name,
+                image: person.photoUrl || '',
+                activityType: person.activityType
+            }));
 
-        const sortedActors = filteredActors.sort((a, b) => {
-            const aStartsWith = a.name.toLowerCase().startsWith(lowerCaseQuery);
-            const bStartsWith = b.name.toLowerCase().startsWith(lowerCaseQuery);
-            if (aStartsWith && !bStartsWith) return -1;
-            if (!aStartsWith && bStartsWith) return 1;
-            return a.name.localeCompare(b.name);
-        });
-
-        setSearchResults({ films: sortedFilms, actors: sortedActors });
+            setSearchResults({ films, actors });
+        } catch (error) {
+            setSearchResults({ films: [], actors: [] });
+        } finally {
+            setIsSearching(false);
+        }
     };
 
     const handleSearchInputChange = (e) => {
         const query = e.target.value;
         setSearchQuery(query);
-        performSearch(query);
+        
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+        }
+        
+        if (!query || query.trim().length < 2) {
+            setSearchResults({ films: [], actors: [] });
+            return;
+        }
+        
+        searchTimeoutRef.current = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    };
+
+    const handleSearchSubmit = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            setIsSearchOpen(false);
+            setSearchQuery('');
+            setSearchResults({ films: [], actors: [] });
+        }
+    };
+
+    const handleSearchKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearchSubmit(e);
+        }
     };
 
     const handleSearchToggle = () => {
@@ -167,7 +196,6 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                 alert(`ОШИБКА (Статус: ${response.status}):\n\nEndpoint: ${endpoint}\n\nResponse:\n${data}`);
             }
         } catch (error) {
-            console.error("Ошибка при вызове API:", error);
             alert(`КРИТИЧЕСКАЯ ОШИБКА:\n\nНе удалось подключиться к API. Смотрите консоль (F12).`);
         }
     };
@@ -299,7 +327,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
 
                         {isSearchOpen && !isPremiumPage && (
                             <div className="header_search_box" ref={searchRef}>
-                                <div className="header_search_bar">
+                                <form className="header_search_bar" onSubmit={handleSearchSubmit}>
                                     <div className="header_search_left_icon" />
                                     <input
                                         type="text"
@@ -307,8 +335,22 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         autoFocus
                                         value={searchQuery}
                                         onChange={handleSearchInputChange}
+                                        onKeyPress={handleSearchKeyPress}
                                     />
-                                </div>
+                                    <button 
+                                        type="submit" 
+                                        className="header_search_submit_button"
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            padding: '0',
+                                            margin: '0'
+                                        }}
+                                    >
+                                        <div className="header_search_left_icon" style={{ cursor: 'pointer' }} />
+                                    </button>
+                                </form>
                                 {isSearchOpen && (
                                     <HeaderSearch
                                         popularFilms={popularFilms}
@@ -316,6 +358,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         searchResults={searchResults}
                                         searchQuery={searchQuery}
                                         searchSuggestionsTitle={headerData?.searchSuggestions?.title}
+                                        isSearching={isSearching}
                                     />
                                 )}
                             </div>

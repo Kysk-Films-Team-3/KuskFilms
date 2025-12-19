@@ -1,22 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
 import { useFavorites } from '../../context/FavoritesContext';
-import { fakeContent, fakeCategories } from '../../services/api';
+import { getPersonData } from '../../services/api';
 import './ActorModal.css';
 
 export const ActorModal = ({ actor, onClose }) => {
-    const { t } = useTranslation();
     const { isFavorite, toggleFavorite } = useFavorites();
     const modalRef = useRef(null);
-    const [category, setCategory] = useState(t('actorModal.categories.all'));
-    const [sortBy, setSortBy] = useState(t('actorModal.sort.newest'));
+    const [personData, setPersonData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [category, setCategory] = useState('');
+    const [sortBy, setSortBy] = useState('');
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
-    const [films, setFilms] = useState([]);
     const [selectedItemId, setSelectedItemId] = useState(null);
     const categoryRef = useRef(null);
     const sortRef = useRef(null);
+
+    useEffect(() => {
+        const loadPersonData = async () => {
+            if (!actor || !actor.id) return;
+
+            try {
+                setLoading(true);
+                const data = await getPersonData(actor.id);
+                setPersonData(data);
+                if (data.ui) {
+                    setCategory(data.ui.genreLabel || '');
+                    setSortBy(data.ui.sortLabel || '');
+                }
+            } catch (error) {
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPersonData();
+    }, [actor]);
 
     useEffect(() => {
         if (!actor) return;
@@ -42,68 +62,60 @@ export const ActorModal = ({ actor, onClose }) => {
         };
     }, [actor, onClose]);
 
-    useEffect(() => {
-        setCategory(t('actorModal.categories.all'));
-        setSortBy(t('actorModal.sort.newest'));
-    }, [t]);
+    const formatDate = (dateString) => {
+        if (!dateString) return null;
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('uk-UA', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        } catch {
+            return dateString;
+        }
+    };
 
-    const categories = [
-        t('actorModal.categories.all'),
-        t('actorModal.categories.films'),
-        t('actorModal.categories.series'),
-        t('actorModal.categories.cartoons'),
-        t('actorModal.categories.anime')
-    ];
-    const sortOptions = [
-        t('actorModal.sort.newest'),
-        t('actorModal.sort.rating'),
-        t('actorModal.sort.discussion'),
-        t('actorModal.sort.recentlyAdded')
-    ];
-
-    useEffect(() => {
-        const loadFilms = async () => {
-            try {
-                const categories = await fakeCategories();
-                const categoryNames = categories.map(cat => cat.name);
-                const content = await fakeContent(categoryNames);
-                
-                const extractedFilms = [];
-                content.forEach(category => {
-                    category.subcategories.forEach(sub => {
-                        sub.films.forEach(film => {
-                            extractedFilms.push({
-                                id: film.id,
-                                name: film.title || t('filmsPage.filmDefault', { id: film.id }),
-                                image: film.image,
-                                hoverImage: film.hoverImage || film.image,
-                                rating: parseFloat(film.rating) || 0,
-                                year: film.linedate ? parseInt(film.linedate.split('-')[0]) : null,
-                                genre: film.line1 ? film.line1.split(' • ').filter(g => g && g !== 'USA' && g !== 'UK' && g !== 'South Korea' && g !== 'Південна Корея' && g !== 'Велика Британія' && g !== 'France' && g !== 'Latvia')[0] : null,
-                                linedate: film.linedate,
-                                line1: film.line1,
-                                line2: film.line2,
-                                season: film.season
-                            });
-                        });
-                    });
-                });
-                
-                const uniqueFilms = extractedFilms.filter((film, index, self) =>
-                    index === self.findIndex(f => f.id === film.id)
-                );
-                
-                const limitedFilms = uniqueFilms.slice(0, 25);
-                setFilms(limitedFilms);
-            } catch (error) {
-                console.error('Помилка завантаження фільмів:', error);
-            }
-        };
+    const getFilteredFilmography = () => {
+        if (!personData || !personData.filmography) return [];
         
-        loadFilms();
-    }, [t]);
+        let filtered = [...personData.filmography];
+        
+        if (category && category !== personData.ui?.genreLabel && category !== '') {
+            filtered = filtered.filter(film => film.genres && film.genres.length > 0 && film.genres.some(g => g === category));
+        }
+        
+        if (sortBy === 'rating') {
+            filtered.sort((a, b) => {
+                if (a.rating && b.rating) {
+                    return b.rating - a.rating;
+                }
+                return 0;
+            });
+        } else {
+            filtered.sort((a, b) => {
+                if (a.releaseDate && b.releaseDate) {
+                    return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+                }
+                return 0;
+            });
+        }
+        
+        return filtered;
+    };
+
+    const films = getFilteredFilmography();
 
     if (!actor) return null;
+
+    if (loading) {
+        return (
+            <div className="actor_overlay" role="dialog" aria-modal="true">
+                <div className="actor_modal" ref={modalRef}>
+                    <div className="actor_close_icon" onClick={onClose}></div>
+                    <p></p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!personData) return null;
 
     return (
         <div className="actor_overlay" role="dialog" aria-modal="true">
@@ -111,110 +123,165 @@ export const ActorModal = ({ actor, onClose }) => {
                 <div className="actor_close_icon" onClick={onClose}></div>
                 <div className="actor_block">
                     <div className="actor_info_block">
-                        <div className="actor_info_avatar"></div>
-                        <div className="actor_info_name">{actor.name || 'Марго Роббі'}</div>
-                        <div className="actor_info_name_en">{actor.nameEn || 'Margot Robbie'}</div>
+                        {personData.photoUrl ? (
+                            <img 
+                                src={personData.photoUrl} 
+                                alt={personData.name}
+                                className="actor_info_avatar"
+                                style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+                            />
+                        ) : (
+                            <div className="actor_info_avatar"></div>
+                        )}
+                        <div className="actor_info_name">{personData.name}</div>
+                        {personData.activityType && (
+                            <div className="actor_info_name_en">{personData.activityType}</div>
+                        )}
                         
                         <div className="actor_info_divider"></div>
                         
-                        <div className="actor_info_item">
-                            <div className="actor_info_label"><Trans i18nKey="actorModal.labels.age" /></div>
-                            <div className="actor_info_value">{actor.age || 35} {t('actorModal.years')}</div>
-                        </div>
+                        {personData.age !== null && personData.age !== undefined && (
+                            <>
+                                <div className="actor_info_item">
+                                    <div className="actor_info_label">{personData.ui?.ageLabel || ''}</div>
+                                    <div className="actor_info_value">{personData.age} {personData.ui?.ageUnit || ''}</div>
+                                </div>
+                                <div className="actor_info_divider"></div>
+                            </>
+                        )}
                         
-                        <div className="actor_info_divider"></div>
+                        {personData.birthDate && (
+                            <>
+                                <div className="actor_info_item">
+                                    <div className="actor_info_label">{personData.ui?.birthDateLabel || ''}</div>
+                                    <div className="actor_info_value">{formatDate(personData.birthDate)}</div>
+                                </div>
+                                <div className="actor_info_divider"></div>
+                            </>
+                        )}
                         
-                        <div className="actor_info_item">
-                            <div className="actor_info_label"><Trans i18nKey="actorModal.labels.birthDate" /></div>
-                            <div className="actor_info_value">{actor.birthDate || '02.07.1990'}</div>
-                        </div>
+                        {personData.gender && (
+                            <>
+                                <div className="actor_info_item">
+                                    <div className="actor_info_label">{personData.ui?.genderLabel || ''}</div>
+                                    <div className="actor_info_value">
+                                        {personData.gender === 'MALE' ? (personData.ui?.genderMale || '') : 
+                                         personData.gender === 'FEMALE' ? (personData.ui?.genderFemale || '') : 
+                                         personData.gender}
+                                    </div>
+                                </div>
+                                <div className="actor_info_divider"></div>
+                            </>
+                        )}
                         
-                        <div className="actor_info_divider"></div>
+                        {personData.relatives && personData.relatives.length > 0 && (
+                            <>
+                                <div className="actor_info_item">
+                                    <div className="actor_info_label">{personData.ui?.relativesLabel || ''}</div>
+                                    <div className="actor_info_value actor_info_relatives">
+                                        {personData.relatives.map((rel) => (
+                                            <div key={rel.id}>
+                                                <Link to={`/actor/${rel.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                    {rel.name} ({rel.relationship})
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="actor_info_divider"></div>
+                            </>
+                        )}
                         
-                        <div className="actor_info_item">
-                            <div className="actor_info_label"><Trans i18nKey="actorModal.labels.gender" /></div>
-                            <div className="actor_info_value">{actor.gender || 'Жіноча'}</div>
-                        </div>
-                        
-                        <div className="actor_info_divider"></div>
-                        
-                        <div className="actor_info_item">
-                            <div className="actor_info_label"><Trans i18nKey="actorModal.labels.relatives" /></div>
-                            <div className="actor_info_value actor_info_relatives">
-                                {(actor.relatives || ['Лахлан Роббі (брат/сестра)', 'Аня Роббі (брат/сестра)', 'Кемерон Роббі (брат/сестра)']).map((rel, idx) => (
-                                    <div key={idx}>{rel}</div>
-                                ))}
-                            </div>
-                        </div>
-                        
-                        <div className="actor_info_divider"></div>
-                        
-                        <div className="actor_info_item">
-                            <div className="actor_info_label"><Trans i18nKey="actorModal.labels.birthPlace" /></div>
-                            <div className="actor_info_value">{actor.birthPlace || 'Делбі, Квінсленд, Австралія'}</div>
-                        </div>
+                        {personData.birthPlace && (
+                            <>
+                                <div className="actor_info_item">
+                                    <div className="actor_info_label">{personData.ui?.birthPlaceLabel || ''}</div>
+                                    <div className="actor_info_value">{personData.birthPlace}</div>
+                                </div>
+                                <div className="actor_info_divider"></div>
+                            </>
+                        )}
                     </div>
                     <div className="actor_film_block">
-                        <div className="actor_film_title"><Trans i18nKey="actorModal.filmography" /></div>
+                        <div className="actor_film_title">{personData.ui?.filmographyTitle || ''}</div>
                         <div className="actor_film_togle">
                             <div className="actor_filter_group">
-                                <div className="actor_filter_dropdown" ref={categoryRef}>
-                                    <button 
-                                        className={`actor_filter_button ${isCategoryOpen ? 'open' : ''}`}
-                                        onClick={() => {
-                                            setIsCategoryOpen(!isCategoryOpen);
-                                            setIsSortOpen(false);
-                                        }}
-                                    >
-                                        {category}
-                                        <span className={`actor_filter_arrow ${isCategoryOpen ? 'open' : ''}`}></span>
-                                    </button>
-                                    {isCategoryOpen && (
-                                        <div className="actor_filter_menu">
-                                            {categories.map((cat) => (
+                                {personData.ui?.genreLabel && (
+                                    <div className="actor_filter_dropdown" ref={categoryRef}>
+                                        <button 
+                                            className={`actor_filter_button ${isCategoryOpen ? 'open' : ''}`}
+                                            onClick={() => {
+                                                setIsCategoryOpen(!isCategoryOpen);
+                                                setIsSortOpen(false);
+                                            }}
+                                        >
+                                            {category || personData.ui.genreLabel}
+                                            <span className={`actor_filter_arrow ${isCategoryOpen ? 'open' : ''}`}></span>
+                                        </button>
+                                        {isCategoryOpen && (
+                                            <div className="actor_filter_menu">
                                                 <button 
-                                                    key={cat} 
-                                                    className={category === cat ? 'selected' : ''} 
+                                                    className={category === '' ? 'selected' : ''} 
                                                     onClick={() => { 
-                                                        setCategory(cat); 
+                                                        setCategory(''); 
                                                         setIsCategoryOpen(false); 
                                                     }}
                                                 >
-                                                    {cat}
+                                                    Всі
                                                 </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                                {personData.filmography && Array.from(new Set(personData.filmography.flatMap(f => f.genres || []))).map((genre) => (
+                                                    <button 
+                                                        key={genre} 
+                                                        className={category === genre ? 'selected' : ''} 
+                                                        onClick={() => { 
+                                                            setCategory(genre); 
+                                                            setIsCategoryOpen(false); 
+                                                        }}
+                                                    >
+                                                        {genre}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
-                                <div className="actor_filter_dropdown" ref={sortRef}>
-                                    <button 
-                                        className={`actor_filter_button ${isSortOpen ? 'open' : ''}`}
-                                        onClick={() => {
-                                            setIsSortOpen(!isSortOpen);
-                                            setIsCategoryOpen(false);
-                                        }}
-                                    >
-                                        {sortBy}
-                                        <span className={`actor_filter_arrow ${isSortOpen ? 'open' : ''}`}></span>
-                                    </button>
-                                    {isSortOpen && (
-                                        <div className="actor_filter_menu">
-                                            {sortOptions.map((option) => (
+                                {personData.ui?.sortLabel && (
+                                    <div className="actor_filter_dropdown" ref={sortRef}>
+                                        <button 
+                                            className={`actor_filter_button ${isSortOpen ? 'open' : ''}`}
+                                            onClick={() => {
+                                                setIsSortOpen(!isSortOpen);
+                                                setIsCategoryOpen(false);
+                                            }}
+                                        >
+                                            {sortBy || personData.ui.sortLabel}
+                                            <span className={`actor_filter_arrow ${isSortOpen ? 'open' : ''}`}></span>
+                                        </button>
+                                        {isSortOpen && (
+                                            <div className="actor_filter_menu">
                                                 <button 
-                                                    key={option} 
-                                                    className={sortBy === option ? 'selected' : ''} 
+                                                    className={sortBy === '' ? 'selected' : ''} 
                                                     onClick={() => { 
-                                                        setSortBy(option); 
+                                                        setSortBy(''); 
                                                         setIsSortOpen(false); 
                                                     }}
                                                 >
-                                                    {option}
+                                                    За датою
                                                 </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                                <button 
+                                                    className={sortBy === 'rating' ? 'selected' : ''} 
+                                                    onClick={() => { 
+                                                        setSortBy('rating'); 
+                                                        setIsSortOpen(false); 
+                                                    }}
+                                                >
+                                                    За рейтингом
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="actor_block_films">
@@ -230,18 +297,19 @@ export const ActorModal = ({ actor, onClose }) => {
                                             to={`/movie/${film.id}`}
                                             className="actor_film-card-link"
                                         >
-                                            <img 
-                                                src={selectedItemId === film.id ? film.hoverImage : film.image} 
-                                                alt={film.name} 
-                                                className="actor_film-poster" 
-                                            />
+                                            {film.posterUrl && (
+                                                <img 
+                                                    src={film.posterUrl} 
+                                                    alt={film.title} 
+                                                    className="actor_film-poster" 
+                                                />
+                                            )}
                                             
                                             <div className="actor_film-card-header">
                                                 <div
                                                     className={`actor_film-card-save actor_film-action ${
                                                         isFavorite(film.id) ? 'active' : ''
                                                     }`}
-                                                    data-tooltip={t('tooltip.watch')}
                                                     onClick={async (e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
@@ -250,7 +318,6 @@ export const ActorModal = ({ actor, onClose }) => {
                                                 />
                                                 <div
                                                     className="actor_film-card-repost actor_film-action"
-                                                    data-tooltip={t('tooltip.share')}
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
@@ -263,31 +330,27 @@ export const ActorModal = ({ actor, onClose }) => {
                                             </div>
 
                                             <div className="actor_film-card-text">
-                                                {film.rating > 0 && (
+                                                {film.rating && film.rating > 0 && (
                                                     <div className="actor_film-card-rating">{film.rating.toFixed(1)}</div>
                                                 )}
-                                                <div className="actor_film-card-line">
-                                                    {(film.linedate || film.line1) && (
+                                                {film.releaseDate && (
+                                                    <div className="actor_film-card-line">
                                                         <div className="actor_film-card-line1">
-                                                            {film.linedate && (
-                                                                <span className="actor_film-card-date">{film.linedate.trim()}</span>
-                                                            )}
-                                                            {film.line1 && <span>{film.line1}</span>}
+                                                            <span className="actor_film-card-date">
+                                                                {new Date(film.releaseDate).getFullYear()}
+                                                            </span>
                                                         </div>
-                                                    )}
-                                                    {film.line2 && (
-                                                        <div className="actor_film-card-line2">{film.line2}</div>
-                                                    )}
-                                                </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </Link>
                                         <div className="actor_film-title">
-                                            {t(`filmsPage.filmTitles.${film.id}`, { defaultValue: film.name })}
+                                            {film.title}
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div style={{ color: '#F8F8FE', padding: '20px' }}><Trans i18nKey="actorModal.loading" /></div>
+                                <div style={{ color: '#F8F8FE', padding: '20px' }}></div>
                             )}
                         </div>
                     </div>

@@ -245,17 +245,8 @@ export const NewAndPopular = () => {
                 setLoading(true);
                 setError(null);
                 const data = await getNewPopularPageData();
-                console.log('Данные страницы новинок загружены:', data);
-                console.log('Коллекции:', data?.collections);
-                console.log('Количество коллекций:', data?.collections?.length);
-                if (data?.collections) {
-                    data.collections.forEach((col, idx) => {
-                        console.log(`Коллекция ${idx}:`, col.title, 'items:', col.items?.length);
-                    });
-                }
                 setPageData(data);
             } catch (err) {
-                console.error('Ошибка загрузки данных страницы новинок:', err);
                 setError(err.message || 'Ошибка загрузки данных');
                 setPageData(null);
             } finally {
@@ -313,9 +304,6 @@ export const NewAndPopular = () => {
         );
     }
 
-    console.log('pageData.collections:', pageData.collections);
-    console.log('pageData.collections?.length:', pageData.collections?.length);
-    console.log('Условие отображения коллекций:', pageData.collections && pageData.collections.length > 0);
 
     const transformTitleToFilm = (title) => {
         let year = '';
@@ -429,7 +417,6 @@ export const NewAndPopular = () => {
                                                 draggable="false"
                                                 onDragStart={(e) => e.preventDefault()}
                                                 onError={(e) => {
-                                                    console.error('Ошибка загрузки изображения коллекции:', collectionImage);
                                                     e.target.style.display = 'none';
                                                 }}
                                             />

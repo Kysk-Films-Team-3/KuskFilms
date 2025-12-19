@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
 import { useKeycloak } from '@react-keycloak/web';
+import { getLogoutUi } from '../../services/api';
 import './Logout.css';
 
 export const Logout = ({ onClose }) => {
     const { keycloak } = useKeycloak();
     const logoutRef = useRef(null);
     const navigate = useNavigate();
-    useTranslation();
+    const [logoutData, setLogoutData] = useState(null);
 
     const handleClose = () => {
         onClose?.();
@@ -20,6 +20,17 @@ export const Logout = ({ onClose }) => {
         }
         handleClose();
     };
+
+    useEffect(() => {
+        const loadLogoutData = async () => {
+            try {
+                const data = await getLogoutUi();
+                setLogoutData(data);
+            } catch (err) {
+            }
+        };
+        loadLogoutData();
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -37,6 +48,16 @@ export const Logout = ({ onClose }) => {
         };
     }, [onClose]);
 
+    if (!logoutData) {
+        return (
+            <div className="logout_overlay" role="dialog" aria-modal="true">
+                <div className="logout_modal" ref={logoutRef}>
+                    <div>Завантаження...</div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="logout_overlay" role="dialog" aria-modal="true">
             <div className="logout_modal" ref={logoutRef}>
@@ -44,20 +65,20 @@ export const Logout = ({ onClose }) => {
 
                 <div className="logout_text">
                     <div className="logout_title t-text-preline">
-                        <Trans i18nKey="logout.confirmMessage" />
+                        {logoutData.title}
                     </div>
                     <div className="logout_description t-text-preline">
-                        <Trans i18nKey="logout.description" />
+                        {logoutData.description}
                     </div>
                 </div>
 
                 <div className="logout_buttons">
                     <button className="logout_cancel_button" onClick={handleClose}>
-                        <Trans i18nKey="logout.cancel" />
+                        {logoutData.stayButton}
                     </button>
 
                     <button className="logout_exit_button" onClick={handleLogout}>
-                        <Trans i18nKey="logout.exit" />
+                        {logoutData.logoutButton}
                     </button>
                 </div>
             </div>
