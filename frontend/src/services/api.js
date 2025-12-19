@@ -19,18 +19,14 @@ const baseURL = API_URL || "";
 export const api = axios.create({
     baseURL: baseURL,
     headers: { "Content-Type": "application/json" },
-    timeout: 15000, // <--- ВАЖНО: Добавили таймаут 15 секунд (fix ECONNABORTED)
+    timeout: 15000
 });
 
-// Хелпер для формирования URL
-// Если baseURL уже содержит /api, мы не дублируем его в пути запроса
 const getUrl = (endpoint) => {
     const currentBase = api.defaults.baseURL || '';
-    // Если путь начинается с /api, а в базовом URL он уже есть — убираем из пути
     if ((currentBase.endsWith('/api') || currentBase.match(/\/api\/?$/)) && endpoint.startsWith('/api')) {
         return endpoint.replace('/api', '');
     }
-    // Если базовый URL пустой, а путь не начинается с /api — добавляем (для Nginx)
     if (!currentBase && !endpoint.startsWith('/api')) {
         return `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
     }
@@ -44,7 +40,7 @@ api.interceptors.request.use(async (config) => {
             config.headers.Authorization = `Bearer ${keycloak.token}`;
         } catch (error) {
             keycloak.logout();
-            return Promise.reject('Token refresh failed, logging out.');
+            return Promise.reject('Помилка оновлення токену, вихід з системи.');
         }
     }
     return config;
@@ -243,7 +239,6 @@ export const fetchTitles = async (params = {}) => {
 
 export const fetchTitleById = async (id) => {
     try {
-        // FIX: Добавлено /page (ты это сделал правильно, оставляем)
         const response = await api.get(getUrl(`/api/public/titles/${id}/page`));
         return response.data;
     } catch (error) {
@@ -253,10 +248,9 @@ export const fetchTitleById = async (id) => {
 
 export const fetchUserProfile = async () => {
     try {
-        // FIX: Добавлено /api, чтобы работало через Nginx
         const response = await api.get(getUrl('/api/users/profile/me'));
         if (!response.data) {
-            throw new Error("Профиль не найден в ответе");
+            throw new Error("Профіль не знайдено у відповіді");
         }
         return response.data;
     } catch (e) {
@@ -280,14 +274,12 @@ export const fetchUserProfile = async () => {
 export const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    // FIX: Добавлено /api
     const response = await api.post(getUrl('/api/users/profile/avatar'), formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
 };
 
-// --- Mock helpers ---
 const loadUsers = () => {
     try { return JSON.parse(localStorage.getItem('mockUsers') || '[]'); }
     catch (e) { return []; }
@@ -409,16 +401,15 @@ export const createCheckoutSession = async () => {
     try {
         if (!keycloak.authenticated) {
             keycloak.login();
-            return { success: false, message: "Login required" };
+            return { success: false, message: "Потрібен вхід" };
         }
 
-        // FIX: Добавлено /api
         const response = await api.post(getUrl('/api/payment/checkout'));
 
         if (response.data && response.data.url) {
             return { success: true, url: response.data.url };
         } else {
-            return { success: false, message: "No URL returned" };
+            return { success: false, message: "URL не повернено" };
         }
     } catch (error) {
         return { success: false, message: error.message };
@@ -481,7 +472,6 @@ export const getPremiumData = async () => {
 
 export const getLogoutUi = async () => {
     try {
-        // FIX: Добавлено /api (если бэкенд ждет api/auth)
         const response = await api.get(getUrl('/api/auth/logout/ui'));
         return response.data;
     } catch (error) {
@@ -519,6 +509,24 @@ export const activatePromo = async (code) => {
 export const getPersonData = async (personId) => {
     try {
         const response = await api.get(getUrl(`/api/public/persons/${personId}`));
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPersonTitles = async (personId) => {
+    try {
+        const response = await api.get(getUrl(`/api/public/persons/${personId}/titles`));
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPersonPicks = async (personId) => {
+    try {
+        const response = await api.get(getUrl(`/api/public/persons/${personId}/picks`));
         return response.data;
     } catch (error) {
         throw error;
@@ -587,13 +595,13 @@ export const toggleFavorite = async (titleId) => {
             if (keycloak && !keycloak.authenticated) {
                 keycloak.login();
             }
-            throw new Error("Требуется авторизация");
+            throw new Error("Потрібна авторизація");
         }
         if (error.response?.status === 500) {
-            const errorMessage = error.response?.data?.message || error.response?.data?.error || "Ошибка сервера при переключении избранного";
+            const errorMessage = error.response?.data?.message || error.response?.data?.error || "Помилка сервера при перемиканні обраного";
             throw new Error(errorMessage);
         }
-        const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Ошибка при переключении избранного";
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Помилка при перемиканні обраного";
         throw new Error(errorMessage);
     }
 };

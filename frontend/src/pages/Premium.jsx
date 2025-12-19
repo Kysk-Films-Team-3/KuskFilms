@@ -16,7 +16,6 @@ export const Premium = () => {
         const loadPremiumData = async () => {
             try {
                 const data = await getPremiumData();
-                console.log("Premium Data Loaded:", data); // Для отладки
                 setPremiumData(data);
             } catch (err) {
                 console.error("Ошибка загрузки данных премиума:", err);
@@ -54,12 +53,6 @@ export const Premium = () => {
         return <div className="premium_page">Завантаження...</div>;
     }
 
-    // --- FIX: Используем правильные ключи из Java DTO ---
-    // Было: premiumData.ui.backButton -> Стало: premiumData.backButton
-    // Было: premiumData.ui.pageTitle -> Стало: premiumData.title
-    // Было: premiumData.benefits -> Стало: premiumData.features
-    // Было: premiumData.ui.ctaButton -> Стало: premiumData.buttonText
-
     return (
         <div className="premium_page">
             <div className="premium_header">
@@ -84,7 +77,6 @@ export const Premium = () => {
                 </div>
 
                 <div className="premium_left">
-                    {/* FIX: Проверяем наличие features перед map */}
                     {premiumData.features && premiumData.features.map((feature, index) => (
                         <div key={index} className="premium_line">
                             <span className="premium_feature_text">

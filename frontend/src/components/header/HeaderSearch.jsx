@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import './HeaderSearch.css';
 
-export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle, isSearching = false }) => {
+export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle, isSearching = false, onActorClick }) => {
     const { t } = useTranslation();
     const showPopular = searchQuery === '';
     
@@ -274,14 +274,19 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                     <div className="search_results_actors_column">
                                         <h3><Trans i18nKey="category.series" /></h3>
                                         {searchResults.actors.map(actor => (
-                                            <Link to={`/actor/${actor.id}`} key={actor.id} className="search_item_card actor">
+                                            <div 
+                                                key={actor.id} 
+                                                className="search_item_card actor"
+                                                onClick={() => onActorClick && onActorClick(actor)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
                                                 <img src={actor.image || 'https://via.placeholder.com/300x450'} className="search_item_image_actor" alt={actor.name} />
                                                 <div className="search_item_info">
                                                     <p className="search_item_title">
                                                         {actor.name} <span className="search_item_type">({actor.activityType || 'Actor'})</span>
                                                     </p>
                                                 </div>
-                                            </Link>
+                                            </div>
                                         ))}
                                     </div>
                                 )}

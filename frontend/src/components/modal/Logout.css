@@ -55,7 +55,8 @@
     font-size: 20px;
     line-height: 1.4;
     color: #9999A1;
-    margin-bottom: 30px;
+    margin: 0 auto 30px auto;
+    max-width: 500px;
 }
 
 .logout_buttons {

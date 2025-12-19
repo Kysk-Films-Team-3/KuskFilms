@@ -61,6 +61,7 @@ html, body {
     position: relative;
 }
 
+
 .login_input {
     background: #34353F;
     border: 1px solid #838387;
@@ -281,7 +282,7 @@ html, body {
     font-weight: 400;
     font-family: inherit;
     text-align: center;
-    display: block;
+    display: none;
     text-decoration: none;
     width: 100%;
     transition: color 0.3s ease;

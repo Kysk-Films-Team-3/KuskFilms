@@ -7,6 +7,7 @@ import { fetchHeaderData, globalSearch } from 'services/api';
 import { useHasRole } from 'services/useHasRole';
 import { useKeycloak } from '@react-keycloak/web';
 import { HeaderSearch } from './HeaderSearch';
+import { ActorModal } from '../modal/ActorModal';
 
 export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenLogoutModal, onOpenListModal}) => {
 
@@ -30,6 +31,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
     const [headerData, setHeaderData] = useState(null);
     const [navigationItems, setNavigationItems] = useState([]);
     const [searchSuggestions, setSearchSuggestions] = useState([]);
+    const [selectedActor, setSelectedActor] = useState(null);
     const dropdownRef = useRef(null);
     const searchRef = useRef(null);
     const searchTimeoutRef = useRef(null);
@@ -359,6 +361,10 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         searchQuery={searchQuery}
                                         searchSuggestionsTitle={headerData?.searchSuggestions?.title}
                                         isSearching={isSearching}
+                                        onActorClick={(actor) => {
+                                            setSelectedActor(actor);
+                                            setIsSearchOpen(false);
+                                        }}
                                     />
                                 )}
                             </div>
@@ -519,6 +525,12 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                 </div>
             </div>
         </header>
+        {selectedActor && (
+            <ActorModal
+                actor={selectedActor}
+                onClose={() => setSelectedActor(null)}
+            />
+        )}
         </>
     );
 };
