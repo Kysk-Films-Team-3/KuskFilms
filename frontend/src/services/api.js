@@ -19,7 +19,23 @@ const baseURL = API_URL || "";
 export const api = axios.create({
     baseURL: baseURL,
     headers: { "Content-Type": "application/json" },
+    timeout: 15000, // <--- ВАЖНО: Добавили таймаут 15 секунд (fix ECONNABORTED)
 });
+
+// Хелпер для формирования URL
+// Если baseURL уже содержит /api, мы не дублируем его в пути запроса
+const getUrl = (endpoint) => {
+    const currentBase = api.defaults.baseURL || '';
+    // Если путь начинается с /api, а в базовом URL он уже есть — убираем из пути
+    if ((currentBase.endsWith('/api') || currentBase.match(/\/api\/?$/)) && endpoint.startsWith('/api')) {
+        return endpoint.replace('/api', '');
+    }
+    // Если базовый URL пустой, а путь не начинается с /api — добавляем (для Nginx)
+    if (!currentBase && !endpoint.startsWith('/api')) {
+        return `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    }
+    return endpoint;
+};
 
 api.interceptors.request.use(async (config) => {
     if (keycloak.authenticated && keycloak.token) {
@@ -38,7 +54,7 @@ api.interceptors.request.use(async (config) => {
 
 export const getHomeContent = async () => {
     try {
-        const response = await api.get('/api/public/titles');
+        const response = await api.get(getUrl('/api/public/titles'));
         const titles = response.data;
         const mappedContent = [
             {
@@ -70,14 +86,7 @@ export const getHomeContent = async () => {
 
 export const getHomePageData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/home';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/home';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/home'));
         return response.data;
     } catch (error) {
         throw error;
@@ -210,7 +219,6 @@ export const transformPromo = (promo) => {
 };
 
 export const fetchTitles = async (params = {}) => {
-    const baseURL = api.defaults.baseURL || '';
     const {
         page = 0,
         size = 20,
@@ -223,30 +231,20 @@ export const fetchTitles = async (params = {}) => {
 
     let url = `/api/public/titles?page=${page}&size=${size}`;
 
-    if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-        url = `/public/titles?page=${page}&size=${size}`;
-    }
-
     if (genre) url += `&genre=${encodeURIComponent(genre)}`;
     if (year) url += `&year=${year}`;
     if (ratingFrom !== null) url += `&ratingFrom=${ratingFrom}`;
     if (sort) url += `&sort=${encodeURIComponent(sort)}`;
     if (search) url += `&search=${encodeURIComponent(search)}`;
 
-    const response = await api.get(url);
+    const response = await api.get(getUrl(url));
     return response.data;
 };
 
 export const fetchTitleById = async (id) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/titles/${id}/page`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/titles/${id}/page`;
-        }
-
-        const response = await api.get(url);
+        // FIX: Добавлено /page (ты это сделал правильно, оставляем)
+        const response = await api.get(getUrl(`/api/public/titles/${id}/page`));
         return response.data;
     } catch (error) {
         throw error;
@@ -255,7 +253,8 @@ export const fetchTitleById = async (id) => {
 
 export const fetchUserProfile = async () => {
     try {
-        const response = await api.get('/users/profile/me');
+        // FIX: Добавлено /api, чтобы работало через Nginx
+        const response = await api.get(getUrl('/api/users/profile/me'));
         if (!response.data) {
             throw new Error("Профиль не найден в ответе");
         }
@@ -281,12 +280,14 @@ export const fetchUserProfile = async () => {
 export const uploadAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post('/users/profile/avatar', formData, {
+    // FIX: Добавлено /api
+    const response = await api.post(getUrl('/api/users/profile/avatar'), formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
 };
 
+// --- Mock helpers ---
 const loadUsers = () => {
     try { return JSON.parse(localStorage.getItem('mockUsers') || '[]'); }
     catch (e) { return []; }
@@ -411,7 +412,8 @@ export const createCheckoutSession = async () => {
             return { success: false, message: "Login required" };
         }
 
-        const response = await api.post('/payment/checkout');
+        // FIX: Добавлено /api
+        const response = await api.post(getUrl('/api/payment/checkout'));
 
         if (response.data && response.data.url) {
             return { success: true, url: response.data.url };
@@ -425,14 +427,7 @@ export const createCheckoutSession = async () => {
 
 export const fetchHeaderData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/layout/header';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/layout/header';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/layout/header'));
         return response.data;
     } catch (error) {
         throw error;
@@ -441,14 +436,7 @@ export const fetchHeaderData = async () => {
 
 export const fetchFooterData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/layout/footer';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/layout/footer';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/layout/footer'));
         return response.data;
     } catch (error) {
         throw error;
@@ -457,14 +445,7 @@ export const fetchFooterData = async () => {
 
 export const getCatalogPageData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/catalog';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/catalog';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/catalog'));
         return response.data;
     } catch (error) {
         throw error;
@@ -473,14 +454,7 @@ export const getCatalogPageData = async () => {
 
 export const getNewPopularPageData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/new-popular';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/new-popular';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/new-popular'));
         return response.data;
     } catch (error) {
         throw error;
@@ -489,14 +463,7 @@ export const getNewPopularPageData = async () => {
 
 export const getFilmsPageMeta = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/titles/page-meta';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/titles/page-meta';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/titles/page-meta'));
         return response.data;
     } catch (error) {
         throw error;
@@ -505,14 +472,7 @@ export const getFilmsPageMeta = async () => {
 
 export const getPremiumData = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/premium/ui';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/premium/ui';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/public/premium/ui'));
         return response.data;
     } catch (error) {
         throw error;
@@ -521,14 +481,8 @@ export const getPremiumData = async () => {
 
 export const getLogoutUi = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/auth/logout/ui';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/auth/logout/ui';
-        }
-
-        const response = await api.get(url);
+        // FIX: Добавлено /api (если бэкенд ждет api/auth)
+        const response = await api.get(getUrl('/api/auth/logout/ui'));
         return response.data;
     } catch (error) {
         throw error;
@@ -537,14 +491,7 @@ export const getLogoutUi = async () => {
 
 export const getShareTitleData = async (titleId) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/share/title/${titleId}`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/share/title/${titleId}`;
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl(`/api/public/share/title/${titleId}`));
         return response.data;
     } catch (error) {
         throw error;
@@ -553,14 +500,7 @@ export const getShareTitleData = async (titleId) => {
 
 export const getPromoUi = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/promo/ui';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/promo/ui';
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl('/api/promo/ui'));
         return response.data;
     } catch (error) {
         throw error;
@@ -569,14 +509,7 @@ export const getPromoUi = async () => {
 
 export const activatePromo = async (code) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/promo/activate';
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/promo/activate';
-        }
-
-        const response = await api.post(url, { code });
+        const response = await api.post(getUrl('/api/promo/activate'), { code });
         return response.data;
     } catch (error) {
         throw error;
@@ -585,14 +518,7 @@ export const activatePromo = async (code) => {
 
 export const getPersonData = async (personId) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/persons/${personId}`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/persons/${personId}`;
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl(`/api/public/persons/${personId}`));
         return response.data;
     } catch (error) {
         throw error;
@@ -601,14 +527,7 @@ export const getPersonData = async (personId) => {
 
 export const globalSearch = async (query) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/search?q=${encodeURIComponent(query)}`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/search?q=${encodeURIComponent(query)}`;
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl(`/api/public/search?q=${encodeURIComponent(query)}`));
         return response.data;
     } catch (error) {
         throw error;
@@ -617,14 +536,7 @@ export const globalSearch = async (query) => {
 
 export const getTitleComments = async (titleId) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/titles/${titleId}/comments`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/titles/${titleId}/comments`;
-        }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl(`/api/public/titles/${titleId}/comments`));
         return response.data;
     } catch (error) {
         throw error;
@@ -633,18 +545,11 @@ export const getTitleComments = async (titleId) => {
 
 export const getPlayerConfig = async (titleId, episodeId = null) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
         let url = `/api/public/player/config?titleId=${titleId}`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/player/config?titleId=${titleId}`;
-        }
-
         if (episodeId) {
             url += `&episodeId=${episodeId}`;
         }
-
-        const response = await api.get(url);
+        const response = await api.get(getUrl(url));
         return response.data;
     } catch (error) {
         throw error;
@@ -653,15 +558,8 @@ export const getPlayerConfig = async (titleId, episodeId = null) => {
 
 export const getFavorites = async () => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = '/api/favorites';
+        const response = await api.get(getUrl('/api/favorites'));
 
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/favorites';
-        }
-
-        const response = await api.get(url);
-        
         if (response.data && response.data.content) {
             return response.data.content;
         }
@@ -682,14 +580,7 @@ export const getFavorites = async () => {
 
 export const toggleFavorite = async (titleId) => {
     try {
-        const baseURL = api.defaults.baseURL || '';
-        let url = `/api/favorites/${titleId}`;
-
-        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/favorites/${titleId}`;
-        }
-
-        const response = await api.post(url);
+        const response = await api.post(getUrl(`/api/favorites/${titleId}`));
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {

@@ -32,7 +32,7 @@ class PublicPremiumController {
             "Завантаження та перегляд без інтернету"
         ),
         planName = "Kysk преміум",
-        price = "15€",
+        price = "9.99€",
         buttonText = "Оформити"
     )
 }
