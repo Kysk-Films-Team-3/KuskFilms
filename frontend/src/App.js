@@ -59,7 +59,6 @@ const AppContent = () => {
                     setUserProfile(profileData);
                 })
                 .catch(error => {
-                    console.error("Не удалось загрузить профиль пользователя с бэкенда:", error);
                 });
         }
 
@@ -86,13 +85,20 @@ const AppContent = () => {
                 isLoggedIn={keycloak.authenticated}
                 onPromoInputClick={() => openModal('PromoInput')}
                 onCommentModalClick={() => openModal('CommentModal')}
-                onPlayerOverlayClick={() => openModal('PlayerOverlay')}
+                onPlayerOverlayClick={(titleId, episodeId) => openModal({ type: 'PlayerOverlay', titleId, episodeId })}
                 onOpenLogoutModal={() => openModal('logout')}
                 onOpenActorRecs={(actor) => openModal({ type: 'actorRecs', actor })}
                 onProfileClick={() => openModal('profile')}
                 onOpenListModal={() => openModal('adminList')}
             />
-            {activeModal === 'PlayerOverlay' && <PlayerOverlay isOpen onClose={closeModal} />}
+            {activeModal?.type === 'PlayerOverlay' && (
+                <PlayerOverlay 
+                    isOpen 
+                    onClose={closeModal} 
+                    titleId={activeModal.titleId} 
+                    episodeId={activeModal.episodeId} 
+                />
+            )}
             {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
             {activeModal === 'CommentModal' && <CommentModal isOpen onClose={closeModal} />}
             {activeModal === 'logout' && <Logout isOpen onClose={closeModal} />}

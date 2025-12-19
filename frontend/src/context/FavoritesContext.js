@@ -43,7 +43,6 @@ export function FavoritesProvider({ children }) {
                 setFavoriteIds(new Set());
             }
         } catch (error) {
-            console.error("Ошибка загрузки избранного:", error);
             setFavorites([]);
             setFavoriteIds(new Set());
         } finally {
@@ -76,7 +75,6 @@ export function FavoritesProvider({ children }) {
                 await loadFavorites();
             }
         } catch (error) {
-            console.error("Ошибка переключения избранного:", error);
         }
     }, [loadFavorites]);
 

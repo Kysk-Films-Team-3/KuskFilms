@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { Trans, useTranslation } from "react-i18next";
 import PlayerOverlay from "../components/player/PlayerOverlay";
 import { fetchTitleById } from "../services/api";
 import { useFavorites } from "../context/FavoritesContext";
@@ -8,7 +7,6 @@ import "./MoviePage.css";
 
 export const MoviePage = ({ onCommentModalClick }) => {
     const { id } = useParams();
-    const { t } = useTranslation();
     const { isFavorite, toggleFavorite } = useFavorites();
     const [isPlayerOpen, setIsPlayerOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -41,7 +39,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
     useEffect(() => {
         const loadMovie = async () => {
             if (!id) {
-                setError(t("moviePage.errorId"));
+                setError("");
                 setLoading(false);
                 return;
             }
@@ -52,8 +50,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 const data = await fetchTitleById(id);
                 setMovie(data);
             } catch (err) {
-                console.error("Помилка завантаження фільму:", err);
-                setError(t("moviePage.errorLoad"));
+                setError("");
             } finally {
                 setLoading(false);
             }
@@ -134,7 +131,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
     if (loading) {
         return (
             <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
-                <p><Trans i18nKey="moviePage.loading" /></p>
+                <p></p>
             </div>
         );
     }
@@ -142,34 +139,32 @@ export const MoviePage = ({ onCommentModalClick }) => {
     if (error || !movie) {
         return (
             <div className="movie_page" style={{ padding: '100px 20px', textAlign: 'center' }}>
-                <p style={{ color: 'red' }}>{error || <Trans i18nKey="moviePage.notFound" />}</p>
+                <p style={{ color: 'red' }}>{error || ''}</p>
             </div>
         );
     }
 
     const videoUrl = movie.streamUrl;
 
-    const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
-    const genres = movie.genres && movie.genres.length > 0 ? movie.genres.join(", ") : null;
+    const releaseYear = movie.year || null;
+    const genres = movie.genre || null;
 
     const handleWatchClick = () => {
         if (videoUrl) {
             setIsPlayerOpen(true);
-        } else {
-            alert(t("moviePage.videoProcessing"));
         }
     };
 
-    const castAndCrew = movie?.actors?.map(actor => ({
-        id: actor.id,
-        name: actor.name,
-        role: actor.role || 'Актор',
-        image: actor.image || 'https://via.placeholder.com/150'
+    const castAndCrew = movie?.cast?.map(person => ({
+        id: person.id,
+        name: person.name,
+        role: person.role || 'Актор',
+        image: person.photoUrl || 'https://via.placeholder.com/150'
     })) || [];
 
     const reviews = movie?.reviews || [];
 
-    const alsoWatchFilms = [];
+    const alsoWatchFilms = movie?.recommendations || [];
 
     const scrollCast = (direction) => {
         if (!castRef.current) return;
@@ -220,8 +215,11 @@ export const MoviePage = ({ onCommentModalClick }) => {
 
     return (
         <div className="movie_page">
-            <div className="movie_page_poster">
+            <div className="movie_page_poster" style={movie.backgroundUrl ? { backgroundImage: `url(${movie.backgroundUrl})` } : {}}>
                 <img src={movie.posterUrl || 'https://via.placeholder.com/1920x1080?text=No+Poster'} alt={movie.title} className="movie_poster" />
+                {movie.logoUrl && (
+                    <img src={movie.logoUrl} alt={movie.title} className="movie_logo" style={{ position: 'absolute', top: '20px', left: '20px', maxHeight: '100px' }} />
+                )}
                 <div className="movie_poster_content">
                     <div className="movie_postername">{movie.title}</div>
                     <div className="movie_poster_description">
@@ -231,19 +229,25 @@ export const MoviePage = ({ onCommentModalClick }) => {
                             {releaseYear && genres && <div className="movie_poster_end">•</div>}
                             {genres && <div className="movie_poster_genre">{genres}</div>}
                         </div>
+                        {movie.directorsText && (
+                            <div className="movie_poster_directors">{movie.directorsText}</div>
+                        )}
+                        {movie.actorsText && (
+                            <div className="movie_poster_actors">{movie.actorsText}</div>
+                        )}
                         <div className="movie_poster_details">
-                            {movie.description && (
-                                <div className="movie_details_line">{movie.description.split('\n')[0]}</div>
+                            {movie.shortDescription && (
+                                <div className="movie_details_line">{movie.shortDescription}</div>
                             )}
                         </div>
                         <div className="movie_poster_info">
-                            {movie.seasons && movie.seasons.length > 0 && (
-                                <div className="movie_poster_seasons"><Trans i18nKey="moviePage.seasonsCount" /> {movie.seasons.length}</div>
+                            {movie.duration && (
+                                <div className="movie_poster_seasons">{movie.duration}</div>
                             )}
                         </div>
                         <div className="movie_submit">
-                            <div className="movie_submit_price"><Trans i18nKey="moviePage.price" /></div>
-                            <div className="movie_submit_subtitle"><Trans i18nKey="moviePage.inSubscription" /></div>
+                            <div className="movie_submit_price">{movie.subscriptionPrice}</div>
+                            <div className="movie_submit_subtitle">{movie.subscriptionLabel}</div>
                         </div>
                     </div>
 
@@ -253,12 +257,27 @@ export const MoviePage = ({ onCommentModalClick }) => {
                             onClick={handleWatchClick}
                             style={{ opacity: videoUrl ? 1 : 0.6, cursor: videoUrl ? 'pointer' : 'not-allowed' }}
                         >
-                            <Trans i18nKey="moviePage.watch" />
                         </button>
 
-                        <button className="movie_trailer_button" onClick={() => alert(t("moviePage.trailerNotAvailable"))}><Trans i18nKey="moviePage.trailer" /></button>
+                        {movie.trailerUrl && (
+                            <button 
+                                className="movie_trailer_button" 
+                                onClick={() => {
+                                    window.open(movie.trailerUrl, '_blank');
+                                }}
+                            ></button>
+                        )}
+                        {!movie.hasPremium && (
+                            <button 
+                                className="movie_buy_premium_button"
+                                onClick={() => {
+                                    window.location.href = '/premium';
+                                }}
+                            >
+                            </button>
+                        )}
                         <div 
-                            className={`movie_save_button ${movie && isFavorite(movie.id) ? "active" : ""}`}
+                            className={`movie_save_button ${movie && (movie.isSaved || isFavorite(movie.id)) ? "active" : ""}`}
                             onClick={async () => {
                                 if (movie && movie.id) {
                                     await toggleFavorite(movie.id);
@@ -275,38 +294,36 @@ export const MoviePage = ({ onCommentModalClick }) => {
                     open={isPlayerOpen}
                     onClose={() => setIsPlayerOpen(false)}
                     titleId={movie.id}
-                    episodeId={movie.type === 'SERIES' && movie.seasons?.[0]?.episodes?.[0]?.id ? movie.seasons[0].episodes[0].id : null}
+                    episodeId={null}
                 />
             )}
 
             <div className="movie_description_block">
-                <div className="movie_description_title"><Trans i18nKey="moviePage.description" /></div>
+                <div className="movie_description_title">{movie.fullDescriptionTitle || ''}</div>
                 <div className="movie_description_title_line"></div>
             </div>
             <div className="movie_overview">
-                {movie.description && (
+                {movie.fullDescription && (
                     <div className="movie_description_block_expand">
                         <p className={`movie_description_text ${expanded ? "open" : ""}`}>
-                            {movie.description}
+                            {movie.fullDescription}
                         </p>
                         <div className="movie_description_block_toggle" onClick={() => setExpanded(!expanded)}>
-                            {expanded ? <Trans i18nKey="moviePage.collapse" /> : <Trans i18nKey="moviePage.expand" />}
                         </div>
                     </div>
                 )}
                 <div className="movie_mark_block">
                     <div className="movie_mark_block_header">
-                        <div className="movie_mark_block_text"><Trans i18nKey="moviePage.rate" /></div>
+                        <div className="movie_mark_block_text"></div>
                         {userRating > 0 && (
                             <button 
                                 className="movie_mark_block_delete"
                                 onClick={() => setUserRating(0)}
                             >
-                                <Trans i18nKey="moviePage.delete" />
                             </button>
                         )}
                     </div>
-                    <div className="movie_mark_block_subtext"><Trans i18nKey="moviePage.rateSubtext" /></div>
+                    <div className="movie_mark_block_subtext"></div>
                     <div className="movie_marks">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                             <button
@@ -326,7 +343,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
 
             {castAndCrew.length > 0 && (
                 <div className="movie_cast_block">
-                    <div className="movie_cast_title"><Trans i18nKey="moviePage.castAndCrew" /></div>
+                    <div className="movie_cast_title"></div>
                     <div className={`movie_cast_scroll_btn left ${!castScrollState.isScrollable || castScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollCast('left')}></div>
                     <div className={`movie_cast_scroll_btn right ${!castScrollState.isScrollable || castScrollState.isAtEnd ? 'hidden' : ''}`} onClick={() => scrollCast('right')}></div>
                     <div 
@@ -350,7 +367,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
             )}
 
             <div className="movie_reviews_block">
-                <div className="movie_reviews_title"><Trans i18nKey="moviePage.reviews" /></div>
+                <div className="movie_reviews_title"></div>
                 <div className={`movie_reviews_scroll_btn left ${!reviewsScrollState.isScrollable || reviewsScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollReviews('left')}></div>
                 <div className={`movie_reviews_scroll_btn right ${!reviewsScrollState.isScrollable || reviewsScrollState.isAtEnd ? 'hidden' : ''}`} onClick={() => scrollReviews('right')}></div>
                 <div 
@@ -372,14 +389,13 @@ export const MoviePage = ({ onCommentModalClick }) => {
                                         </div>
                                         <div className="movie_review_rating">{review.rating}</div>
                                     </div>
-                                    <div className="movie_review_title">{review.title}</div>
+                                    {review.title && <div className="movie_review_title">{review.title}</div>}
                                     <div className="movie_review_text">{review.text}</div>
                                     {review.fullText && review.fullText !== review.text && (
                                         <button 
                                             className="movie_review_read_more"
                                             onClick={() => handleToggleReview(review)}
                                         >
-                                            <Trans i18nKey="moviePage.readFull" />
                                         </button>
                                     )}
                                 </div>
@@ -387,7 +403,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                         ))}
                     </div>
                 </div>
-                <button className="movie_reviews_button" onClick={onCommentModalClick}><Trans i18nKey="moviePage.writeComment" /></button>
+                <button className="movie_reviews_button" onClick={onCommentModalClick}></button>
             </div>
 
             {selectedReview && (
@@ -406,7 +422,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                             </div>
                             <div className="movie_review_modal_rating">{selectedReview.rating}</div>
                         </div>
-                        <div className="movie_review_modal_title">{selectedReview.title}</div>
+                        {selectedReview.title && <div className="movie_review_modal_title">{selectedReview.title}</div>}
                         <div className="movie_review_modal_text">{selectedReview.fullText || selectedReview.text}</div>
                     </div>
                 </div>
@@ -415,7 +431,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
             {alsoWatchFilms.length > 0 && (
                 <div className="movie_also_watch_block">
                     <div className="movie_also_watch_header">
-                        <div className="movie_also_watch_title"><Trans i18nKey="moviePage.alsoWatch" /></div>
+                        <div className="movie_also_watch_title"></div>
                         <div className="movie_also_watch_arrow"></div>
                     </div>
                     <div className={`movie_also_watch_scroll_btn left ${!alsoWatchScrollState.isScrollable || alsoWatchScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollAlsoWatch('left')}></div>
@@ -434,22 +450,21 @@ export const MoviePage = ({ onCommentModalClick }) => {
                                     onMouseLeave={() => setSelectedItemId(null)}
                                 >
                                     <img 
-                                        src={selectedItemId === film.id ? film.hoverImage : film.image} 
-                                        alt={`Film ${film.id}`} 
+                                        src={film.posterUrl || 'https://via.placeholder.com/300x450'} 
+                                        alt={film.title} 
                                         className="movie_also_watch_img"
                                     />
                                     <div className="movie_also_watch_text">
-                                        {film.rating > 0 && (
-                                            <div className="movie_also_watch_rating">{film.rating.toFixed(1)}</div>
+                                        {film.rating && film.rating > 0 && (
+                                            <div className="movie_also_watch_rating">{typeof film.rating === 'number' ? film.rating.toFixed(1) : film.rating}</div>
                                         )}
                                         <div className="movie_also_watch_line">
                                             <div className="movie_also_watch_line1">
-                                                {film.linedate && <span className="movie_also_watch_date">{film.linedate}</span>}
-                                                {film.line1 && ` ${film.line1}`}
+                                                {film.title}
+                                                {film.type && <span> • {film.type}</span>}
+                                                {film.genres && film.genres.length > 0 && <span> • {film.genres.join(', ')}</span>}
                                             </div>
-                                            {film.line2 && <div className="movie_also_watch_line2">{film.line2}</div>}
                                         </div>
-                                        {film.season && <div className="movie_also_watch_season">{film.season}</div>}
                                     </div>
                                 </div>
                             ))}

@@ -12,7 +12,6 @@ export const Footer = () => {
                 const data = await fetchFooterData();
                 setFooterData(data);
             } catch (error) {
-                console.error("Ошибка загрузки данных футера:", error);
             }
         })();
     }, []);

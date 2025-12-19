@@ -43,7 +43,6 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
 
                 setMovies(mappedMovies);
             } catch (error) {
-                console.error("Помилка завантаження фільмів:", error);
             }
         };
 

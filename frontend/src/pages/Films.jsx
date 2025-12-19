@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { fetchTitles, getFilmsPageMeta } from '../services/api';
 import './Films.css';
 
 export const Films = () => {
     const { isFavorite, toggleFavorite } = useFavorites();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [pageMeta, setPageMeta] = useState(null);
     const [loading, setLoading] = useState(true);
     const [filmsLoading, setFilmsLoading] = useState(false);
@@ -132,13 +133,19 @@ export const Films = () => {
     }, [ratingMin, ratingMax]);
 
     useEffect(() => {
+        const genreParam = searchParams.get('genre');
+        if (genreParam) {
+            setGenre(genreParam);
+            setSelectedGenre(genreParam);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
         const loadPageMeta = async () => {
             try {
                 setLoading(true);
                 setError(null);
-                console.log('Загрузка метаданных страницы Films...');
                 const meta = await getFilmsPageMeta();
-                console.log('Метаданные загружены:', meta);
                 setPageMeta(meta);
                 
                 if (meta && meta.filters) {
@@ -162,8 +169,6 @@ export const Films = () => {
                     }
                 }
             } catch (err) {
-                console.error('Ошибка загрузки метаданных страницы Films:', err);
-                console.error('Детали ошибки:', err.response?.data || err.message);
                 setError(err.message || 'Ошибка загрузки данных');
             } finally {
                 setLoading(false);
@@ -197,7 +202,6 @@ export const Films = () => {
                     ratingFrom: ratingMin > 0 ? ratingMin : undefined
                 };
 
-                console.log('Загрузка фильмов с параметрами:', params);
                 const response = await fetchTitles(params);
                 
                 let titles;
@@ -226,7 +230,6 @@ export const Films = () => {
                                     ? date.getFullYear() 
                                     : null;
                             } catch (e) {
-                                console.warn('Ошибка парсинга даты:', title.releaseDate);
                             }
                         }
                         
@@ -260,7 +263,6 @@ export const Films = () => {
                 
                 setFilms(mappedFilms);
             } catch (error) {
-                console.error('Помилка завантаження фільмів:', error);
                 setError(error.message || 'Ошибка загрузки фильмов');
             } finally {
                 setFilmsLoading(false);
@@ -286,7 +288,6 @@ export const Films = () => {
                     ratingFrom: ratingMin > 0 ? ratingMin : undefined
                 };
 
-                console.log('Загрузка фильмов с параметрами (рейтинг):', params);
                 const response = await fetchTitles(params);
                 
                 let titles;
@@ -315,7 +316,6 @@ export const Films = () => {
                                     ? date.getFullYear() 
                                     : null;
                             } catch (e) {
-                                console.warn('Ошибка парсинга даты:', title.releaseDate);
                             }
                         }
                         
@@ -349,7 +349,6 @@ export const Films = () => {
                 
                 setFilms(mappedFilms);
             } catch (error) {
-                console.error('Помилка завантаження фільмів:', error);
                 setError(error.message || 'Ошибка загрузки фильмов');
             } finally {
                 setFilmsLoading(false);
@@ -372,6 +371,7 @@ export const Films = () => {
     }, [pageMeta, sortKey, selectedGenre, selectedYear, ratingMin, ratingMax]);
 
     const handleReset = () => {
+        setSearchParams({});
         if (pageMeta && pageMeta.filters && pageMeta.filters.sortOptions) {
             const sortOptions = pageMeta.filters.sortOptions;
             if (sortOptions['rating_desc']) {
@@ -479,14 +479,21 @@ export const Films = () => {
                             {isGenreOpen && (
                                 <div className="films_filter_menu">
                                     {genres.map((g) => (
-                                        <button 
-                                            key={g} 
-                                            className={genre === g ? 'selected' : ''} 
-                                            onClick={() => { 
+                                        <button
+                                            key={g}
+                                            className={genre === g ? 'selected' : ''}
+                                            onClick={() => {
                                                 setGenre(g);
                                                 setSelectedGenre(g);
                                                 setIsGenreOpen(false);
                                                 setCurrentPage(0);
+                                                const newSearchParams = new URLSearchParams(searchParams);
+                                                if (g) {
+                                                    newSearchParams.set('genre', g);
+                                                } else {
+                                                    newSearchParams.delete('genre');
+                                                }
+                                                setSearchParams(newSearchParams);
                                             }}
                                         >
                                             {g}

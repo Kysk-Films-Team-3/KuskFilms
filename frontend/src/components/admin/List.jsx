@@ -64,7 +64,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
                     setPersons(mappedPersons);
                 }
             } catch (error) {
-                console.error("Ошибка загрузки данных:", error);
             } finally {
                 setLoading(false);
             }
@@ -157,7 +156,6 @@ export const List = ({ isOpen, onClose, onOpenEditActor }) => {
             }
             setIsDeleteModalOpen(false);
         } catch (error) {
-            console.error("Ошибка при удалении:", error);
             alert("Помилка видалення. Перевірте консоль.");
         }
     };

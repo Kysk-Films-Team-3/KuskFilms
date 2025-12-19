@@ -27,7 +27,6 @@ export const AdminPage = () => {
 
                 setAdminData(response.data);
             } catch (err) {
-                console.error("Admin API Error:", err.response || err);
                 if (err.response && err.response.status === 403) {
                     setError(t("adminPage.errorBackend"));
                 } else {

@@ -106,7 +106,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             });
             return response.data.url;
         } catch (error) {
-            console.error("Ошибка загрузки фото:", error);
             return null;
         }
     };
@@ -132,7 +131,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 birthDate: (year && month && day) ? `${year}-01-01` : null
             };
 
-            console.log("Saving actor:", actorData);
 
             await api.post('/admin/persons', actorData);
 
@@ -142,7 +140,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             window.location.reload();
 
         } catch (error) {
-            console.error("Ошибка сохранения:", error);
             alert("Помилка збереження.");
         }
     };
@@ -154,7 +151,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 onClose();
                 window.location.reload();
             } catch (error) {
-                console.error("Ошибка удаления:", error);
                 alert("Помилка видалення.");
             }
         }

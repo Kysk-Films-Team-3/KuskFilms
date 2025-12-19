@@ -25,4 +25,4 @@ i18n
         },
         interpolation: { escapeValue: false }
     })
-    .catch(err => console.error('i18next init error:', err));
+    .catch(() => {});

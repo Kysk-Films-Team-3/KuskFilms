@@ -15,7 +15,6 @@ import {
 export { fakeSlides, fakeCategories, fakeContent, getPopularFilms, getPopularActors, getMenuItems, getWatchModeItems, getStarsActors };
 
 const baseURL = API_URL || "";
-console.log("API Base URL:", baseURL || "не установлен");
 
 export const api = axios.create({
     baseURL: baseURL,
@@ -28,7 +27,6 @@ api.interceptors.request.use(async (config) => {
             await keycloak.updateToken(30);
             config.headers.Authorization = `Bearer ${keycloak.token}`;
         } catch (error) {
-            console.error('Failed to refresh token. Initiating Keycloak logout.', error);
             keycloak.logout();
             return Promise.reject('Token refresh failed, logging out.');
         }
@@ -66,7 +64,6 @@ export const getHomeContent = async () => {
         ];
         return mappedContent;
     } catch (error) {
-        console.error("Помилка завантаження контенту:", error);
         return [];
     }
 };
@@ -80,16 +77,9 @@ export const getHomePageData = async () => {
             url = '/public/home';
         }
 
-        console.log("Base URL:", baseURL);
-        console.log("Используемый путь:", url);
-        console.log("Полный URL будет:", baseURL + url);
-
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Помилка завантаження даних головної сторінки:", error);
-        console.error("URL запроса:", error.config?.url);
-        console.error("Base URL:", api.defaults.baseURL);
         throw error;
     }
 };
@@ -250,24 +240,15 @@ export const fetchTitles = async (params = {}) => {
 export const fetchTitleById = async (id) => {
     try {
         const baseURL = api.defaults.baseURL || '';
-        let url = `/api/public/titles/${id}`;
+        let url = `/api/public/titles/${id}/page`;
 
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = `/public/titles/${id}`;
+            url = `/public/titles/${id}/page`;
         }
-
-        console.log("Загрузка фильма ID:", id);
-        console.log("Base URL:", baseURL);
-        console.log("Используемый путь:", url);
-        console.log("Полный URL будет:", baseURL + url);
 
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки фильма:", error);
-        console.error("URL запроса:", error.config?.url);
-        console.error("Base URL:", api.defaults.baseURL);
-        console.error("Детали ошибки:", error.response?.data || error.message);
         throw error;
     }
 };
@@ -275,17 +256,12 @@ export const fetchTitleById = async (id) => {
 export const fetchUserProfile = async () => {
     try {
         const response = await api.get('/users/profile/me');
-        console.log("📥 Профиль загружен:", response.data);
-        console.log("📥 isPremium:", response.data?.isPremium);
         if (!response.data) {
             throw new Error("Профиль не найден в ответе");
         }
         return response.data;
     } catch (e) {
-        console.error("Ошибка загрузки профиля:", e);
-        console.error("Детали ошибки:", e.response?.data || e.message);
         if (keycloak.tokenParsed) {
-            console.log("⚠️ Используем fallback данные из Keycloak");
             return {
                 username: keycloak.tokenParsed.preferred_username,
                 email: keycloak.tokenParsed.email,
@@ -293,7 +269,6 @@ export const fetchUserProfile = async () => {
                 isPremium: false
             };
         }
-        console.warn("⚠️ Keycloak token недоступен, возвращаем пустой профиль");
         return {
             username: null,
             email: null,
@@ -314,12 +289,12 @@ export const uploadAvatar = async (file) => {
 
 const loadUsers = () => {
     try { return JSON.parse(localStorage.getItem('mockUsers') || '[]'); }
-    catch (e) { console.error('Не вдалося прочитати користувачів', e); return []; }
+    catch (e) { return []; }
 };
 
 const saveUsers = (users) => {
     try { localStorage.setItem('mockUsers', JSON.stringify(users)); }
-    catch (e) { console.error('Не вдалося зберегти користувачів', e); }
+    catch (e) { }
 };
 
 const mockVerificationCodes = {};
@@ -350,12 +325,12 @@ export const logoutUser = async () => {
 
 export const getRememberedUser = () => {
     try { return localStorage.getItem('rememberedUser'); }
-    catch (e) { console.error("Помилка в getRememberedUser:", e); return null; }
+    catch (e) { return null; }
 };
 
 export const getAuthUser = () => {
     try { return JSON.parse(localStorage.getItem('user') || 'null'); }
-    catch (e) { console.error("Помилка в getAuthUser:", e); return null; }
+    catch (e) { return null; }
 };
 
 export const fakeRegisterEmail = async (emailOrPhone) => {
@@ -444,7 +419,6 @@ export const createCheckoutSession = async () => {
             return { success: false, message: "No URL returned" };
         }
     } catch (error) {
-        console.error("Payment Error:", error);
         return { success: false, message: error.message };
     }
 };
@@ -461,9 +435,6 @@ export const fetchHeaderData = async () => {
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки данных хедера:", error);
-        console.error("URL запроса:", error.config?.url);
-        console.error("Base URL:", api.defaults.baseURL);
         throw error;
     }
 };
@@ -480,9 +451,6 @@ export const fetchFooterData = async () => {
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки данных футера:", error);
-        console.error("URL запроса:", error.config?.url);
-        console.error("Base URL:", api.defaults.baseURL);
         throw error;
     }
 };
@@ -499,7 +467,6 @@ export const getCatalogPageData = async () => {
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки данных каталога:", error);
         throw error;
     }
 };
@@ -516,7 +483,6 @@ export const getNewPopularPageData = async () => {
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки данных страницы новинок:", error);
         throw error;
     }
 };
@@ -530,12 +496,9 @@ export const getFilmsPageMeta = async () => {
             url = '/public/titles/page-meta';
         }
 
-        console.log("Загрузка метаданных страницы Films, baseURL:", baseURL, "url:", url);
         const response = await api.get(url);
-        console.log("Метаданные страницы Films:", response.data);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки метаданных страницы Films:", error);
         throw error;
     }
 };
@@ -543,16 +506,127 @@ export const getFilmsPageMeta = async () => {
 export const getPremiumData = async () => {
     try {
         const baseURL = api.defaults.baseURL || '';
-        let url = '/api/public/premium';
+        let url = '/api/public/premium/ui';
 
         if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
-            url = '/public/premium';
+            url = '/public/premium/ui';
         }
 
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки данных премиума:", error);
+        throw error;
+    }
+};
+
+export const getLogoutUi = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/auth/logout/ui';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/auth/logout/ui';
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getShareTitleData = async (titleId) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/share/title/${titleId}`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/share/title/${titleId}`;
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPromoUi = async () => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/promo/ui';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/promo/ui';
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const activatePromo = async (code) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = '/api/promo/activate';
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = '/promo/activate';
+        }
+
+        const response = await api.post(url, { code });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPersonData = async (personId) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/persons/${personId}`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/persons/${personId}`;
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const globalSearch = async (query) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/search?q=${encodeURIComponent(query)}`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/search?q=${encodeURIComponent(query)}`;
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTitleComments = async (titleId) => {
+    try {
+        const baseURL = api.defaults.baseURL || '';
+        let url = `/api/public/titles/${titleId}/comments`;
+
+        if (baseURL.endsWith('/api') || baseURL.match(/\/api\/?$/)) {
+            url = `/public/titles/${titleId}/comments`;
+        }
+
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
         throw error;
     }
 };
@@ -573,7 +647,6 @@ export const getPlayerConfig = async (titleId, episodeId = null) => {
         const response = await api.get(url);
         return response.data;
     } catch (error) {
-        console.error("Ошибка загрузки конфига плеера:", error);
         throw error;
     }
 };
@@ -587,9 +660,7 @@ export const getFavorites = async () => {
             url = '/favorites';
         }
 
-        console.log("Запрос к favorites, baseURL:", baseURL, "url:", url);
         const response = await api.get(url);
-        console.log("Ответ от API:", response.data);
         
         if (response.data && response.data.content) {
             return response.data.content;
@@ -599,12 +670,10 @@ export const getFavorites = async () => {
         }
         return [];
     } catch (error) {
-        console.error("Ошибка загрузки избранного:", error);
         if (error.response?.status === 401) {
             return [];
         }
         if (error.response?.status === 404) {
-            console.error("Эндпоинт /api/favorites не найден (404)");
             return [];
         }
         throw error;
@@ -620,15 +689,9 @@ export const toggleFavorite = async (titleId) => {
             url = `/favorites/${titleId}`;
         }
 
-        console.log("POST запрос к favorites, baseURL:", baseURL, "url:", url, "titleId:", titleId);
         const response = await api.post(url);
-        console.log("Ответ от toggleFavorite:", response.data);
         return response.data;
     } catch (error) {
-        console.error("Ошибка переключения избранного:", error);
-        console.error("Статус ошибки:", error.response?.status);
-        console.error("Данные ошибки:", error.response?.data);
-        console.error("URL запроса:", error.config?.url);
         if (error.response?.status === 401) {
             if (keycloak && !keycloak.authenticated) {
                 keycloak.login();
@@ -636,8 +699,6 @@ export const toggleFavorite = async (titleId) => {
             throw new Error("Требуется авторизация");
         }
         if (error.response?.status === 500) {
-            console.error("Ошибка 500 на сервере при переключении избранного");
-            console.error("Детали ошибки с сервера:", error.response?.data);
             const errorMessage = error.response?.data?.message || error.response?.data?.error || "Ошибка сервера при переключении избранного";
             throw new Error(errorMessage);
         }

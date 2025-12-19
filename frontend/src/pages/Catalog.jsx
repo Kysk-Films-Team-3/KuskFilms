@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { getCatalogPageData } from '../services/api';
 import './Catalog.css';
 
@@ -176,17 +177,9 @@ export const Catalog = () => {
             try {
                 setLoading(true);
                 setError(null);
-                console.log('Загрузка данных каталога...');
                 const data = await getCatalogPageData();
-                console.log('Данные каталога загружены:', data);
-                console.log('Жанры:', data?.genres);
-                console.log('Количество жанров:', data?.genres?.length);
-                console.log('Коллекции:', data?.collections);
-                console.log('Количество коллекций:', data?.collections?.length);
                 setPageData(data);
             } catch (err) {
-                console.error('Ошибка загрузки данных каталога:', err);
-                console.error('Детали ошибки:', err.response?.data || err.message);
                 setError(err.message || 'Ошибка загрузки данных');
                 setPageData(null);
             } finally {
@@ -236,19 +229,15 @@ export const Catalog = () => {
             <div className="catalog_container">
                 <div className="catalog_title">{pageData.title || ''}</div>
                 
-                {process.env.NODE_ENV === 'development' && (
-                    <div style={{ padding: '10px', background: '#333', color: '#fff', margin: '10px 0' }}>
-                        <div>Жанры: {pageData.genres ? JSON.stringify(pageData.genres.map(g => ({ name: g.name, slug: g.slug }))) : 'null'}</div>
-                        <div>Количество жанров: {pageData.genres?.length || 0}</div>
-                        <div>Коллекции: {pageData.collections ? JSON.stringify(pageData.collections.map(c => ({ title: c.title, itemsCount: c.items?.length }))) : 'null'}</div>
-                        <div>Количество коллекций: {pageData.collections?.length || 0}</div>
-                    </div>
-                )}
-                
                 {pageData.genres && pageData.genres.length > 0 ? (
                     <div className="catalog_grid">
                         {pageData.genres.map((genre, index) => (
-                            <div key={index} className="catalog_category_card">
+                            <Link 
+                                key={index} 
+                                to={`/films?genre=${encodeURIComponent(genre.name)}`}
+                                className="catalog_category_card"
+                                style={{ textDecoration: 'none', color: 'inherit' }}
+                            >
                                 <div className="category_image_wrapper">
                                     {genre.iconUrl ? (
                                         <img 
@@ -256,7 +245,6 @@ export const Catalog = () => {
                                             alt={genre.name}
                                             className="category_image"
                                             onError={(e) => {
-                                                console.error('Ошибка загрузки иконки жанра:', genre.iconUrl);
                                                 e.target.style.display = 'none';
                                             }}
                                         />
@@ -273,7 +261,7 @@ export const Catalog = () => {
                                     )}
                                 </div>
                                 <div className="category_name">{genre.name}</div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 ) : (
@@ -324,7 +312,6 @@ export const Catalog = () => {
                                                     draggable="false"
                                                     onDragStart={(e) => e.preventDefault()}
                                                     onError={(e) => {
-                                                        console.error('Ошибка загрузки изображения коллекции:', collectionImage);
                                                         e.target.style.display = 'none';
                                                     }}
                                                 />
