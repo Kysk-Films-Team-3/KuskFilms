@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 data class HeaderDataDto(
     val navigation: List<MenuItemDto>,
     val searchSuggestions: SearchSuggestionsDto,
-    val ui: HeaderUiDto // Новое поле для текстов
+    val ui: HeaderUiDto
 )
 
 data class HeaderUiDto(
@@ -15,7 +15,8 @@ data class HeaderUiDto(
     val manageProfile: String,   // "Керувати профілем"
     val switchLang: String,      // "Перемкнути на українську"
     val adminPanel: String,      // "Адмін панель"
-    val logout: String           // "Вийти"
+    val logout: String,          // "Вийти"
+    val loginBtn: String         // "Увійти" (НОВЕ ПОЛЕ)
 )
 
 data class MenuItemDto(
@@ -49,10 +50,20 @@ data class FooterDataDto(
 data class SocialLinkDto(val network: String, val url: String)
 data class FooterColumnDto(val title: String, val links: List<MenuItemDto>)
 
-// --- STATIC PAGES DTOs (Для страниц футера) ---
+// --- STATIC PAGES DTOs ---
 
-// Общий класс-маркер или Any в контроллере
 interface PageContentDto
+
+// 0. Юридические страницы (Угода, Політика, Правила) - ДОБАВЛЕНО
+data class LegalPageDto(
+    val title: String,
+    val sections: List<LegalSectionDto>
+) : PageContentDto
+
+data class LegalSectionDto(
+    val title: String,
+    val content: String
+)
 
 // 1. Список устройств
 data class DevicesPageDto(

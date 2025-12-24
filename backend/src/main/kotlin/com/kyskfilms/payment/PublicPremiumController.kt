@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/public/premium")
 class PublicPremiumController {
 
-    // Оставляем старый на всякий случай
+    // Основной эндпоинт для UI
     @GetMapping("/ui")
     fun getPremiumUi(): ResponseEntity<PremiumPageDto> {
         return ResponseEntity.ok(createDto())
     }
 
-    // Добавляем обработку корня /api/public/premium
+    // Запасной эндпоинт (корень), если фронт стучится сюда
     @GetMapping
     fun getPremiumRoot(): ResponseEntity<PremiumPageDto> {
         return ResponseEntity.ok(createDto())
     }
 
     private fun createDto() = PremiumPageDto(
-        backButton = "До налаштувань",
+        backButton = "Назад",
         title = "Підтвердіть вибір",
         features = listOf(
             "Більше 70 000 фільмів, серіалів та мультфільмів",
@@ -32,7 +32,7 @@ class PublicPremiumController {
             "Завантаження та перегляд без інтернету"
         ),
         planName = "Kysk преміум",
-        price = "9.99€",
+        price = "15€",
         buttonText = "Оформити"
     )
 }
