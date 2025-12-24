@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="${locale.currentLanguageTag}">
 <head>
     <meta charset="UTF-8">
     <title>KYSKFilms</title>
     <link rel="stylesheet" href="${url.resourcesPath}/css/login.css">
+    <link rel="stylesheet" href="${url.resourcesPath}/css/language-switcher.css">
     <script src="${url.resourcesPath}/js/login.js" defer></script>
+    <script src="${url.resourcesPath}/js/language-switcher.js" defer></script>
 </head>
 <body class="login-page">
 <div class="login_page">
     <div class="login_layout">
 
-        <div class="login_title">Вхід</div>
+        <div class="login_title">${msg("login.title")}</div>
         <form class="login_form" method="post" action="${url.loginAction}">
 
             <div class="login_input_block">
@@ -24,7 +26,7 @@
                         autocomplete="username"
                 />
 
-                <label for="username">Адреса електронної пошти або мобільний телефон</label>
+                <label for="username">${msg("login.emailOrPhone")}</label>
                 <div class="login_error_text" id="username-client-error" style="display:none;">
                     <div class="login_error_icon"></div>
                     <span id="username-client-text"></span>
@@ -41,7 +43,7 @@
                             class="login_input password_input"
                             autocomplete="current-password"
                     />
-                    <label for="password">Пароль</label>
+                    <label for="password">${msg("login.password")}</label>
                     <button type="button" class="login_toggle_password">
                         <span id="eyeIcon" class="login_eye_icon login_eye_open"></span>
                     </button>
@@ -68,13 +70,13 @@
             </div>
 
             <div class="login_block">
-                <button type="submit" class="login_button disabled">Вхід</button>
+                <button type="submit" class="login_button disabled">${msg("login.button")}</button>
             </div>
 
         </form>
 
         <div class="login_forgot_block">
-            <a href="${url.loginResetCredentialsUrl}" class="login_forgot_link">Забув пароль?</a>
+            <a href="${url.loginResetCredentialsUrl}" class="login_forgot_link">${msg("login.forgotPassword")}</a>
         </div>
 
         <div class="login_remember_block">
@@ -82,31 +84,36 @@
                 <div id="rememberCheckbox" class="login_custom_checkbox">
                     <div class="login_checkbox_icon"></div>
                 </div>
-                <span>Запам'ятати мене</span>
+                <span>${msg("login.rememberMe")}</span>
             </label>
             <input type="hidden" name="rememberMe" id="rememberMeInput" value="false">
         </div>
 
 
-        <div class="login_register_block">Вперше на KYSKFilms?
+        <div class="login_register_block">${msg("login.firstTime")}
             <button type="button" class="login_register_link"
                     onclick="window.location.href='${url.registrationUrl}'">
-                Створіть свій обліковий запис KYSK.
+                ${msg("login.register")}
             </button>
 
         </div>
 
 
         <div class="login_terms_block">
-            Продовжуючи, ви погоджуєтеся з KYSK
-            <a href="/terms" target="_blank" rel="noopener noreferrer">Умовами використання</a><br />
-            Будь ласка, перегляньте наші
-            <a href="/privacy" target="_blank" rel="noopener noreferrer">Повідомленням про конфіденційність,</a>
-            <a href="/cookies" target="_blank" rel="noopener noreferrer">повідомлення про файли cookie та повідомлення про рекламу на
-                основі інтересів.</a>
+            ${msg("login.terms")}
+            <a href="/terms" target="_blank" rel="noopener noreferrer">${msg("login.termsLink")}</a><br />
+            ${msg("login.privacyNotice")}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer">${msg("login.privacyLink")}</a>
+            <a href="/cookies" target="_blank" rel="noopener noreferrer">${msg("login.cookiesLink")}</a>
         </div>
 
     </div>
 </div>
+
+<!-- Language Switcher -->
+<div id="language-switcher" class="language-switcher">
+    <span class="language-switcher-icon">EN</span>
+</div>
+
 </body>
 </html>
