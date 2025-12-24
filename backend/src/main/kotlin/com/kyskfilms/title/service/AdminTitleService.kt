@@ -1,8 +1,10 @@
 package com.kyskfilms.title.service
 
+import com.kyskfilms.comment.repository.CommentRepository
 import com.kyskfilms.title.dto.SaveTitleRequest
 import com.kyskfilms.title.entity.*
 import com.kyskfilms.title.repository.*
+import com.kyskfilms.video.repository.VideoFileRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,17 +15,20 @@ class AdminTitleService(
     private val genreRepository: GenreRepository,
     private val personRepository: PersonRepository,
     private val titlePersonRepository: TitlePersonRepository,
-    private val seasonRepository: SeasonRepository // Добавил репозиторий сезонов
+    private val seasonRepository: SeasonRepository,
+    // Новые инжекты для очистки
+    private val videoFileRepository: VideoFileRepository,
+    private val commentRepository: CommentRepository
 ) {
 
     @Transactional
     fun saveFullTitle(req: SaveTitleRequest): Title {
-        // 1. Генерация слага (если нет)
+        // Логика создания/обновления (без изменений, скопирована из предыдущих версий)
         val slug = req.slug?.takeIf { it.isNotBlank() }
             ?: (req.title.lowercase().replace(" ", "-") + "-" + System.currentTimeMillis())
 
-        // 2. Создаем Entity
         val title = Title(
+            id = req.id, // Важно передать ID если это обновление
             type = req.type,
             title = req.title,
             slug = slug,
@@ -35,41 +40,30 @@ class AdminTitleService(
             backgroundUrl = req.backgroundUrl
         )
 
-        // 3. Жанры
         if (req.genreIds.isNotEmpty()) {
-            val genres = genreRepository.findAllById(req.genreIds).toMutableSet()
-            title.genres = genres
+            title.genres = genreRepository.findAllById(req.genreIds as Iterable<Int?>).toMutableSet()
         }
 
-        // Сохраняем Title, чтобы получить ID
         val savedTitle = titleRepository.save(title)
 
-        // 4. Актеры и Режиссеры
+        // Пересохраняем актеров (простой вариант: удаляем старые связи, пишем новые,
+        // но для Create это ок. Для Update лучше проверять, но пока оставим append)
         if (req.persons.isNotEmpty()) {
+            // Если это update, по хорошему надо почистить старые связи
+            if (req.id != null) titlePersonRepository.deleteAllByTitleId(req.id)
+
             req.persons.forEach { personRel ->
                 val person = personRepository.findById(personRel.personId).orElse(null)
                 if (person != null) {
-                    val relation = TitlePerson(
-                        title = savedTitle,
-                        person = person,
-                        role = personRel.role
-                    )
-                    titlePersonRepository.save(relation)
+                    titlePersonRepository.save(TitlePerson(title = savedTitle, person = person, role = personRel.role))
                 }
             }
         }
 
-        // 5. Сезоны и Эпизоды (Если это Сериал)
         if (req.seasons.isNotEmpty()) {
             req.seasons.forEach { seasonDto ->
-                val season = Season(
-                    title = savedTitle,
-                    seasonNumber = seasonDto.seasonNumber,
-                    seasonTitle = seasonDto.seasonTitle
-                )
-                // Сохраняем сезон, чтобы получить ID для эпизодов
+                val season = Season(title = savedTitle, seasonNumber = seasonDto.seasonNumber, seasonTitle = seasonDto.seasonTitle)
                 val savedSeason = seasonRepository.save(season)
-
                 seasonDto.episodes.forEach { epDto ->
                     val episode = Episode(
                         season = savedSeason,
@@ -78,25 +72,32 @@ class AdminTitleService(
                         description = epDto.description,
                         releaseDate = epDto.releaseDate,
                         posterUrl = epDto.posterUrl
-                        // Видео эпизода загружается отдельно через EpisodeVideoController
                     )
-                    // Episode сохраняется каскадно или нужно инжектить episodeRepository
-                    // В Entity Season у тебя cascade = [CascadeType.ALL], поэтому достаточно добавить в список:
                     savedSeason.episodes.add(episode)
                 }
-                // Обновляем сезон с эпизодами (если Hibernate не подхватил автоматом, лучше сохранить явно)
                 seasonRepository.save(savedSeason)
             }
         }
-
         return savedTitle
     }
 
+    // ИСПРАВЛЕННОЕ УДАЛЕНИЕ
     @Transactional
     fun deleteTitle(id: Int) {
         if (!titleRepository.existsById(id)) {
             throw EntityNotFoundException("Title not found with id $id")
         }
+
+        // 1. Удаляем связи с актерами
+        titlePersonRepository.deleteAllByTitleId(id)
+
+        // 2. Удаляем видео файлы (ссылки в БД)
+        videoFileRepository.deleteAllByTitleId(id)
+
+        // 3. Удаляем комментарии
+        commentRepository.deleteAllByTitleId(id)
+
+        // 4. Удаляем сам фильм (Сезоны и Эпизоды удалятся сами благодаря CascadeType.ALL в Entity Title)
         titleRepository.deleteById(id)
     }
 }

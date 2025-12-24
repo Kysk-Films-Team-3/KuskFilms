@@ -6,11 +6,13 @@ import './EditActor.css';
 
 const activityTypes = ['Актор', 'Акторка', 'Режисер', 'Режисерка'];
 const genders = ['Чоловік', 'Жінка', 'Не вказувати'];
-const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
 const months = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
 const years = Array.from({ length: 125 }, (_, i) => (2025 - i).toString());
 const countries = ['Польща', 'Австралія', 'Велика Британія', 'Україна', 'США', 'Франція', 'Німеччина', 'Італія', 'Іспанія', 'Канада'];
 const cities = ['Паріж', 'Лондон', 'Київ', 'Вашингтон', 'Гринхит', 'Осло', 'Варшава', 'Берлін', 'Рим', 'Мадрид'];
+
+const DRAFT_KEY = 'edit_actor_draft';
 
 export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchMovie, selectedMovies, onMoviesAdded, onOpenSearchActor, selectedActors, onActorsAdded }) => {
     const { t } = useTranslation();
@@ -18,6 +20,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const fileInputRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
+    // State
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [activityType, setActivityType] = useState('Актор');
@@ -30,12 +33,13 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
 
-    const [avatarUrl, setAvatarUrl] = useState(null);
-    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarUrl, setAvatarUrl] = useState(null); // Preview URL
+    const [avatarFile, setAvatarFile] = useState(null); // File object
 
     const [filmography, setFilmography] = useState([]);
     const [relatives, setRelatives] = useState([]);
 
+    // Dropdowns state
     const [isActivityOpen, setIsActivityOpen] = useState(false);
     const [isGenderOpen, setIsGenderOpen] = useState(false);
     const [isDayOpen, setIsDayOpen] = useState(false);
@@ -44,6 +48,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
 
+    // Refs
     const activityDropdownRef = useRef(null);
     const genderDropdownRef = useRef(null);
     const dayDropdownRef = useRef(null);
@@ -52,47 +57,137 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const countryDropdownRef = useRef(null);
     const cityDropdownRef = useRef(null);
 
+    // Helper to resolve image path
+    const resolvePath = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http') || path.startsWith('data:')) return path;
+        const clean = path.replace(/^kyskfilms\//, '').replace(/^images\//, '');
+        return `/kyskfilms/images/${clean}`;
+    };
+
+    // --- HELPER: Close Dropdowns (Moved UP) ---
+    const closeAllDropdownsExcept = (exceptStateSetter) => {
+        if (exceptStateSetter !== setIsActivityOpen) setIsActivityOpen(false);
+        if (exceptStateSetter !== setIsGenderOpen) setIsGenderOpen(false);
+        if (exceptStateSetter !== setIsDayOpen) setIsDayOpen(false);
+        if (exceptStateSetter !== setIsMonthOpen) setIsMonthOpen(false);
+        if (exceptStateSetter !== setIsYearOpen) setIsYearOpen(false);
+        if (exceptStateSetter !== setIsCountryOpen) setIsCountryOpen(false);
+        if (exceptStateSetter !== setIsCityOpen) setIsCityOpen(false);
+    };
+
+    // --- 1. INITIALIZATION & DRAFT RESTORE ---
     useEffect(() => {
+        if (!isOpen) return;
+
         if (actor) {
-            setName(actor.name || '');
-            setSurname(actor.surname || '');
+            // EDIT MODE
+            const names = (actor.name || '').split(' ');
+            setName(names[0] || '');
+            setSurname(names.slice(1).join(' ') || '');
             setActivityType(actor.role || 'Актор');
             setGender(actor.gender || '');
+            setAvatarUrl(resolvePath(actor.image));
 
-            setAvatarUrl(actor.image
-                ? (actor.image.startsWith('http') ? actor.image : `/kyskfilms/${actor.image}`)
-                : null
-            );
+            if (actor.birthDate) {
+                const date = new Date(actor.birthDate);
+                if (!isNaN(date)) {
+                    setYear(date.getFullYear().toString());
+                    setMonth(months[date.getMonth()]);
+                    setDay(date.getDate().toString().padStart(2, '0'));
+                }
+            }
+
+            if (actor.birthPlace) {
+                const parts = actor.birthPlace.split(',').map(s => s.trim());
+                if (parts.length > 0) setCity(parts[0]);
+                if (parts.length > 1) setCountry(parts[parts.length - 1]);
+            }
 
             if (actor.filmography) setFilmography(actor.filmography);
             if (actor.relatives) setRelatives(actor.relatives);
 
+            sessionStorage.removeItem(DRAFT_KEY);
+
         } else {
-            setName('');
-            setSurname('');
-            setActivityType('Актор');
-            setGender('');
-            setDay('');
-            setMonth('');
-            setYear('');
-            setCountry('');
-            setCity('');
-            setAvatarUrl(null);
-            setAvatarFile(null);
-            setFilmography([]);
-            setRelatives([]);
+            // CREATE MODE
+            const draft = sessionStorage.getItem(DRAFT_KEY);
+            if (draft) {
+                const data = JSON.parse(draft);
+                setName(data.name || '');
+                setSurname(data.surname || '');
+                setActivityType(data.activityType || 'Актор');
+                setGender(data.gender || '');
+                setDay(data.day || '');
+                setMonth(data.month || '');
+                setYear(data.year || '');
+                setCountry(data.country || '');
+                setCity(data.city || '');
+                if (data.filmography) setFilmography(data.filmography);
+                if (data.relatives) setRelatives(data.relatives);
+            } else {
+                setName('');
+                setSurname('');
+                setActivityType('Актор');
+                setGender('');
+                setDay('');
+                setMonth('');
+                setYear('');
+                setCountry('');
+                setCity('');
+                setAvatarUrl(null);
+                setAvatarFile(null);
+                setFilmography([]);
+                setRelatives([]);
+            }
         }
-    }, [actor, isOpen]);
+    }, [isOpen, actor]);
+
+    // --- 2. AUTO-SAVE DRAFT ---
+    useEffect(() => {
+        if (!actor && isOpen) {
+            const draftData = {
+                name, surname, activityType, gender,
+                day, month, year, country, city,
+                filmography, relatives
+            };
+            sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
+        }
+    }, [name, surname, activityType, gender, day, month, year, country, city, filmography, relatives, actor, isOpen]);
+
+
+    // --- 3. HANDLE EXTERNAL UPDATES ---
+    useEffect(() => {
+        if (selectedMovies && selectedMovies.length > 0) {
+            setFilmography(prev => {
+                const existingIds = prev.map(f => f.id);
+                const newMovies = selectedMovies.filter(movie => !existingIds.includes(movie.id));
+                return [...prev, ...newMovies];
+            });
+            if (onMoviesAdded) onMoviesAdded();
+        }
+    }, [selectedMovies, onMoviesAdded]);
+
+    useEffect(() => {
+        if (selectedActors && selectedActors.length > 0) {
+            setRelatives(prev => {
+                const existingIds = prev.map(r => r.id);
+                const newActors = selectedActors.filter(actor => !existingIds.includes(actor.id));
+                return [...prev, ...newActors];
+            });
+            if (onActorsAdded) onActorsAdded();
+        }
+    }, [selectedActors, onActorsAdded]);
+
+
+    // --- Handlers ---
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-
         setAvatarFile(file);
         const reader = new FileReader();
-        reader.onloadend = () => {
-            setAvatarUrl(reader.result);
-        };
+        reader.onloadend = () => setAvatarUrl(reader.result);
         reader.readAsDataURL(file);
     };
 
@@ -104,43 +199,54 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             const response = await api.post('/admin/titles/upload-image', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            return response.data.url;
+            let url = response.data.url;
+            return url ? url.replace(/^images\//, '') : null;
         } catch (error) {
+            console.error("Upload failed", error);
             return null;
         }
     };
 
     const handleSave = async () => {
         try {
-            let uploadedPhotoUrl = avatarUrl;
+            let uploadedPhotoUrl = null;
 
             if (avatarFile) {
-                const url = await uploadImageToServer(avatarFile);
-                if (url) uploadedPhotoUrl = url;
+                uploadedPhotoUrl = await uploadImageToServer(avatarFile);
+            } else if (avatarUrl && !avatarUrl.startsWith('data:')) {
+                uploadedPhotoUrl = avatarUrl.replace('/kyskfilms/images/', '').replace(/^images\//, '');
             }
+
+            const monthIndex = months.indexOf(month);
+            const birthDateStr = (year && monthIndex !== -1 && day)
+                ? `${year}-${(monthIndex + 1).toString().padStart(2, '0')}-${day.padStart(2, '0')}`
+                : null;
 
             const actorData = {
                 id: actor?.id,
-                name: name.trim(),
-                surname: surname.trim(),
+                name: `${name} ${surname}`.trim(),
                 activityType,
                 gender,
                 photoUrl: uploadedPhotoUrl,
-
                 birthPlace: (country || city) ? `${city}${city && country ? ', ' : ''}${country}` : null,
-                birthDate: (year && month && day) ? `${year}-01-01` : null
+                birthDate: birthDateStr
             };
 
+            const payload = {
+                name: actorData.name,
+                photoUrl: actorData.photoUrl
+            };
 
-            await api.post('/admin/persons', actorData);
+            await api.post('/persons', payload);
 
+            sessionStorage.removeItem(DRAFT_KEY);
             if (onSave) onSave(actorData);
             onClose();
-
             window.location.reload();
 
         } catch (error) {
-            alert("Помилка збереження.");
+            console.error(error);
+            alert("Помилка збереження актора.");
         }
     };
 
@@ -156,172 +262,49 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     };
 
-    const handleAddFilm = () => {
-        if (onOpenSearchMovie) onOpenSearchMovie();
-    };
+    const handleAddFilm = () => { if (onOpenSearchMovie) onOpenSearchMovie(); };
+    const handleAddRelative = () => { if (onOpenSearchActor) onOpenSearchActor(); };
+    const handleRemoveFilm = (fid) => setFilmography(p => p.filter(f => f.id !== fid));
+    const handleRemoveRelative = (rid) => setRelatives(p => p.filter(r => r.id !== rid));
 
-    useEffect(() => {
-        if (selectedMovies && selectedMovies.length > 0) {
-            setFilmography(prev => {
-                const existingIds = prev.map(f => f.id);
-                const newMovies = selectedMovies.filter(movie => !existingIds.includes(movie.id));
-                return [...prev, ...newMovies];
-            });
-            if (onMoviesAdded) onMoviesAdded();
-        }
-    }, [selectedMovies, onMoviesAdded]);
-
-    const handleAddRelative = () => {
-        if (onOpenSearchActor) onOpenSearchActor();
-    };
-
-    useEffect(() => {
-        if (selectedActors && selectedActors.length > 0) {
-            setRelatives(prev => {
-                const existingIds = prev.map(r => r.id);
-                const newActors = selectedActors.filter(actor => !existingIds.includes(actor.id));
-                return [...prev, ...newActors];
-            });
-            if (onActorsAdded) onActorsAdded();
-        }
-    }, [selectedActors, onActorsAdded]);
-
-    const handleRemoveFilm = (filmId) => {
-        setFilmography(prev => prev.filter(film => film.id !== filmId));
-    };
-
-    const handleRemoveRelative = (relativeId) => {
-        setRelatives(prev => prev.filter(relative => relative.id !== relativeId));
+    const handleClose = () => {
+        sessionStorage.removeItem(DRAFT_KEY);
+        onClose();
     };
 
     useEffect(() => {
         if (!isOpen) return;
-
-        const handleClickOutside = (e) => {
-            if (dropdownMenuClickRef.current) {
-                dropdownMenuClickRef.current = false;
-                return;
-            }
-
-            const clickedMenu = e.target.closest('.edit_actor_dropdown_menu');
-            const clickedOption = e.target.closest('.edit_actor_dropdown_option');
-            const clickedWrapper = e.target.closest('.edit_actor_dropdown_wrapper');
-
-            if (clickedMenu || clickedOption) return;
-
-            const clickedSearchModal = e.target.closest('.search_movie_overlay, .search_actor_overlay');
-            if (clickedSearchModal) return;
-
-            if (modalRef.current && !modalRef.current.contains(e.target)) {
-                onClose();
-            }
-
-            if (!clickedWrapper) {
-                closeAllDropdownsExcept(null);
-            }
+        const h = (e) => {
+            if (dropdownMenuClickRef.current) { dropdownMenuClickRef.current = false; return; }
+            if (e.target.closest('.edit_actor_dropdown_menu') || e.target.closest('.search_movie_overlay, .search_actor_overlay')) return;
+            if (modalRef.current && !modalRef.current.contains(e.target)) onClose();
+            if (!e.target.closest('.edit_actor_dropdown_wrapper')) closeAllDropdownsExcept(null);
         };
-
-        const handleScroll = () => {
-            closeAllDropdownsExcept(null);
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('scroll', handleScroll, true);
-        document.body.style.overflow = 'hidden';
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('scroll', handleScroll, true);
-            document.body.style.overflow = '';
-        };
+        document.addEventListener('mousedown', h);
+        return () => document.removeEventListener('mousedown', h);
     }, [isOpen, onClose]);
 
-    const closeAllDropdownsExcept = (exceptStateSetter) => {
-        if (exceptStateSetter !== setIsActivityOpen) setIsActivityOpen(false);
-        if (exceptStateSetter !== setIsGenderOpen) setIsGenderOpen(false);
-        if (exceptStateSetter !== setIsDayOpen) setIsDayOpen(false);
-        if (exceptStateSetter !== setIsMonthOpen) setIsMonthOpen(false);
-        if (exceptStateSetter !== setIsYearOpen) setIsYearOpen(false);
-        if (exceptStateSetter !== setIsCountryOpen) setIsCountryOpen(false);
-        if (exceptStateSetter !== setIsCityOpen) setIsCityOpen(false);
-    };
-
-    const renderDropdown = (label, value, options, isOpen, setIsOpen, onChange, id, dropdownRef) => {
-        const getMenuPosition = () => {
-            if (!dropdownRef.current) return { top: 0, left: 0, width: 0, opensUpward: false };
-            const rect = dropdownRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const estimatedMenuHeight = 200;
-            const opensUpward = spaceBelow < estimatedMenuHeight + 10;
-
-            return {
-                top: opensUpward ? undefined : rect.bottom + 5,
-                bottom: opensUpward ? window.innerHeight - rect.top + 5 : undefined,
-                left: rect.left,
-                width: rect.width,
-                opensUpward
-            };
+    const renderDropdown = (label, value, options, isOpen, setIsOpen, onChange, id, ref) => {
+        const getPos = () => {
+            if(!ref.current) return {};
+            const rect = ref.current.getBoundingClientRect();
+            const up = (window.innerHeight - rect.bottom) < 210;
+            return { top: up?undefined:rect.bottom+5, bottom: up?window.innerHeight-rect.top+5:undefined, left: rect.left, width: rect.width, up };
         };
-
-        const handleToggle = () => {
-            if (!isOpen) closeAllDropdownsExcept(setIsOpen);
-            setIsOpen(!isOpen);
-        };
-
-        const menuPosition = isOpen ? getMenuPosition() : null;
-
+        const pos = isOpen ? getPos() : {};
         return (
             <div className="edit_actor_input_block">
-                <div className="edit_actor_dropdown_wrapper" ref={dropdownRef}>
-                    <div
-                        className={`edit_actor_dropdown ${isOpen ? 'open' : ''} ${value ? 'has-value' : ''}`}
-                        onClick={handleToggle}
-                    >
-                        <span className="edit_actor_dropdown_value">{value || ''}</span>
+                <div className="edit_actor_dropdown_wrapper" ref={ref}>
+                    <div className={`edit_actor_dropdown ${isOpen?'open':''} ${value?'has-value':''}`} onClick={()=>{if(!isOpen)closeAllDropdownsExcept(setIsOpen);setIsOpen(!isOpen)}}>
+                        <span className="edit_actor_dropdown_value">{value||''}</span>
                     </div>
-                    {isOpen && menuPosition && createPortal(
-                        <div
-                            className={`edit_actor_dropdown_menu ${menuPosition.opensUpward ? 'opens-upward' : ''}`}
-                            style={{
-                                position: 'fixed',
-                                ...(menuPosition.opensUpward
-                                    ? { bottom: `${menuPosition.bottom}px` }
-                                    : { top: `${menuPosition.top}px` }
-                                ),
-                                left: `${menuPosition.left}px`,
-                                width: `${menuPosition.width}px`,
-                                zIndex: 10002
-                            }}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {options.map((option, index) => (
-                                <div
-                                    key={index}
-                                    className={`edit_actor_dropdown_option ${value === option ? 'selected' : ''}`}
-                                    onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        dropdownMenuClickRef.current = true;
-                                        onChange(option);
-                                        setTimeout(() => {
-                                            setIsOpen(false);
-                                            dropdownMenuClickRef.current = false;
-                                        }, 100);
-                                    }}
-                                >
-                                    {option}
-                                </div>
-                            ))}
-                        </div>,
-                        document.body
+                    {isOpen && createPortal(
+                        <div className={`edit_actor_dropdown_menu ${pos.up?'opens-upward':''}`} style={{position:'fixed', top:pos.top, bottom:pos.bottom, left:pos.left, width:pos.width, zIndex:10002}} onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()}>
+                            {options.map((o,i)=><div key={i} className={`edit_actor_dropdown_option ${value===o?'selected':''}`} onClick={e=>{e.preventDefault();e.stopPropagation();dropdownMenuClickRef.current=true;onChange(o);setTimeout(()=>{setIsOpen(false);dropdownMenuClickRef.current=false},100)}}>{o}</div>)}
+                        </div>, document.body
                     )}
                 </div>
-                <label htmlFor={id} className={value ? 'edit_actor_dropdown_label_active' : ''}>{label}</label>
+                <label className={value?'edit_actor_dropdown_label_active':''}>{label}</label>
             </div>
         );
     };
@@ -331,166 +314,64 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     return (
         <div className="edit_actor_overlay" role="dialog" aria-modal="true">
             <div className="edit_actor_modal" ref={modalRef}>
-                <div className="edit_actor_close" onClick={onClose}></div>
-
-                <div className="edit_actor_header">
-                    <div className="edit_actor_title">
-                        <Trans i18nKey="admin.editActor.title" />
-                    </div>
-                </div>
-
+                <div className="edit_actor_close" onClick={handleClose}></div>
+                <div className="edit_actor_header"><div className="edit_actor_title">{actor ? <Trans i18nKey="admin.editActor.editTitle" defaults="Редагування актора" /> : <Trans i18nKey="admin.editActor.title" />}</div></div>
                 <div className="edit_actor_content">
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        style={{ display: 'none' }}
-                        accept="image/png, image/jpeg"
-                    />
-
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{display:'none'}} accept="image/png, image/jpeg" />
                     <div className="edit_actor_main_content">
                         <div className="edit_actor_form">
                             <div className="edit_actor_avatar_wrapper">
-                                <div
-                                    className="edit_actor_avatar"
-                                    onClick={() => fileInputRef.current?.click()}
-                                >
-                                    {avatarUrl && (
-                                        <img
-                                            src={avatarUrl}
-                                            alt="Avatar"
-                                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                                        />
-                                    )}
+                                <div className="edit_actor_avatar" onClick={()=>fileInputRef.current?.click()}>
+                                    {avatarUrl && <img src={avatarUrl} alt="Avatar" style={{width:'100%',height:'100%',borderRadius:'50%',objectFit:'cover'}} />}
                                 </div>
                                 <div className="edit_actor_avatar_info">
-                                    <div className="edit_actor_avatar_name">
-                                        {name || surname ? `${name} ${surname}`.trim() : ''}
-                                    </div>
-                                    <div className="edit_actor_avatar_role">
-                                        {activityType || ''}
-                                    </div>
+                                    <div className="edit_actor_avatar_name">{name||surname?`${name} ${surname}`.trim():''}</div>
+                                    <div className="edit_actor_avatar_role">{activityType||''}</div>
                                 </div>
                             </div>
-
-                            <div className="edit_actor_section">
-                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.mainInfo" /></div>
+                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.mainInfo" /></div>
                                 <div className="edit_actor_inputs_row">
-                                    <div className="edit_actor_input_block">
-                                        <input
-                                            type="text"
-                                            id="editActorName"
-                                            placeholder=" "
-                                            className="edit_actor_input"
-                                            value={name}
-                                            onChange={e => setName(e.target.value)}
-                                        />
-                                        <label htmlFor="editActorName"><Trans i18nKey="admin.editActor.name" /></label>
-                                    </div>
-                                    <div className="edit_actor_input_block">
-                                        <input
-                                            type="text"
-                                            id="editActorSurname"
-                                            placeholder=" "
-                                            className="edit_actor_input"
-                                            value={surname}
-                                            onChange={e => setSurname(e.target.value)}
-                                        />
-                                        <label htmlFor="editActorSurname"><Trans i18nKey="admin.editActor.surname" /></label>
-                                    </div>
+                                    <div className="edit_actor_input_block"><input type="text" id="an" className="edit_actor_input" value={name} onChange={e=>setName(e.target.value)} placeholder=" "/><label htmlFor="an"><Trans i18nKey="admin.editActor.name" /></label></div>
+                                    <div className="edit_actor_input_block"><input type="text" id="as" className="edit_actor_input" value={surname} onChange={e=>setSurname(e.target.value)} placeholder=" "/><label htmlFor="as"><Trans i18nKey="admin.editActor.surname" /></label></div>
                                 </div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'editActorActivity', activityDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.gender'), gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'editActorGender', genderDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'act', activityDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.gender'), gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'gen', genderDropdownRef)}
                                 </div>
                             </div>
-
-                            <div className="edit_actor_section">
-                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthDate" /></div>
+                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthDate" /></div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.day'), day, days, isDayOpen, setIsDayOpen, setDay, 'editActorDay', dayDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.month'), month, months, isMonthOpen, setIsMonthOpen, setMonth, 'editActorMonth', monthDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.year'), year, years, isYearOpen, setIsYearOpen, setYear, 'editActorYear', yearDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.day'), day, days, isDayOpen, setIsDayOpen, setDay, 'dd', dayDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.month'), month, months, isMonthOpen, setIsMonthOpen, setMonth, 'mm', monthDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.year'), year, years, isYearOpen, setIsYearOpen, setYear, 'yy', yearDropdownRef)}
                                 </div>
                             </div>
-
-                            <div className="edit_actor_section">
-                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthPlace" /></div>
+                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthPlace" /></div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.country'), country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'editActorCountry', countryDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.city'), city, cities, isCityOpen, setIsCityOpen, setCity, 'editActorCity', cityDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.country'), country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'cnt', countryDropdownRef)}
+                                    {renderDropdown(t('admin.editActor.city'), city, cities, isCityOpen, setIsCityOpen, setCity, 'ct', cityDropdownRef)}
                                 </div>
                             </div>
                         </div>
-
                         <div className="edit_actor_right_column">
-                            <div className="edit_actor_section">
-                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.filmography" /></div>
+                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.filmography" /></div>
                                 <div className="edit_actor_filmography">
-                                    <div className="edit_actor_film_placeholder" onClick={handleAddFilm}>
-                                        <button className="edit_actor_add_film_button">
-                                            <span className="edit_actor_add_film_icon"></span>
-                                            <Trans i18nKey="admin.editActor.addMovie" />
-                                        </button>
-                                    </div>
-                                    {filmography.map((film) => (
-                                        <div key={film.id} className="edit_actor_film_poster">
-                                            <img src={film.image} alt={film.name} />
-                                            <div className="edit_actor_film_remove" onClick={() => handleRemoveFilm(film.id)}></div>
-                                        </div>
-                                    ))}
+                                    <div className="edit_actor_film_placeholder" onClick={handleAddFilm}><button className="edit_actor_add_film_button"><span className="edit_actor_add_film_icon"></span><Trans i18nKey="admin.editActor.addMovie" /></button></div>
+                                    {filmography.map(f=><div key={f.id} className="edit_actor_film_poster"><img src={f.image} alt={f.name}/><div className="edit_actor_film_remove" onClick={()=>handleRemoveFilm(f.id)}></div></div>)}
                                 </div>
                             </div>
-
-                            <div className="edit_actor_section">
-                                <div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.relatives" /></div>
+                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.relatives" /></div>
                                 <div className="edit_actor_relatives">
-                                    <div className="edit_actor_relative_placeholder" onClick={handleAddRelative}>
-                                        <div className="edit_actor_relative_avatar"></div>
-                                        <button
-                                            className="edit_actor_add_relative_button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAddRelative();
-                                            }}
-                                        >
-                                            <span className="edit_actor_add_relative_icon"></span>
-                                            <Trans i18nKey="admin.editActor.add" />
-                                        </button>
-                                    </div>
-                                    {relatives.map((relative) => (
-                                        <div key={relative.id} className="edit_actor_relative_item">
-                                            <div className="edit_actor_relative_avatar_wrapper">
-                                                <div className="edit_actor_relative_avatar">
-                                                    {relative.image && <img src={relative.image} alt={relative.name} />}
-                                                </div>
-                                                <div className="edit_actor_relative_remove" onClick={() => handleRemoveRelative(relative.id)}></div>
-                                            </div>
-                                            <div className="edit_actor_relative_info">
-                                                <div className="edit_actor_relative_name">{relative.name}</div>
-                                                {relative.role && (
-                                                    <div className="edit_actor_relative_role">{relative.role}</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
+                                    <div className="edit_actor_relative_placeholder" onClick={handleAddRelative}><div className="edit_actor_relative_avatar"></div><button className="edit_actor_add_relative_button" onClick={e=>{e.stopPropagation();handleAddRelative()}}><span className="edit_actor_add_relative_icon"></span><Trans i18nKey="admin.editActor.add" /></button></div>
+                                    {relatives.map(r=><div key={r.id} className="edit_actor_relative_item"><div className="edit_actor_relative_avatar_wrapper"><div className="edit_actor_relative_avatar">{r.image&&<img src={r.image} alt={r.name}/>}</div><div className="edit_actor_relative_remove" onClick={()=>handleRemoveRelative(r.id)}></div></div><div className="edit_actor_relative_info"><div className="edit_actor_relative_name">{r.name}</div>{r.role&&<div className="edit_actor_relative_role">{r.role}</div>}</div></div>)}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="edit_actor_footer">
-                    {actor && (
-                        <button className="edit_actor_delete_button" onClick={handleDelete}>
-                            <span className="edit_actor_delete_icon"></span>
-                            <Trans i18nKey="admin.editActor.delete" />
-                        </button>
-                    )}
-                    <button className="edit_actor_save_button" onClick={handleSave}>
-                        <span className="edit_actor_save_icon"></span>
-                        <Trans i18nKey="admin.editActor.save" />
-                    </button>
+                    {actor && <button className="edit_actor_delete_button" onClick={handleDelete}><span className="edit_actor_delete_icon"></span><Trans i18nKey="admin.editActor.delete" /></button>}
+                    <button className="edit_actor_save_button" onClick={handleSave}><span className="edit_actor_save_icon"></span><Trans i18nKey="admin.editActor.save" /></button>
                 </div>
             </div>
         </div>

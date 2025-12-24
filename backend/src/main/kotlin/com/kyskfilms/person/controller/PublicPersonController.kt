@@ -25,6 +25,14 @@ class PublicPersonController(
     @Value("\${minio.bucket-name:images}") private val folderName: String
 ) {
 
+    // Helper для чистки путей
+    private fun resolveUrl(path: String?): String? {
+        if (path == null) return null
+        if (path.startsWith("http")) return path
+        val cleanPath = path.removePrefix("$folderName/").removePrefix("/")
+        return "$minioUrl/$folderName/$cleanPath"
+    }
+
     // 1. ДЕТАЛИ АКТЕРА
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
@@ -43,7 +51,7 @@ class PublicPersonController(
         val titlePersons = titlePersonRepository.findAllByPersonIdWithTitlesAndGenres(id)
         val filmography = titlePersons.map { tp ->
             val title = tp.title
-            val poster = title.posterUrl?.let { if (it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
+            val poster = resolveUrl(title.posterUrl) // FIX HERE
             PersonFilmographyDto(
                 id = title.id!!, title = title.title, posterUrl = poster,
                 rating = title.rating.toDouble(), releaseDate = title.releaseDate,
@@ -69,7 +77,7 @@ class PublicPersonController(
             PersonDetailsDto(
                 id = person.id!!,
                 name = person.name,
-                photoUrl = person.photoUrl?.let { if (it.startsWith("http")) it else "$minioUrl/$folderName/$it" },
+                photoUrl = resolveUrl(person.photoUrl), // FIX HERE
                 activityType = person.activityType,
                 gender = person.gender,
                 age = age,
@@ -82,7 +90,7 @@ class PublicPersonController(
         )
     }
 
-    // 2. РЕКОМЕНДАЦИИ (Похожие актеры)
+    // 2. РЕКОМЕНДАЦИИ
     @GetMapping("/{id}/recommendations")
     @Transactional(readOnly = true)
     fun getRecommendations(@PathVariable id: Long): ResponseEntity<List<PersonRecommendationDto>> {
@@ -93,18 +101,17 @@ class PublicPersonController(
         val recommendations = personRepository.findRandomRecommendations(type, id)
 
         val dtos = recommendations.map { p ->
-            val photo = p.photoUrl?.let { if (it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
             PersonRecommendationDto(
                 id = p.id!!,
                 name = p.name,
-                photoUrl = photo,
+                photoUrl = resolveUrl(p.photoUrl), // FIX HERE
                 activityType = p.activityType
             )
         }
         return ResponseEntity.ok(dtos)
     }
 
-    // 3. ФИЛЬМЫ С УЧАСТИЕМ (Топ лучших)
+    // 3. ФИЛЬМЫ С УЧАСТИЕМ
     @GetMapping("/{id}/titles")
     @Transactional(readOnly = true)
     fun getPersonTitles(@PathVariable id: Long): ResponseEntity<List<TitleDto>> {
@@ -115,12 +122,11 @@ class PublicPersonController(
         val titles = titleRepository.findTopTitlesByPersonId(id, PageRequest.of(0, 10))
 
         val dtos = titles.map { t ->
-            val poster = t.posterUrl?.let { if (it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
             TitleDto(
                 id = t.id!!,
                 title = t.title,
                 slug = t.slug,
-                posterUrl = poster,
+                posterUrl = resolveUrl(t.posterUrl), // FIX HERE
                 rating = t.rating,
                 type = t.type,
                 genres = t.genres.map { it.name },
@@ -130,7 +136,7 @@ class PublicPersonController(
         return ResponseEntity.ok(dtos)
     }
 
-    // 4. ВЫБОР АКТЕРА (Рекомендации с цитатой)
+    // 4. ВЫБОР АКТЕРА
     @GetMapping("/{id}/picks")
     @Transactional(readOnly = true)
     fun getActorPicks(@PathVariable id: Long): ResponseEntity<ActorPicksResponse> {
@@ -141,12 +147,11 @@ class PublicPersonController(
         val picks = topMovies.shuffled().take(8)
 
         val items = picks.map { t ->
-            val poster = t.posterUrl?.let { if (it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
             TitleDto(
                 id = t.id!!,
                 title = t.title,
                 slug = t.slug,
-                posterUrl = poster,
+                posterUrl = resolveUrl(t.posterUrl), // FIX HERE
                 rating = t.rating,
                 type = t.type,
                 genres = t.genres.map { it.name },
@@ -157,10 +162,8 @@ class PublicPersonController(
         val quote = when {
             person.name.contains("Кіану", ignoreCase = true) || person.name.contains("Keanu", ignoreCase = true) ->
                 "Мистецтво — це спроба знайти хороше в людях і зробити світ співчутливішим."
-
             person.name.contains("Леонардо", ignoreCase = true) ->
                 "Якщо ти робиш те, що у тебе виходить найкраще, ти будеш щасливим."
-
             else -> "Кіно повинно змусити вас забути, що ви сидите в кінотеатрі."
         }
 

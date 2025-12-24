@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Добавил useNavigate
 import PlayerOverlay from "../components/player/PlayerOverlay";
 import { fetchTitleById } from "../services/api";
 import { useFavorites } from "../context/FavoritesContext";
@@ -7,7 +7,9 @@ import "./MoviePage.css";
 
 export const MoviePage = ({ onCommentModalClick }) => {
     const { id } = useParams();
+    const navigate = useNavigate(); // Хук для навигации
     const { isFavorite, toggleFavorite } = useFavorites();
+
     const [isPlayerOpen, setIsPlayerOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [movie, setMovie] = useState(null);
@@ -17,9 +19,11 @@ export const MoviePage = ({ onCommentModalClick }) => {
     const [hoveredRating, setHoveredRating] = useState(0);
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedItemId, setSelectedItemId] = useState(null);
+
     const castRef = useRef(null);
     const reviewsRef = useRef(null);
     const alsoWatchRef = useRef(null);
+
     const [castScrollState, setCastScrollState] = useState({
         isAtStart: true,
         isAtEnd: false,
@@ -59,6 +63,17 @@ export const MoviePage = ({ onCommentModalClick }) => {
         loadMovie();
     }, [id]);
 
+    // --- ФУНКЦИИ ПЕРЕХОДА ---
+    const handleActorClick = (personId) => {
+        navigate(`/person/${personId}`);
+    };
+
+    const handleMovieClick = (movieId) => {
+        navigate(`/movie/${movieId}`);
+        window.scrollTo(0, 0);
+    };
+    // -------------------------
+
     const handleCastScroll = useCallback(() => {
         if (!castRef.current) return;
         const el = castRef.current;
@@ -97,7 +112,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
 
     useEffect(() => {
         if (!movie) return;
-        
+
         const checkScroll = () => {
             if (castRef.current) {
                 handleCastScroll();
@@ -109,7 +124,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 handleAlsoWatchScroll();
             }
         };
-        
+
         checkScroll();
         const handleResize = () => checkScroll();
         window.addEventListener('resize', handleResize);
@@ -260,15 +275,15 @@ export const MoviePage = ({ onCommentModalClick }) => {
                         </button>
 
                         {movie.trailerUrl && (
-                            <button 
-                                className="movie_trailer_button" 
+                            <button
+                                className="movie_trailer_button"
                                 onClick={() => {
                                     window.open(movie.trailerUrl, '_blank');
                                 }}
                             ></button>
                         )}
                         {!movie.hasPremium && (
-                            <button 
+                            <button
                                 className="movie_buy_premium_button"
                                 onClick={() => {
                                     window.location.href = '/premium';
@@ -276,7 +291,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                             >
                             </button>
                         )}
-                        <div 
+                        <div
                             className={`movie_save_button ${movie && (movie.isSaved || isFavorite(movie.id)) ? "active" : ""}`}
                             onClick={async () => {
                                 if (movie && movie.id) {
@@ -316,7 +331,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                     <div className="movie_mark_block_header">
                         <div className="movie_mark_block_text"></div>
                         {userRating > 0 && (
-                            <button 
+                            <button
                                 className="movie_mark_block_delete"
                                 onClick={() => setUserRating(0)}
                             >
@@ -346,14 +361,19 @@ export const MoviePage = ({ onCommentModalClick }) => {
                     <div className="movie_cast_title"></div>
                     <div className={`movie_cast_scroll_btn left ${!castScrollState.isScrollable || castScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollCast('left')}></div>
                     <div className={`movie_cast_scroll_btn right ${!castScrollState.isScrollable || castScrollState.isAtEnd ? 'hidden' : ''}`} onClick={() => scrollCast('right')}></div>
-                    <div 
-                        className="movie_cast_list_wrapper" 
+                    <div
+                        className="movie_cast_list_wrapper"
                         ref={castRef}
                         onScroll={handleCastScroll}
                     >
                         <div className="movie_cast_list">
                             {castAndCrew.map((person) => (
-                                <div key={person.id} className="movie_cast_item">
+                                <div
+                                    key={person.id}
+                                    className="movie_cast_item"
+                                    onClick={() => handleActorClick(person.id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <div className="movie_cast_avatar">
                                         <img src={person.image} alt={person.name} />
                                     </div>
@@ -370,8 +390,8 @@ export const MoviePage = ({ onCommentModalClick }) => {
                 <div className="movie_reviews_title"></div>
                 <div className={`movie_reviews_scroll_btn left ${!reviewsScrollState.isScrollable || reviewsScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollReviews('left')}></div>
                 <div className={`movie_reviews_scroll_btn right ${!reviewsScrollState.isScrollable || reviewsScrollState.isAtEnd ? 'hidden' : ''}`} onClick={() => scrollReviews('right')}></div>
-                <div 
-                    className="movie_reviews_list_wrapper" 
+                <div
+                    className="movie_reviews_list_wrapper"
                     ref={reviewsRef}
                     onScroll={handleReviewsScroll}
                 >
@@ -392,7 +412,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                                     {review.title && <div className="movie_review_title">{review.title}</div>}
                                     <div className="movie_review_text">{review.text}</div>
                                     {review.fullText && review.fullText !== review.text && (
-                                        <button 
+                                        <button
                                             className="movie_review_read_more"
                                             onClick={() => handleToggleReview(review)}
                                         >
@@ -436,22 +456,24 @@ export const MoviePage = ({ onCommentModalClick }) => {
                     </div>
                     <div className={`movie_also_watch_scroll_btn left ${!alsoWatchScrollState.isScrollable || alsoWatchScrollState.isAtStart ? 'hidden' : ''}`} onClick={() => scrollAlsoWatch('left')}></div>
                     <div className={`movie_also_watch_scroll_btn right ${!alsoWatchScrollState.isScrollable || alsoWatchScrollState.isAtEnd ? 'hidden' : ''}`} onClick={() => scrollAlsoWatch('right')}></div>
-                    <div 
-                        className="movie_also_watch_wrapper" 
+                    <div
+                        className="movie_also_watch_wrapper"
                         ref={alsoWatchRef}
                         onScroll={handleAlsoWatchScroll}
                     >
                         <div className="movie_also_watch_list">
                             {alsoWatchFilms.map((film) => (
-                                <div 
-                                    key={film.id} 
+                                <div
+                                    key={film.id}
                                     className="movie_also_watch_item"
-                                    onMouseEnter={() => setSelectedItemId(film.id)} 
+                                    onMouseEnter={() => setSelectedItemId(film.id)}
                                     onMouseLeave={() => setSelectedItemId(null)}
+                                    onClick={() => handleMovieClick(film.id)} // Добавлен клик
+                                    style={{ cursor: 'pointer' }}
                                 >
-                                    <img 
-                                        src={film.posterUrl || 'https://via.placeholder.com/300x450'} 
-                                        alt={film.title} 
+                                    <img
+                                        src={film.posterUrl || 'https://via.placeholder.com/300x450'}
+                                        alt={film.title}
                                         className="movie_also_watch_img"
                                     />
                                     <div className="movie_also_watch_text">

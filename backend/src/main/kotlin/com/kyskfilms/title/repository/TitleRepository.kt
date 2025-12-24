@@ -45,4 +45,6 @@ interface TitleRepository : JpaRepository<Title, Int>, JpaSpecificationExecutor<
     // Фильмы с участием актера, отсортированные по рейтингу
     @Query("SELECT t FROM Title t JOIN t.persons tp WHERE tp.person.id = :personId ORDER BY t.rating DESC")
     fun findTopTitlesByPersonId(@Param("personId") personId: Long, pageable: Pageable): List<Title>
+
+
 }

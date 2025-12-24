@@ -16,4 +16,6 @@ interface CommentRepository : JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c WHERE c.title.id = :titleId ORDER BY c.createdAt DESC")
     fun findAllByTitleId(@Param("titleId") titleId: Int): List<Comment>
+
+    fun deleteAllByTitleId(titleId: Int)
 }

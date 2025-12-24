@@ -4,55 +4,42 @@ import com.kyskfilms.title.entity.enums.TitleType
 import java.math.BigDecimal
 import java.time.LocalDate
 
-/**
- * DTO для сохранения всего дерева данных фильма/сериала из Админки.
- * Используется в AdminTitleController и AdminTitleService.
- */
 data class SaveTitleRequest(
+    val id: Int? = null,
     val title: String,
-    val originalTitle: String? = null,
-    val slug: String? = null, // Если null, генерируем на бэке
+    val slug: String? = null,
     val description: String? = null,
-
     val type: TitleType,
-
     val releaseDate: LocalDate? = null,
     val rating: BigDecimal? = null,
-
-    // Ссылки на картинки (уже загруженные в MinIO)
+    val duration: Int? = null, // Минуты
     val posterUrl: String? = null,
     val logoUrl: String? = null,
     val backgroundUrl: String? = null,
 
-    // Жанры (список ID)
-    val genreIds: List<Int> = emptyList(),
+    // Списки ID или вложенных объектов
+    val genreIds: List<Long> = emptyList(),
+    val persons: List<TitlePersonRelationDto> = emptyList(),
+    val seasons: List<AdminSeasonDto> = emptyList(),
 
-    // Актеры и Режиссеры (список объектов с ролями)
-    val persons: List<PersonRelationDto> = emptyList(),
-
-    // Сезоны (для сериалов)
-    val seasons: List<SaveSeasonDto> = emptyList(),
-
-    // Прямая ссылка на видео (для фильмов, если нужно сохранить сразу)
     val videoUrl: String? = null
 )
 
-data class PersonRelationDto(
+data class TitlePersonRelationDto(
     val personId: Long,
-    val role: String // "ACTOR", "DIRECTOR"
+    val role: String // "ACTOR" или "DIRECTOR"
 )
 
-data class SaveSeasonDto(
+data class AdminSeasonDto(
     val seasonNumber: Int,
-    val seasonTitle: String? = null,
-    val episodes: List<SaveEpisodeDto> = emptyList()
+    val seasonTitle: String,
+    val episodes: List<AdminEpisodeDto> = emptyList()
 )
 
-data class SaveEpisodeDto(
+data class AdminEpisodeDto(
     val episodeNumber: Int,
     val title: String,
     val description: String? = null,
     val releaseDate: LocalDate? = null,
-    val posterUrl: String? = null,
-    val videoUrl: String? = null
+    val posterUrl: String? = null
 )

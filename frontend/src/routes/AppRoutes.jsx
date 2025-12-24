@@ -57,6 +57,8 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="/payment/success" element={<PaymentSuccess onProfileUpdate={onProfileUpdate} />} />
                 <Route path="/payment/cancel" element={<PaymentCancel />} />
+                <Route path="/admin/movie/new" element={<EditMovie />} />
+                <Route path="/admin/movie/:id" element={<EditMovie />} />
 
                 <Route
                     path="/admin"

@@ -23,4 +23,6 @@ interface TitlePersonRepository : JpaRepository<TitlePerson, Long> {
         ORDER BY t.releaseDate DESC
     """)
     fun findAllByPersonIdWithTitlesAndGenres(@Param("personId") personId: Long): List<TitlePerson>
+
+    fun deleteAllByTitleId(titleId: Int)
 }

@@ -33,4 +33,6 @@ interface VideoFileRepository : JpaRepository<VideoFile, Int> {
     @Modifying
     @Query("UPDATE VideoFile vf SET vf.status = 'ERROR', vf.errorMessage = :errorMessage, vf.updatedAt = CURRENT_TIMESTAMP WHERE vf.id = :id")
     fun updateOnError(id: Int, errorMessage: String)
+
+    fun deleteAllByTitleId(titleId: Int)
 }

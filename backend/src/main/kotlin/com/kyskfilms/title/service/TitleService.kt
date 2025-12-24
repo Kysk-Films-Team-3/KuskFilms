@@ -16,8 +16,6 @@ class TitleService(
     private val seasonRepository: SeasonRepository,
     private val personRepository: PersonRepository,
     private val episodeRepository: EpisodeRepository,
-
-    // ДОБАВИЛИ РЕПОЗИТОРИЙ ДЛЯ СВЯЗЕЙ
     private val titlePersonRepository: TitlePersonRepository
 ) {
 
@@ -29,18 +27,38 @@ class TitleService(
 
     @Transactional
     fun createGenre(req: CreateGenreRequest): Genre {
-        val category = categoryRepository.findById(req.categoryId)
-            .orElseThrow { EntityNotFoundException("Category not found") }
+        // Если categoryId передан — ищем его.
+        // Если нет (как сейчас на фронте) — берем первую попавшуюся категорию или создаем "Default".
+        val category = if (req.categoryId != null) {
+            categoryRepository.findById(req.categoryId)
+                .orElseThrow { EntityNotFoundException("Category not found") }
+        } else {
+            val categories = categoryRepository.findAll()
+            if (categories.isNotEmpty()) {
+                categories[0]
+            } else {
+                categoryRepository.save(Category(name = "General", slug = "general", description = "Default category"))
+            }
+        }
 
         val genre = Genre(category = category, name = req.name, slug = req.slug)
         return genreRepository.save(genre)
+    }
+
+    // НОВЫЙ МЕТОД ДЛЯ СОЗДАНИЯ ПЕРСОН (АКТЕРОВ/РЕЖИССЕРОВ)
+    @Transactional
+    fun createPerson(name: String, photoUrl: String? = null): Person {
+        // Проверяем, может такой уже есть (опционально, но полезно)
+        // val existing = personRepository.findByName(name) ...
+        // Пока просто создаем дубль, если надо, или нового.
+        val person = Person(name = name, photoUrl = photoUrl)
+        return personRepository.save(person)
     }
 
     @Transactional
     fun createTitle(req: TitleDtos): Title {
         val genres = genreRepository.findAllById(req.genreIds).toMutableSet()
 
-        // Генерируем slug, если не пришел
         val finalSlug = req.slug?.takeIf { it.isNotBlank() }
             ?: (req.title.lowercase().replace(" ", "-") + "-" + System.currentTimeMillis())
 
@@ -59,29 +77,18 @@ class TitleService(
 
         val savedTitle = titleRepository.save(title)
 
-        // === СОХРАНЕНИЕ АКТЕРОВ ===
-        // req.actorIds теперь List<Long>, поэтому forEach работает корректно
         req.actorIds.forEach { actorId ->
             val person = personRepository.findById(actorId).orElse(null)
             if (person != null) {
-                val titlePerson = TitlePerson(
-                    title = savedTitle,
-                    person = person,
-                    role = "ACTOR" // Можно вынести в константу
-                )
+                val titlePerson = TitlePerson(title = savedTitle, person = person, role = "ACTOR")
                 titlePersonRepository.save(titlePerson)
             }
         }
 
-        // === СОХРАНЕНИЕ РЕЖИССЕРОВ (если нужно) ===
         req.directorIds.forEach { directorId ->
             val person = personRepository.findById(directorId).orElse(null)
             if (person != null) {
-                val titlePerson = TitlePerson(
-                    title = savedTitle,
-                    person = person,
-                    role = "DIRECTOR"
-                )
+                val titlePerson = TitlePerson(title = savedTitle, person = person, role = "DIRECTOR")
                 titlePersonRepository.save(titlePerson)
             }
         }
@@ -94,11 +101,7 @@ class TitleService(
         val title = titleRepository.findById(req.titleId)
             .orElseThrow { EntityNotFoundException("Title not found") }
 
-        val season = Season(
-            title = title,
-            seasonNumber = req.seasonNumber,
-            seasonTitle = req.seasonTitle
-        )
+        val season = Season(title = title, seasonNumber = req.seasonNumber, seasonTitle = req.seasonTitle)
         return seasonRepository.save(season)
     }
 
@@ -107,12 +110,7 @@ class TitleService(
         val season = seasonRepository.findById(req.seasonId)
             .orElseThrow { EntityNotFoundException("Season not found") }
 
-        val episode = Episode(
-            season = season,
-            episodeNumber = req.episodeNumber,
-            title = req.title,
-            description = req.description
-        )
+        val episode = Episode(season = season, episodeNumber = req.episodeNumber, title = req.title, description = req.description)
         return episodeRepository.save(episode)
     }
 

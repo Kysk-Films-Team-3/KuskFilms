@@ -129,7 +129,19 @@ class PublicTitleController(
         ))
     }
 
-    private fun resolveUrl(path: String?): String? = path?.let { if(it.startsWith("http")) it else "$minioUrl/$folderName/$it" }
+    // Улучшенный метод: убирает дублирование папки images/
+    private fun resolveUrl(path: String?): String? {
+        if (path == null) return null
+        if (path.startsWith("http")) return path
+
+        // Если в базе записано "images/file.png", мы убираем "images/"
+        // Если записано "file.png", ничего не меняется
+        val cleanPath = path.removePrefix("$folderName/").removePrefix("/")
+
+        return "$minioUrl/$folderName/$cleanPath"
+    }
+
     private fun getCurrentUserId(): String? = (SecurityContextHolder.getContext().authentication?.principal as? Jwt)?.subject
+    // В методе toDto тоже используется resolveUrl, так что исправление применится везде
     private fun Title.toDto(isSaved: Boolean) = TitleDto(this.id!!, this.title, this.slug, resolveUrl(this.posterUrl), this.rating, this.type, this.genres.map { it.name }, isSaved)
 }
