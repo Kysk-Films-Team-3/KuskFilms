@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="${locale.currentLanguageTag}">
 <head>
     <meta charset="UTF-8">
     <title>KYSKFilms</title>
     <link rel="stylesheet" href="${url.resourcesPath}/css/register.css">
+    <link rel="stylesheet" href="${url.resourcesPath}/css/language-switcher.css">
     <script src="${url.resourcesPath}/js/register.js" defer></script>
+    <script src="${url.resourcesPath}/js/language-switcher.js" defer></script>
 </head>
 <body class="registration-page">
 <div class="registration_page">
     <div class="registration_layout">
-        <div class="registration_title">Реєстрація</div>
+        <div class="registration_title">${msg("registration.title")}</div>
         <div class="registration_subtitle">
-            Готові дивитися? Введіть свою електронну адресу або
-            мобільний телефон, щоб створити акаунт.
+            ${msg("registration.subtitle")}
         </div>
         <form class="registration_form" id="registrationForm"
               action="${url.registrationAction}"
@@ -27,7 +28,7 @@
                         class="registration_input"
                         autocomplete="given-name"
                 />
-                <label for="firstName">Ім'я</label>
+                <label for="firstName">${msg("registration.firstName")}</label>
             </div>
 
             <div class="registration_input_block">
@@ -39,7 +40,7 @@
                         class="registration_input"
                         autocomplete="family-name"
                 />
-                <label for="lastName">Прізвище</label>
+                <label for="lastName">${msg("registration.lastName")}</label>
             </div>
 
             <div class="registration_input_block">
@@ -51,7 +52,7 @@
                         class="registration_input"
                         autocomplete="email"
                 />
-                <label for="email">Ел. пошта</label>
+                <label for="email">${msg("registration.email")}</label>
             </div>
 
             <div class="registration_input_block">
@@ -64,7 +65,7 @@
                         value="${(username)!}"
                         autocomplete="username"
                 />
-                <label for="username">Ім'я користувача</label>
+                <label for="username">${msg("registration.username")}</label>
             </div>
 
             <div class="registration_input_block">
@@ -76,7 +77,7 @@
                         class="registration_input"
                         autocomplete="new-password"
                 />
-                <label for="password">Пароль</label>
+                <label for="password">${msg("registration.password")}</label>
             </div>
 
             <div class="registration_input_block">
@@ -88,7 +89,7 @@
                         class="registration_input"
                         autocomplete="new-password"
                 />
-                <label for="password-confirm">Підтвердьте пароль</label>
+                <label for="password-confirm">${msg("registration.passwordConfirm")}</label>
             </div>
 
             <#if message?has_content>
@@ -109,7 +110,7 @@
 
             <div class="registration_block">
                 <button type="submit" id="registerBtn" class="registration_button">
-                    Почати
+                    ${msg("registration.button")}
                 </button>
             </div>
         </form>
@@ -119,20 +120,25 @@
                 <div id="rememberCheckbox" class="registration_custom_checkbox">
                     <div class="registration_checkbox_icon"></div>
                 </div>
-                <span>Запам'ятати мене</span>
+                <span>${msg("registration.rememberMe")}</span>
             </label>
             <input type="hidden" name="rememberMe" id="rememberMeInput" value="false">
         </div>
 
         <div class="registration_terms_block">
-            Продовжуючи, ви погоджуєтеся з KYSK
-            <a href="/terms" target="_blank" rel="noopener noreferrer">Умовами використання</a><br />
-            Будь ласка, перегляньте наші
-            <a href="/privacy" target="_blank" rel="noopener noreferrer">Повідомленням про конфіденційність,</a>
-            <a href="/cookies" target="_blank" rel="noopener noreferrer">повідомлення про файли cookie та повідомлення про рекламу на
-                основі інтересів.</a>
+            ${msg("registration.terms")}
+            <a href="/terms" target="_blank" rel="noopener noreferrer">${msg("registration.termsLink")}</a><br />
+            ${msg("registration.privacyNotice")}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer">${msg("registration.privacyLink")}</a>
+            <a href="/cookies" target="_blank" rel="noopener noreferrer">${msg("registration.cookiesLink")}</a>
         </div>
     </div>
 </div>
+
+<!-- Language Switcher -->
+<div id="language-switcher" class="language-switcher">
+    <span class="language-switcher-icon">EN</span>
+</div>
+
 </body>
 </html>
