@@ -1,49 +1,38 @@
-import React from 'react';
-import { Trans } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import './RulesPage.css';
+import { fetchPageData } from '../services/api';
 
 export const RulesPage = () => {
+    const [pageData, setPageData] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchPageData('rules');
+                setPageData(data);
+            } catch (error) {
+                setPageData(null);
+            }
+        })();
+    }, []);
+
+    if (!pageData) {
+        return <div className="rules_page">Завантаження...</div>;
+    }
+
     return (
         <div className="rules_page">
             <div className="rules_block">
-                <h1 className="rules_title"><Trans i18nKey="rulesPage.title" /></h1>
+                <h1 className="rules_title">{pageData.title}</h1>
 
                 <div className="rules_content">
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section1.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section1.content" /></p>
-                    </div>
-
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section2.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section2.content" /></p>
-                    </div>
-
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section3.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section3.content" /></p>
-                    </div>
-
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section4.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section4.content" /></p>
-                    </div>
-
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section5.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section5.content" /></p>
-                    </div>
-
-                    <div className="rules_section">
-                        <h2 className="rules_subtitle"><Trans i18nKey="rulesPage.section6.title" /></h2>
-                        <div className="rules_line small"></div>
-                        <p className="rules_text"><Trans i18nKey="rulesPage.section6.content" /></p>
-                    </div>
+                    {pageData.sections && pageData.sections.map((section, index) => (
+                        <div key={index} className="rules_section">
+                            <h2 className="rules_subtitle">{section.title}</h2>
+                            <div className="rules_line small"></div>
+                            <p className="rules_text">{section.content}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

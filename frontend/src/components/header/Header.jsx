@@ -519,7 +519,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     ) : (
                         <div onClick={handleLogin} className="header_log_button">
                             <div className="log_button_icon"></div>
-                            <span>Увійти</span>
+                            <span>{headerData?.ui?.loginBtn}</span>
                         </div>
                     )}
                 </div>

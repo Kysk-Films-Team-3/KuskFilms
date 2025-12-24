@@ -61,7 +61,7 @@ export const Premium = () => {
                     className="premium_back"
                 >
                     <div className="premium_back_icon"></div>
-                    {premiumData.backButton || "Назад"}
+                    {premiumData.backButton}
                 </Link>
             </div>
 
@@ -105,7 +105,7 @@ export const Premium = () => {
                     onClick={handleSubscribe}
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Завантаження...' : (premiumData.buttonText || "Оформити")}
+                    {isLoading ? 'Завантаження...' : premiumData.buttonText}
                 </button>
             </div>
         </div>
