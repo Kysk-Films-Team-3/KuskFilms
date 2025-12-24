@@ -44,16 +44,27 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
                 <Route path="/Favorites" element={<Favorites />} />
                 <Route path="/movie/:id" element={<MoviePage onCommentModalClick={onCommentModalClick}  />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/pages/about" element={<AboutPage />} />
                 <Route path="/careers" element={<CareerPage />} />
+                <Route path="/pages/careers" element={<CareerPage />} />
                 <Route path="/agents" element={<AgentsPage />} />
+                <Route path="/pages/agents" element={<AgentsPage />} />
                 <Route path="/offers" element={<PromotionsPage />} />
+                <Route path="/pages/promo" element={<PromotionsPage />} />
                 <Route path="/faq" element={<FaqPage />} />
+                <Route path="/pages/faq" element={<FaqPage />} />
                 <Route path="/devices" element={<DevicesPage />} />
+                <Route path="/pages/devices" element={<DevicesPage />} />
                 <Route path="/distributors" element={<DistributorsPage />} />
+                <Route path="/pages/distributors" element={<DistributorsPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/pages/contacts" element={<ContactsPage />} />
                 <Route path="/terms" element={<TermsPage />} />
+                <Route path="/pages/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/pages/privacy" element={<PrivacyPage />} />
                 <Route path="/rules" element={<RulesPage />} />
+                <Route path="/pages/rules" element={<RulesPage />} />
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="/payment/success" element={<PaymentSuccess onProfileUpdate={onProfileUpdate} />} />
                 <Route path="/payment/cancel" element={<PaymentCancel />} />
