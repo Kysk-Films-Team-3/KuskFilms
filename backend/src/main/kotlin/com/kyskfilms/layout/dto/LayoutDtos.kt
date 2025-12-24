@@ -1,11 +1,21 @@
 package com.kyskfilms.layout.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonInclude
 
 // --- HEADER ---
 data class HeaderDataDto(
     val navigation: List<MenuItemDto>,
-    val searchSuggestions: SearchSuggestionsDto
+    val searchSuggestions: SearchSuggestionsDto,
+    val ui: HeaderUiDto // Новое поле для текстов
+)
+
+data class HeaderUiDto(
+    val premiumBtn: String,      // "Преміум"
+    val promoCodeBtn: String,    // "Промокод"
+    val manageProfile: String,   // "Керувати профілем"
+    val switchLang: String,      // "Перемкнути на українську"
+    val adminPanel: String,      // "Адмін панель"
+    val logout: String           // "Вийти"
 )
 
 data class MenuItemDto(
@@ -16,16 +26,16 @@ data class MenuItemDto(
 )
 
 data class SearchSuggestionsDto(
-    val title: String, // "Часто шукають"
+    val title: String,
     val items: List<SearchItemDto>
 )
 
 data class SearchItemDto(
     val id: Long,
     val title: String,
-    val subtitle: String?, // "Актор" или год фильма
+    val subtitle: String?,
     val imageUrl: String,
-    val type: String // "MOVIE" or "ACTOR"
+    val type: String
 )
 
 // --- FOOTER ---
@@ -36,12 +46,104 @@ data class FooterDataDto(
     val legalLinks: List<MenuItemDto>
 )
 
-data class SocialLinkDto(
-    val network: String, // "tg", "fb", "ig", "x"
-    val url: String
-)
+data class SocialLinkDto(val network: String, val url: String)
+data class FooterColumnDto(val title: String, val links: List<MenuItemDto>)
 
-data class FooterColumnDto(
+// --- STATIC PAGES DTOs (Для страниц футера) ---
+
+// Общий класс-маркер или Any в контроллере
+interface PageContentDto
+
+// 1. Список устройств
+data class DevicesPageDto(
     val title: String,
-    val links: List<MenuItemDto>
-)
+    val items: List<DeviceItemDto>
+) : PageContentDto
+
+data class DeviceItemDto(val name: String, val description: String)
+
+// 2. FAQ
+data class FaqPageDto(
+    val title: String,
+    val items: List<FaqItemDto>
+) : PageContentDto
+
+data class FaqItemDto(val question: String, val answer: String)
+
+// 3. О нас
+data class AboutPageDto(
+    val title: String,
+    val description: String,
+    val missionTitle: String,
+    val missionText: String,
+    val valuesTitle: String,
+    val values: List<String>,
+    val teamTitle: String,
+    val teamText: String
+) : PageContentDto
+
+// 4. Карьера
+data class CareersPageDto(
+    val title: String,
+    val intro: String,
+    val whyTitle: String,
+    val reasons: List<String>,
+    val vacanciesTitle: String,
+    val vacancies: List<VacancyDto>,
+    val notFoundTitle: String,
+    val notFoundText: String,
+    val sendResumeBtn: String
+) : PageContentDto
+
+data class VacancyDto(val title: String, val description: String)
+
+// 5. Дистрибьюторам
+data class DistributorsPageDto(
+    val title: String,
+    val cooperationTitle: String,
+    val cooperationDesc: String,
+    val requirementsTitle: String,
+    val requirementsDesc: String,
+    val offerTitle: String,
+    val offerDesc: String,
+    val contactTitle: String,
+    val contactDesc: String,
+    val sendProposalBtn: String
+) : PageContentDto
+
+// 6. Контакты
+data class ContactsPageDto(
+    val title: String,
+    val lead: String,
+    val writeQuestionBtn: String,
+    val responseTime: String
+) : PageContentDto
+
+// 7. Акции (Promo)
+data class PromoOffersPageDto(
+    val title: String,
+    val subtitle: String,
+    val premiumTitle: String,
+    val premiumText: String,
+    val buyPremiumBtn: String,
+    val copiedMsg: String,
+    val copyBtn: String,
+    val promos: List<PromoItemDto>
+) : PageContentDto
+
+data class PromoItemDto(val code: String, val description: String)
+
+// 8. Агенты
+data class AgentsPageDto(
+    val title: String,
+    val intro: String,
+    val whoAreAgentsTitle: String,
+    val whoAreAgentsText: String,
+    val rolesTitle: String,
+    val roles: List<AgentRoleDto>,
+    val howToTitle: String,
+    val howToText: String,
+    val applyButton: String
+) : PageContentDto
+
+data class AgentRoleDto(val title: String, val description: String)
