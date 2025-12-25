@@ -20,9 +20,11 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const fileInputRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
-    // State
+    const [currentLanguage, setCurrentLanguage] = useState('ua');
     const [name, setName] = useState('');
+    const [nameEn, setNameEn] = useState('');
     const [surname, setSurname] = useState('');
+    const [surnameEn, setSurnameEn] = useState('');
     const [activityType, setActivityType] = useState('Актор');
     const [gender, setGender] = useState('');
 
@@ -33,13 +35,12 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
 
-    const [avatarUrl, setAvatarUrl] = useState(null); // Preview URL
-    const [avatarFile, setAvatarFile] = useState(null); // File object
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
 
     const [filmography, setFilmography] = useState([]);
     const [relatives, setRelatives] = useState([]);
 
-    // Dropdowns state
     const [isActivityOpen, setIsActivityOpen] = useState(false);
     const [isGenderOpen, setIsGenderOpen] = useState(false);
     const [isDayOpen, setIsDayOpen] = useState(false);
@@ -48,7 +49,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
 
-    // Refs
     const activityDropdownRef = useRef(null);
     const genderDropdownRef = useRef(null);
     const dayDropdownRef = useRef(null);
@@ -57,7 +57,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const countryDropdownRef = useRef(null);
     const cityDropdownRef = useRef(null);
 
-    // Helper to resolve image path
     const resolvePath = (path) => {
         if (!path) return null;
         if (path.startsWith('http') || path.startsWith('data:')) return path;
@@ -65,7 +64,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         return `/kyskfilms/images/${clean}`;
     };
 
-    // --- HELPER: Close Dropdowns (Moved UP) ---
     const closeAllDropdownsExcept = (exceptStateSetter) => {
         if (exceptStateSetter !== setIsActivityOpen) setIsActivityOpen(false);
         if (exceptStateSetter !== setIsGenderOpen) setIsGenderOpen(false);
@@ -76,15 +74,15 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         if (exceptStateSetter !== setIsCityOpen) setIsCityOpen(false);
     };
 
-    // --- 1. INITIALIZATION & DRAFT RESTORE ---
     useEffect(() => {
         if (!isOpen) return;
 
         if (actor) {
-            // EDIT MODE
             const names = (actor.name || '').split(' ');
             setName(names[0] || '');
+            setNameEn(actor.nameEn || '');
             setSurname(names.slice(1).join(' ') || '');
+            setSurnameEn(actor.surnameEn || '');
             setActivityType(actor.role || 'Актор');
             setGender(actor.gender || '');
             setAvatarUrl(resolvePath(actor.image));
@@ -110,12 +108,13 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             sessionStorage.removeItem(DRAFT_KEY);
 
         } else {
-            // CREATE MODE
             const draft = sessionStorage.getItem(DRAFT_KEY);
             if (draft) {
                 const data = JSON.parse(draft);
                 setName(data.name || '');
+                setNameEn(data.nameEn || '');
                 setSurname(data.surname || '');
+                setSurnameEn(data.surnameEn || '');
                 setActivityType(data.activityType || 'Актор');
                 setGender(data.gender || '');
                 setDay(data.day || '');
@@ -127,7 +126,9 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 if (data.relatives) setRelatives(data.relatives);
             } else {
                 setName('');
+                setNameEn('');
                 setSurname('');
+                setSurnameEn('');
                 setActivityType('Актор');
                 setGender('');
                 setDay('');
@@ -143,20 +144,18 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     }, [isOpen, actor]);
 
-    // --- 2. AUTO-SAVE DRAFT ---
     useEffect(() => {
         if (!actor && isOpen) {
             const draftData = {
-                name, surname, activityType, gender,
+                name, nameEn, surname, surnameEn, activityType, gender,
                 day, month, year, country, city,
                 filmography, relatives
             };
             sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
         }
-    }, [name, surname, activityType, gender, day, month, year, country, city, filmography, relatives, actor, isOpen]);
+    }, [name, nameEn, surname, surnameEn, activityType, gender, day, month, year, country, city, filmography, relatives, actor, isOpen]);
 
 
-    // --- 3. HANDLE EXTERNAL UPDATES ---
     useEffect(() => {
         if (selectedMovies && selectedMovies.length > 0) {
             setFilmography(prev => {
@@ -179,8 +178,6 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         }
     }, [selectedActors, onActorsAdded]);
 
-
-    // --- Handlers ---
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -225,6 +222,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             const actorData = {
                 id: actor?.id,
                 name: `${name} ${surname}`.trim(),
+                nameEn: `${nameEn} ${surnameEn}`.trim(),
                 activityType,
                 gender,
                 photoUrl: uploadedPhotoUrl,
@@ -234,6 +232,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
 
             const payload = {
                 name: actorData.name,
+                nameEn: actorData.nameEn,
                 photoUrl: actorData.photoUrl
             };
 
@@ -325,14 +324,53 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                     {avatarUrl && <img src={avatarUrl} alt="Avatar" style={{width:'100%',height:'100%',borderRadius:'50%',objectFit:'cover'}} />}
                                 </div>
                                 <div className="edit_actor_avatar_info">
-                                    <div className="edit_actor_avatar_name">{name||surname?`${name} ${surname}`.trim():''}</div>
+                                    <div className="edit_actor_avatar_name">
+                                        {currentLanguage === 'ua' 
+                                            ? (name||surname ? `${name} ${surname}`.trim() : '')
+                                            : (nameEn||surnameEn ? `${nameEn} ${surnameEn}`.trim() : '')
+                                        }
+                                    </div>
                                     <div className="edit_actor_avatar_role">{activityType||''}</div>
                                 </div>
                             </div>
                             <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.mainInfo" /></div>
+                                <div className="edit_actor_language_tabs">
+                                    <button
+                                        className={`edit_actor_tab ${currentLanguage === 'ua' ? 'active' : ''}`}
+                                        onClick={() => setCurrentLanguage('ua')}
+                                    >
+                                        UA
+                                    </button>
+                                    <button
+                                        className={`edit_actor_tab ${currentLanguage === 'en' ? 'active' : ''}`}
+                                        onClick={() => setCurrentLanguage('en')}
+                                    >
+                                        EN
+                                    </button>
+                                </div>
                                 <div className="edit_actor_inputs_row">
-                                    <div className="edit_actor_input_block"><input type="text" id="an" className="edit_actor_input" value={name} onChange={e=>setName(e.target.value)} placeholder=" "/><label htmlFor="an"><Trans i18nKey="admin.editActor.name" /></label></div>
-                                    <div className="edit_actor_input_block"><input type="text" id="as" className="edit_actor_input" value={surname} onChange={e=>setSurname(e.target.value)} placeholder=" "/><label htmlFor="as"><Trans i18nKey="admin.editActor.surname" /></label></div>
+                                    <div className="edit_actor_input_block">
+                                        <input 
+                                            type="text" 
+                                            id="an" 
+                                            className="edit_actor_input" 
+                                            value={currentLanguage === 'ua' ? name : nameEn} 
+                                            onChange={e => currentLanguage === 'ua' ? setName(e.target.value) : setNameEn(e.target.value)} 
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="an"><Trans i18nKey="admin.editActor.name" /></label>
+                                    </div>
+                                    <div className="edit_actor_input_block">
+                                        <input 
+                                            type="text" 
+                                            id="as" 
+                                            className="edit_actor_input" 
+                                            value={currentLanguage === 'ua' ? surname : surnameEn} 
+                                            onChange={e => currentLanguage === 'ua' ? setSurname(e.target.value) : setSurnameEn(e.target.value)} 
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="as"><Trans i18nKey="admin.editActor.surname" /></label>
+                                    </div>
                                 </div>
                                 <div className="edit_actor_inputs_row">
                                     {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'act', activityDropdownRef)}

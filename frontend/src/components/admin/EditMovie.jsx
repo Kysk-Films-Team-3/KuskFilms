@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate, useParams } from 'react-router-dom'; // Добавил useParams
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../../services/api';
 import './EditMovie.css';
@@ -14,26 +14,22 @@ const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0
 export const EditMovie = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { id } = useParams(); // Получаем ID из URL (если мы в режиме редактирования)
+    const { id } = useParams();
 
-    // --- Файлы (Blob) ---
     const [coverFile, setCoverFile] = useState(null);
     const [logoFile, setLogoFile] = useState(null);
     const [backgroundFile, setBackgroundFile] = useState(null);
     const [contentFile, setContentFile] = useState(null);
 
-    // --- Данные для списков ---
     const [allGenres, setAllGenres] = useState([]);
     const [foundPersons, setFoundPersons] = useState([]);
 
-    // --- Выбранные значения ---
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [selectedDirectors, setSelectedDirectors] = useState([]);
     const [selectedActors, setSelectedActors] = useState([]);
 
     const [actorsAndDirectors, setActorsAndDirectors] = useState([]);
 
-    // --- Превью картинок (URL) ---
     const [coverImage, setCoverImage] = useState(null);
     const [logoImage, setLogoImage] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
@@ -45,15 +41,20 @@ export const EditMovie = () => {
     const episodeCoverInputRefs = useRef({});
     const episodeContentInputRefs = useRef({});
 
+    const [currentLanguage, setCurrentLanguage] = useState('ua');
+    
     const [formData, setFormData] = useState({
         title: '',
+        titleEn: '',
         shortDescription: '',
+        shortDescriptionEn: '',
         rating: '10.0',
         yearStart: '2025',
         yearEnd: '2025',
         durationHours: '0',
         durationMinutes: '00',
-        description: ''
+        description: '',
+        descriptionEn: ''
     });
 
     const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
@@ -79,10 +80,10 @@ export const EditMovie = () => {
         art: false, fitness: false, lectures: false
     });
 
-    const [contentType, setContentType] = useState('film'); // 'film' or 'series'
+    const [contentType, setContentType] = useState('film');
 
     const [episodes, setEpisodes] = useState([
-        { id: 1, season: 1, episode: 1, title: '', description: '', cover: null, coverFile: null, content: null }
+        { id: 1, season: 1, episode: 1, title: '', titleEn: '', description: '', descriptionEn: '', cover: null, coverFile: null, content: null }
     ]);
     const [availableSeasons, setAvailableSeasons] = useState([1]);
     const [availableEpisodes, setAvailableEpisodes] = useState([1]);
@@ -104,60 +105,49 @@ export const EditMovie = () => {
     const durationMinutesDropdownRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
-    // --- Helper для путей картинок ---
     const resolvePath = (path) => {
         if (!path) return null;
         if (path.startsWith('http')) return path;
-        // Убираем дублирование, если оно есть
         const clean = path.replace(/^kyskfilms\//, '').replace(/^images\//, '');
         return `/kyskfilms/images/${clean}`;
     };
 
-    // --- 1. ЗАГРУЗКА ДАННЫХ ПРИ СТАРТЕ ---
     useEffect(() => {
         const init = async () => {
-            // Загружаем жанры
             try {
                 const gRes = await api.get('/genres');
                 setAllGenres(gRes.data);
             } catch (e) {}
 
-            // Если есть ID - загружаем фильм для редактирования
             if (id) {
                 try {
                     const res = await api.get(`/admin/titles/${id}`);
                     const data = res.data;
 
-                    // Заполняем форму
                     const year = data.releaseDate ? data.releaseDate.substring(0, 4) : '2025';
-                    // duration хранится в минутах? Если нет, считаем 0.
-                    // Предположим бэк не возвращает duration в минутах, или возвращает null.
-                    // Для простоты ставим дефолт или парсим, если добавишь поле.
 
                     setFormData({
-                        title: data.title,
+                        title: data.title || '',
+                        titleEn: data.titleEn || '',
                         shortDescription: data.description ? data.description.substring(0, 100) : '',
+                        shortDescriptionEn: data.descriptionEn ? data.descriptionEn.substring(0, 100) : '',
                         description: data.description || '',
+                        descriptionEn: data.descriptionEn || '',
                         rating: data.rating ? data.rating.toString() : '10.0',
                         yearStart: year,
                         yearEnd: year,
-                        durationHours: '2', // Заглушка, если нет данных
+                        durationHours: '2',
                         durationMinutes: '00'
                     });
 
-                    // Картинки
                     setCoverImage(resolvePath(data.posterUrl));
                     setLogoImage(resolvePath(data.logoUrl));
                     setBackgroundImage(resolvePath(data.backgroundUrl));
 
-                    // Тип
                     setContentType(data.type === 'SERIES' ? 'series' : 'film');
 
-                    // Жанры
                     if (data.genres) setSelectedGenres(data.genres);
 
-                    // Актеры и Режиссеры
-                    // В data.persons приходит массив TitlePerson { person: {...}, role: "..." }
                     if (data.persons) {
                         const dirs = [];
                         const acts = [];
@@ -171,7 +161,6 @@ export const EditMovie = () => {
                         setSelectedActors(acts);
                     }
 
-                    // Сезоны (сложная логика маппинга обратно в плоский список)
                     if (data.type === 'SERIES' && data.seasons) {
                         const loadedEpisodes = [];
                         const loadedSeasons = new Set();
@@ -180,14 +169,16 @@ export const EditMovie = () => {
                             loadedSeasons.add(s.seasonNumber);
                             s.episodes.forEach(ep => {
                                 loadedEpisodes.push({
-                                    id: ep.id, // ID существующего эпизода
+                                    id: ep.id,
                                     season: s.seasonNumber,
                                     episode: ep.episodeNumber,
-                                    title: ep.title,
-                                    description: ep.description,
+                                    title: ep.title || '',
+                                    titleEn: ep.titleEn || '',
+                                    description: ep.description || '',
+                                    descriptionEn: ep.descriptionEn || '',
                                     cover: resolvePath(ep.posterUrl),
                                     coverFile: null,
-                                    content: null // Видео файл не восстановить, только перезалить
+                                    content: null
                                 });
                             });
                         });
@@ -260,7 +251,6 @@ export const EditMovie = () => {
             const response = await api.post('/admin/titles/upload-image', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            // Чистим путь, чтобы не было images/images
             let url = response.data.url;
             return url ? url.replace(/^images\//, '') : null;
         } catch (error) {
@@ -308,7 +298,6 @@ export const EditMovie = () => {
         }
 
         try {
-            // Если файл выбран - грузим. Если нет - берем старый URL (обрезая префикс)
             let posterUrl = coverFile ? await uploadImageToServer(coverFile) : (coverImage ? coverImage.replace('/kyskfilms/images/', '') : null);
             let logoUrl = logoFile ? await uploadImageToServer(logoFile) : (logoImage ? logoImage.replace('/kyskfilms/images/', '') : null);
             let backgroundUrl = backgroundFile ? await uploadImageToServer(backgroundFile) : (backgroundImage ? backgroundImage.replace('/kyskfilms/images/', '') : null);
@@ -329,7 +318,9 @@ export const EditMovie = () => {
                     const dto = {
                         episodeNumber: ep.episode,
                         title: ep.title || `Episode ${ep.episode}`,
+                        titleEn: ep.titleEn || '',
                         description: ep.description || '',
+                        descriptionEn: ep.descriptionEn || '',
                         posterUrl: epPosterUrl,
                         releaseDate: `${formData.yearStart}-01-01`
                     };
@@ -343,12 +334,10 @@ export const EditMovie = () => {
             }
 
             const payload = {
-                // Если есть ID, можно добавить его в DTO, если бэкенд поддерживает update.
-                // Сейчас мы просто создаем новый или перезаписываем (зависит от логики AdminTitleService)
-                // Для простоты дипломной работы часто проще удалить старый и создать новый, но мы шлем как Create.
-
                 title: formData.title,
+                titleEn: formData.titleEn,
                 description: formData.description || formData.shortDescription,
+                descriptionEn: formData.descriptionEn || formData.shortDescriptionEn,
                 type: contentType === 'film' ? 'MOVIE' : 'SERIES',
                 releaseDate: `${formData.yearStart}-01-01`,
                 rating: parseFloat(formData.rating),
@@ -369,15 +358,10 @@ export const EditMovie = () => {
                 videoUrl: null
             };
 
-            // Если это редактирование, в идеале нужен PUT.
-            // Но если мы делаем "Create" с тем же названием, будет дубль.
-            // Для диплома: если ID есть, можно сначала удалить старый (костыль), либо реализовать Update на бэке.
-            // Пока шлем POST (создаст новый).
             const createResponse = await api.post('/admin/titles', payload);
             const savedTitle = createResponse.data;
             const titleId = savedTitle.id;
 
-            // Если редактировали и создали новый - удалим старый (ОПАСНЫЙ КОСТЫЛЬ, НО РАБОЧИЙ ДЛЯ ДЕМО)
             if (id && titleId !== parseInt(id)) {
                  await api.delete(`/admin/titles/${id}`);
             }
@@ -473,7 +457,9 @@ export const EditMovie = () => {
                 season: 1,
                 episode: maxEpisode + 1,
                 title: '',
+                titleEn: '',
                 description: '',
+                descriptionEn: '',
                 cover: null, coverFile: null, content: null
             }];
         });
@@ -786,14 +772,29 @@ export const EditMovie = () => {
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Основна інформація</div>
 
+                            <div className="edit_movie_language_tabs">
+                                <button
+                                    className={`edit_movie_tab ${currentLanguage === 'ua' ? 'active' : ''}`}
+                                    onClick={() => setCurrentLanguage('ua')}
+                                >
+                                    UA
+                                </button>
+                                <button
+                                    className={`edit_movie_tab ${currentLanguage === 'en' ? 'active' : ''}`}
+                                    onClick={() => setCurrentLanguage('en')}
+                                >
+                                    EN
+                                </button>
+                            </div>
+
                             <div className="edit_movie_input_group">
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.movieTitle" /></label>
                                 <input
                                     type="text"
-                                    name="title"
+                                    name={currentLanguage === 'ua' ? 'title' : 'titleEn'}
                                     className="edit_movie_input"
                                     placeholder="Введіть назву фільму чи серіалу"
-                                    value={formData.title}
+                                    value={currentLanguage === 'ua' ? formData.title : formData.titleEn}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -802,10 +803,10 @@ export const EditMovie = () => {
                                 <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.shortDescription" /></label>
                                 <input
                                     type="text"
-                                    name="shortDescription"
+                                    name={currentLanguage === 'ua' ? 'shortDescription' : 'shortDescriptionEn'}
                                     className="edit_movie_input"
                                     placeholder={t('admin.editMovie.shortDescription')}
-                                    value={formData.shortDescription}
+                                    value={currentLanguage === 'ua' ? formData.shortDescription : formData.shortDescriptionEn}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -1161,10 +1162,10 @@ export const EditMovie = () => {
                         <div className="edit_movie_section">
                             <div className="edit_movie_section_title">Опис</div>
                             <textarea
-                                name="description"
+                                name={currentLanguage === 'ua' ? 'description' : 'descriptionEn'}
                                 className="edit_movie_textarea"
                                 placeholder="Опис фільму, цікаві факти, короткий зміст"
-                                value={formData.description}
+                                value={currentLanguage === 'ua' ? formData.description : formData.descriptionEn}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -1433,10 +1434,13 @@ export const EditMovie = () => {
                                                         type="text"
                                                         className="edit_movie_input"
                                                         placeholder={t('admin.editMovie.episodeTitle')}
-                                                        value={episode.title}
+                                                        value={currentLanguage === 'ua' ? (episode.title || '') : (episode.titleEn || '')}
                                                         onChange={(e) => {
                                                             setEpisodes(prev => prev.map(ep =>
-                                                                ep.id === episode.id ? { ...ep, title: e.target.value } : ep
+                                                                ep.id === episode.id ? { 
+                                                                    ...ep, 
+                                                                    [currentLanguage === 'ua' ? 'title' : 'titleEn']: e.target.value 
+                                                                } : ep
                                                             ));
                                                         }}
                                                     />
@@ -1446,10 +1450,13 @@ export const EditMovie = () => {
                                                     <textarea
                                                         className="edit_movie_textarea"
                                                         placeholder="Короткий опис серии"
-                                                        value={episode.description}
+                                                        value={currentLanguage === 'ua' ? (episode.description || '') : (episode.descriptionEn || '')}
                                                         onChange={(e) => {
                                                             setEpisodes(prev => prev.map(ep =>
-                                                                ep.id === episode.id ? { ...ep, description: e.target.value } : ep
+                                                                ep.id === episode.id ? { 
+                                                                    ...ep, 
+                                                                    [currentLanguage === 'ua' ? 'description' : 'descriptionEn']: e.target.value 
+                                                                } : ep
                                                             ));
                                                         }}
                                                     />

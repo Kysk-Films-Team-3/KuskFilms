@@ -809,7 +809,8 @@
     text-align: center;
 }
 
-.edit_movie_content_tabs {
+.edit_movie_content_tabs,
+.edit_movie_language_tabs {
     display: flex;
     border-radius: 50px;
     overflow: hidden;
