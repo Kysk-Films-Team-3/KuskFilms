@@ -39,17 +39,17 @@ export const Premium = () => {
             if (result.success && result.url) {
                 window.location.href = result.url;
             } else {
-                setError(result.message || 'Не вдалося створити сесію оплати');
+                setError(result.message || '');
             }
         } catch (err) {
-            setError('Не вдалося створити сесію оплати');
+            setError('');
         } finally {
             setIsLoading(false);
         }
     };
 
     if (!premiumData) {
-        return <div className="premium_page">Завантаження...</div>;
+        return <div className="premium_page"></div>;
     }
 
     return (
@@ -104,7 +104,7 @@ export const Premium = () => {
                     onClick={handleSubscribe}
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Завантаження...' : premiumData.buttonText}
+                    {isLoading ? '' : premiumData.buttonText}
                 </button>
             </div>
         </div>

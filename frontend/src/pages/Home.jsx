@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { getMenuItems, getWatchModeItems, getHomePageData, transformCarouselItems, transformCategories, transformSections, transformCelebrities, transformPromo } from '../services/api';
+import { getMenuItems, getWatchModeItems, getHomePageData, transformCarouselItems, transformCategories, transformSections, transformCelebrities, transformPromo, fetchUiDictionary } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
-import {Trans, useTranslation} from 'react-i18next';
 import '../i18n/i18n';
 import { ShareModal } from '../components/modal/ShareModal';
 
@@ -44,7 +43,7 @@ export const Home = ({ onOpenActorRecs }) => {
     const [starsActors, setStarsActors] = useState([]);
     const [promoData, setPromoData] = useState(null);
     const [shareModal, setShareModal] = useState({ isOpen: false, film: null });
-    const { t } = useTranslation();
+    const [uiDictionary, setUiDictionary] = useState(null);
     const { isFavorite, toggleFavorite } = useFavorites();
     const location = useLocation();
     const navigate = useNavigate();
@@ -169,11 +168,21 @@ export const Home = ({ onOpenActorRecs }) => {
 
                 await loadAuxiliaryData();
             } catch (err) {
-                setError(<Trans i18nKey="home.errorLoading" />);
+                setError(uiDictionary?.common?.errorLoading || '');
             }
         };
 
         void loadInitialData();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
     }, []);
     useEffect(() => {
         if (activeCategories.length === 0) {
@@ -377,7 +386,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                         <div className="home_slide_text">
                                             {slide.isNew && (
                                                 <div className="home_slide_new">
-                                                    <div className="home_slide_new_title"></div>
+                                                    <div className="home_slide_new_title">{uiDictionary?.common?.newBadge || ''}</div>
                                                 </div>
                                             )}
                                             <div className="home_slide_film_name">
@@ -406,7 +415,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                 )) : (
                                     <div className="home_carousel_slide">
                                         <div className="home_slide_text">
-                                            <div className="home_slide_film_name">Загрузка...</div>
+                                            <div className="home_slide_film_name"></div>
                                         </div>
                                     </div>
                                 )}
@@ -484,7 +493,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <div className="home_film_header">
                                                     <div
                                                         className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
-                                                        data-tooltip={t('tooltip.watch')}
+                                                        data-tooltip={uiDictionary?.common?.watchLater || ''}
                                                         onClick={async (e) => {
                                                             e.stopPropagation();
                                                             await toggleFavorite(film.id);
@@ -493,7 +502,7 @@ export const Home = ({ onOpenActorRecs }) => {
 
                                                     <div 
                                                         className="home_film_repost home_film_action" 
-                                                        data-tooltip={t('tooltip.share')}
+                                                        data-tooltip={uiDictionary?.common?.share || ''}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setShareModal({ isOpen: true, film: film });
@@ -501,7 +510,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
-                                                        data-tooltip={t('tooltip.dislike')}
+                                                        data-tooltip={uiDictionary?.common?.dislike || ''}
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </div>
@@ -531,7 +540,7 @@ export const Home = ({ onOpenActorRecs }) => {
 
                         <div className="home_stars_choice_block">
                             <div className="home_stars_header">
-                                <div className="home_stars_choice_title">actor.title</div>
+                                <div className="home_stars_choice_title">{uiDictionary?.common?.starsRecommend || ''}</div>
                                 <div className="home_stars_choice_arrow"></div>
                             </div>
 
@@ -599,7 +608,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                         <div className="home_film_header">
                                                             <div
                                                                 className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
-                                                                data-tooltip={t('tooltip.watch')}
+                                                                data-tooltip={uiDictionary?.common?.watchLater || ''}
                                                                 onClick={async (e) => {
                                                                     e.stopPropagation();
                                                                     await toggleFavorite(film.id);
@@ -608,7 +617,7 @@ export const Home = ({ onOpenActorRecs }) => {
 
                                                             <div 
                                                                 className="home_film_repost home_film_action" 
-                                                                data-tooltip={t('tooltip.share')}
+                                                                data-tooltip={uiDictionary?.common?.share || ''}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     setShareModal({ isOpen: true, film: film });
@@ -616,7 +625,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                             />
                                                             <div 
                                                                 className="home_film_remuve home_film_action" 
-                                                                data-tooltip={t('tooltip.dislike')}
+                                                                data-tooltip={uiDictionary?.common?.dislike || ''}
                                                                 onClick={(e) => e.stopPropagation()}
                                                             />
                                                         </div>
@@ -730,7 +739,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                 <div className="home_film_header">
                                                     <div
                                                         className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
-                                                        data-tooltip={t('tooltip.watch')}
+                                                        data-tooltip={uiDictionary?.common?.watchLater || ''}
                                                         onClick={async (e) => {
                                                             e.stopPropagation();
                                                             await toggleFavorite(film.id);
@@ -741,7 +750,7 @@ export const Home = ({ onOpenActorRecs }) => {
 
                                                     <div 
                                                         className="home_film_repost home_film_action" 
-                                                        data-tooltip={t('tooltip.share')}
+                                                        data-tooltip={uiDictionary?.common?.share || ''}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setShareModal({ isOpen: true, film: film });
@@ -749,7 +758,7 @@ export const Home = ({ onOpenActorRecs }) => {
                                                     />
                                                     <div 
                                                         className="home_film_remuve home_film_action" 
-                                                        data-tooltip={t('tooltip.dislike')}
+                                                        data-tooltip={uiDictionary?.common?.dislike || ''}
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </div>

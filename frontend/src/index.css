@@ -22,6 +22,7 @@ html, body {
   height: 100%;
   cursor: default;
   image-rendering: auto;
+  background-color: #262630;
 }
 
 body.search-open {

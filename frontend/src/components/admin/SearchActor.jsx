@@ -1,15 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api';
+import { api, fetchUiDictionary } from '../../services/api';
 import './SearchActor.css';
 
 export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }) => {
-    const { t } = useTranslation();
+    const [uiDictionary, setUiDictionary] = useState(null);
     const modalRef = useRef(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedActors, setSelectedActors] = useState([]);
     const [actors, setActors] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
+    }, []);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -92,7 +101,7 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                 <div className="search_actor_close" onClick={onClose}></div>
 
                 <div className="search_actor_header">
-                    <div className="search_actor_title"><Trans i18nKey="admin.searchActor.title" /></div>
+                    <div className="search_actor_title">{uiDictionary?.searchActor?.title || ''}</div>
                 </div>
 
                 <div className="search_actor_content">
@@ -101,7 +110,7 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                         <input
                             type="text"
                             className="search_actor_search_input"
-                            placeholder={t('admin.searchActor.placeholder')}
+                            placeholder={uiDictionary?.searchActor?.placeholder || ''}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -122,7 +131,7 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                                     }}
                                 >
                                     <span className="search_actor_create_icon"></span>
-                                    <Trans i18nKey="admin.searchActor.create" />
+                                    {uiDictionary?.searchActor?.create || ''}
                                 </button>
                             </div>
                         )}
@@ -130,9 +139,9 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                         {actors.length === 0 && searchQuery && (
                             <div className="search_actor_empty_state">
                                 <div className="search_actor_empty_icon"></div>
-                                <div className="search_actor_empty_title"><Trans i18nKey="admin.searchActor.emptyStateTitle" /></div>
+                                <div className="search_actor_empty_title">{uiDictionary?.searchActor?.emptyStateTitle || ''}</div>
                                 <div className="search_actor_empty_message">
-                                    <Trans i18nKey="admin.searchActor.emptyStateMessage" />
+                                    {uiDictionary?.searchActor?.emptyStateMessage || ''}
                                 </div>
                             </div>
                         )}
@@ -171,12 +180,12 @@ export const SearchActor = ({ isOpen, onClose, onSelectActors, onOpenEditActor }
                     {selectedActors.length > 0 && (
                         <button className="search_actor_delete_button" onClick={handleDelete}>
                             <span className="search_actor_delete_icon"></span>
-                            <Trans i18nKey="admin.searchActor.delete" />
+                            {uiDictionary?.searchActor?.delete || ''}
                         </button>
                     )}
                     <button className="search_actor_save_button" onClick={handleSave}>
                         <span className="search_actor_save_icon"></span>
-                        <Trans i18nKey="admin.searchActor.save" />
+                        {uiDictionary?.searchActor?.save || ''}
                     </button>
                 </div>
             </div>

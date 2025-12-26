@@ -26,18 +26,14 @@ export const api = axios.create({
 const getUrl = (endpoint) => {
     const currentBase = api.defaults.baseURL || '';
     
-    // Если baseURL не установлен, используем относительный путь (через nginx)
     if (!currentBase) {
-        // endpoint уже должен начинаться с /api
         return endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
     }
     
-    // Если baseURL установлен и заканчивается на /api, убираем /api из endpoint
     if ((currentBase.endsWith('/api') || currentBase.match(/\/api\/?$/)) && endpoint.startsWith('/api')) {
         return endpoint.replace('/api', '');
     }
     
-    // Если baseURL установлен, но endpoint не начинается с /api
     if (currentBase && !endpoint.startsWith('/api')) {
         return `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
     }
@@ -451,6 +447,15 @@ export const fetchPageData = async (slug) => {
 export const fetchFooterData = async () => {
     try {
         const response = await api.get(getUrl('/api/public/layout/footer'));
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchUiDictionary = async () => {
+    try {
+        const response = await api.get(getUrl('/api/public/layout/ui-dictionary'));
         return response.data;
     } catch (error) {
         throw error;

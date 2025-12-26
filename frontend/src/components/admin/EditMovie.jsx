@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api';
+import { api, fetchUiDictionary } from '../../services/api';
 import './EditMovie.css';
 import './EditMovie_ReviewModal.css';
 
@@ -12,9 +11,9 @@ const hours = Array.from({ length: 25 }, (_, i) => i.toString());
 const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
 export const EditMovie = () => {
-    const { t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams();
+    const [uiDictionary, setUiDictionary] = useState(null);
 
     const [coverFile, setCoverFile] = useState(null);
     const [logoFile, setLogoFile] = useState(null);
@@ -113,6 +112,16 @@ export const EditMovie = () => {
     };
 
     useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
+    }, []);
+
+    useEffect(() => {
         const init = async () => {
             try {
                 const gRes = await api.get('/genres');
@@ -188,7 +197,7 @@ export const EditMovie = () => {
 
                 } catch (error) {
                     console.error("Ошибка загрузки фильма", error);
-                    alert("Не удалось загрузить данные фильма");
+                    alert("");
                 }
             }
         };
@@ -268,7 +277,7 @@ export const EditMovie = () => {
             setGenreInputValue('');
             setIsGenreDropdownOpen(false);
         } catch (e) {
-            alert("Помилка створення жанру");
+            alert("");
         }
     };
 
@@ -287,13 +296,13 @@ export const EditMovie = () => {
                 setIsDirectorDropdownOpen(false);
             }
         } catch (e) {
-            alert("Помилка створення персони");
+            alert("");
         }
     };
 
     const handleSave = async () => {
         if (!formData.title) {
-            alert("Введіть назву!");
+            alert("");
             return;
         }
 
@@ -307,7 +316,7 @@ export const EditMovie = () => {
                 availableSeasons.forEach(num => {
                     seasonsMap[num] = {
                         seasonNumber: num,
-                        seasonTitle: `Сезон ${num}`,
+                        seasonTitle: `${num}`,
                         episodes: []
                     };
                 });
@@ -382,21 +391,21 @@ export const EditMovie = () => {
                 }
             }
 
-            alert("Успішно збережено!");
+            alert("");
             navigate('/');
         } catch (error) {
-            alert("Сталася помилка при збереженні: " + (error.response?.data?.message || error.message));
+            alert(error.response?.data?.message || error.message || '');
         }
     };
 
     const handleDelete = async () => {
         if (!id) return;
-        if (window.confirm("Видалити цей фільм?")) {
+        if (window.confirm("")) {
             try {
                 await api.delete(`/admin/titles/${id}`);
                 navigate('/');
             } catch (e) {
-                alert("Помилка видалення");
+                alert("");
             }
         }
     };
@@ -631,20 +640,19 @@ export const EditMovie = () => {
             <div className="edit_movie_container">
                 <div className="edit_movie_back" onClick={() => navigate('/')}>
                     <span className="edit_movie_back_icon"></span>
-                    До списку
                 </div>
 
                 <div className="edit_movie_title">
-                    {id ? <Trans i18nKey="admin.editMovie.editTitle" defaults="Редагування фільму" /> : <Trans i18nKey="admin.editMovie.title" />}
+                    {uiDictionary?.editMovie?.title || ''}
                 </div>
 
                 <div className="edit_movie_content">
                     <div className="edit_movie_images">
-                        <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.images" /></div>
+                        <div className="edit_movie_section_title">{uiDictionary?.editMovie?.images || ''}</div>
 
                         <div className="edit_movie_images_row">
                             <div className="edit_movie_image_upload">
-                                <div className="edit_movie_image_label"><Trans i18nKey="admin.editMovie.cover" /></div>
+                                <div className="edit_movie_image_label">{uiDictionary?.editMovie?.cover || ''}</div>
                                 <input
                                     ref={coverInputRef}
                                     type="file"
@@ -662,12 +670,12 @@ export const EditMovie = () => {
                                                 className="edit_movie_reload_button"
                                                 onClick={() => handleImageReload(coverInputRef)}
                                             >
-                                                <Trans i18nKey="admin.editMovie.reload" />
+                                                {uiDictionary?.editMovie?.reload || ''}
                                                 <span className="edit_movie_reload_icon"></span>
                                             </button>
                                             <button className="edit_movie_delete_button" onClick={() => { setCoverImage(null); setCoverFile(null); }}>
                                                 <span className="edit_movie_delete_icon"></span>
-                                                <Trans i18nKey="admin.editMovie.delete" />
+                                                {uiDictionary?.editMovie?.delete || ''}
                                             </button>
                                         </div>
                                     </>
@@ -677,7 +685,7 @@ export const EditMovie = () => {
                                             className="edit_movie_upload_button"
                                             onClick={() => handleImageReload(coverInputRef)}
                                         >
-                                            <Trans i18nKey="admin.editMovie.upload" />
+                                            {uiDictionary?.editMovie?.upload || ''}
                                             <span className="edit_movie_upload_icon"></span>
                                         </button>
                                     </div>
@@ -685,7 +693,7 @@ export const EditMovie = () => {
                             </div>
 
                             <div className="edit_movie_image_upload">
-                                <div className="edit_movie_image_label"><Trans i18nKey="admin.editMovie.logo" /></div>
+                                <div className="edit_movie_image_label">{uiDictionary?.editMovie?.logo || ''}</div>
                                 <input
                                     ref={logoInputRef}
                                     type="file"
@@ -703,12 +711,12 @@ export const EditMovie = () => {
                                                 className="edit_movie_reload_button"
                                                 onClick={() => handleImageReload(logoInputRef)}
                                             >
-                                                <Trans i18nKey="admin.editMovie.reload" />
+                                                {uiDictionary?.editMovie?.reload || ''}
                                                 <span className="edit_movie_reload_icon"></span>
                                             </button>
                                             <button className="edit_movie_delete_button" onClick={() => { setLogoImage(null); setLogoFile(null); }}>
                                                 <span className="edit_movie_delete_icon"></span>
-                                                Видалити
+                                                {uiDictionary?.editMovie?.delete || ''}
                                             </button>
                                         </div>
                                     </>
@@ -718,7 +726,7 @@ export const EditMovie = () => {
                                             className="edit_movie_upload_button"
                                             onClick={() => handleImageReload(logoInputRef)}
                                         >
-                                            <Trans i18nKey="admin.editMovie.upload" />
+                                            {uiDictionary?.editMovie?.upload || ''}
                                             <span className="edit_movie_upload_icon"></span>
                                         </button>
                                     </div>
@@ -727,7 +735,7 @@ export const EditMovie = () => {
                         </div>
 
                         <div className="edit_movie_image_upload">
-                            <div className="edit_movie_image_label"><Trans i18nKey="admin.editMovie.background" /></div>
+                            <div className="edit_movie_image_label">{uiDictionary?.editMovie?.background || ''}</div>
                             <input
                                 ref={backgroundInputRef}
                                 type="file"
@@ -745,12 +753,12 @@ export const EditMovie = () => {
                                             className="edit_movie_reload_button"
                                             onClick={() => handleImageReload(backgroundInputRef)}
                                         >
-                                            Перезавантажити
+                                            {uiDictionary?.editMovie?.reload || ''}
                                             <span className="edit_movie_reload_icon"></span>
                                         </button>
                                         <button className="edit_movie_delete_button" onClick={() => { setBackgroundImage(null); setBackgroundFile(null); }}>
                                             <span className="edit_movie_delete_icon"></span>
-                                            Видалити
+                                            {uiDictionary?.editMovie?.delete || ''}
                                         </button>
                                     </div>
                                 </>
@@ -760,7 +768,7 @@ export const EditMovie = () => {
                                         className="edit_movie_upload_button"
                                         onClick={() => handleImageReload(backgroundInputRef)}
                                     >
-                                        Завантажити
+                                        {uiDictionary?.editMovie?.upload || ''}
                                         <span className="edit_movie_upload_icon"></span>
                                     </button>
                                 </div>
@@ -770,7 +778,7 @@ export const EditMovie = () => {
 
                     <div className="edit_movie_info">
                         <div className="edit_movie_section">
-                            <div className="edit_movie_section_title">Основна інформація</div>
+                            <div className="edit_movie_section_title"></div>
 
                             <div className="edit_movie_language_tabs">
                                 <button
@@ -788,31 +796,31 @@ export const EditMovie = () => {
                             </div>
 
                             <div className="edit_movie_input_group">
-                                <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.movieTitle" /></label>
+                                <label className="edit_movie_input_label">{uiDictionary?.editMovie?.movieTitle || ''}</label>
                                 <input
                                     type="text"
                                     name={currentLanguage === 'ua' ? 'title' : 'titleEn'}
                                     className="edit_movie_input"
-                                    placeholder="Введіть назву фільму чи серіалу"
+                                    placeholder=""
                                     value={currentLanguage === 'ua' ? formData.title : formData.titleEn}
                                     onChange={handleInputChange}
                                 />
                             </div>
 
                             <div className="edit_movie_input_group">
-                                <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.shortDescription" /></label>
+                                <label className="edit_movie_input_label">{uiDictionary?.editMovie?.shortDescription || ''}</label>
                                 <input
                                     type="text"
                                     name={currentLanguage === 'ua' ? 'shortDescription' : 'shortDescriptionEn'}
                                     className="edit_movie_input"
-                                    placeholder={t('admin.editMovie.shortDescription')}
+                                    placeholder={uiDictionary?.editMovie?.shortDescription || ''}
                                     value={currentLanguage === 'ua' ? formData.shortDescription : formData.shortDescriptionEn}
                                     onChange={handleInputChange}
                                 />
                             </div>
 
                             <div className="edit_movie_input_group">
-                                <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.director" /></label>
+                                <label className="edit_movie_input_label">{uiDictionary?.editMovie?.director || ''}</label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={directorDropdownRef}>
                                     <div
                                         className={`edit_movie_genre_dropdown ${isDirectorDropdownOpen ? 'open' : ''} ${selectedDirectors.length > 0 || directorInputValue ? 'has-value' : ''}`}
@@ -849,7 +857,7 @@ export const EditMovie = () => {
                                                     setIsDirectorDropdownOpen(true);
                                                 }}
                                                 onClick={(e) => e.stopPropagation()}
-                                                placeholder={selectedDirectors.length === 0 ? t('admin.editMovie.directors') : ''}
+                                                placeholder={selectedDirectors.length === 0 ? (uiDictionary?.editMovie?.directors || '') : ''}
                                             />
                                             {(directorInputValue || selectedDirectors.length > 1) && (
                                                 <span
@@ -898,7 +906,7 @@ export const EditMovie = () => {
                                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddNewPerson(directorInputValue, 'director'); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
-                                                    <Trans i18nKey="admin.editMovie.addNewDirector" /> (Створити)
+                                                    {uiDictionary?.editMovie?.addNewDirector || ''}
                                                 </button>
                                             </div>
                                             );
@@ -909,7 +917,7 @@ export const EditMovie = () => {
                             </div>
 
                             <div className="edit_movie_input_group">
-                                <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.actors" /></label>
+                                <label className="edit_movie_input_label">{uiDictionary?.editMovie?.actors || ''}</label>
                                 <div className="edit_movie_genre_dropdown_wrapper" ref={actorDropdownRef}>
                                     <div
                                         className={`edit_movie_genre_dropdown ${isActorDropdownOpen ? 'open' : ''} ${selectedActors.length > 0 || actorInputValue ? 'has-value' : ''}`}
@@ -946,7 +954,7 @@ export const EditMovie = () => {
                                                     setIsActorDropdownOpen(true);
                                                 }}
                                                 onClick={(e) => e.stopPropagation()}
-                                                placeholder={selectedActors.length === 0 ? t('admin.editMovie.movieActors') : ''}
+                                                placeholder={selectedActors.length === 0 ? (uiDictionary?.editMovie?.movieActors || '') : ''}
                                             />
                                             {(actorInputValue || selectedActors.length > 0) && (
                                                 <span
@@ -998,7 +1006,6 @@ export const EditMovie = () => {
                                                     }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
-                                                    Новий актор (Створити)
                                                 </button>
                                             </div>
                                             );
@@ -1010,12 +1017,12 @@ export const EditMovie = () => {
 
                             <div className="edit_movie_details_row">
                                 <div className="edit_movie_detail_item">
-                                    <div className="edit_movie_detail_label">Оцінка</div>
+                                    <div className="edit_movie_detail_label"></div>
                                     {renderDropdown('', formData.rating, ratings, isRatingOpen, setIsRatingOpen, (v) => setFormData(p => ({ ...p, rating: v })), 'rating', ratingDropdownRef)}
                                 </div>
 
                                 <div className="edit_movie_detail_item">
-                                    <div className="edit_movie_detail_label"><Trans i18nKey="admin.editMovie.year" /></div>
+                                    <div className="edit_movie_detail_label">{uiDictionary?.editMovie?.year || ''}</div>
                                     <div className="edit_movie_year_inputs">
                                         {renderDropdown('', formData.yearStart, years, isYearStartOpen, setIsYearStartOpen, (v) => setFormData(p => ({ ...p, yearStart: v })), 'yearStart', yearStartDropdownRef)}
                                         <span className="edit_movie_dash">-</span>
@@ -1024,7 +1031,7 @@ export const EditMovie = () => {
                                 </div>
 
                                 <div className="edit_movie_detail_item">
-                                    <div className="edit_movie_detail_label"><Trans i18nKey="admin.editMovie.duration" /></div>
+                                    <div className="edit_movie_detail_label">{uiDictionary?.editMovie?.duration || ''}</div>
                                     <div className="edit_movie_duration_inputs">
                                         {renderDropdown('', formData.durationHours, hours, isDurationHoursOpen, setIsDurationHoursOpen, (v) => setFormData(p => ({ ...p, durationHours: v })), 'durationHours', durationHoursDropdownRef)}
                                         <span className="edit_movie_duration_unit">h</span>
@@ -1034,7 +1041,7 @@ export const EditMovie = () => {
                                 </div>
 
                                 <div className="edit_movie_detail_item">
-                                    <div className="edit_movie_detail_label">Жанр</div>
+                                    <div className="edit_movie_detail_label"></div>
                                     <div className="edit_movie_genre_dropdown_wrapper" ref={genreDropdownRef}>
                                         <div
                                             className={`edit_movie_genre_dropdown ${isGenreDropdownOpen ? 'open' : ''} ${selectedGenres.length > 0 || genreInputValue ? 'has-value' : ''}`}
@@ -1070,7 +1077,7 @@ export const EditMovie = () => {
                                                         setIsGenreDropdownOpen(true);
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    placeholder={selectedGenres.length === 0 ? 'Опис фільму, цікаві факти, короткий зміст' : ''}
+                                                    placeholder=""
                                                 />
                                                 {(genreInputValue || selectedGenres.length > 0) && (
                                                     <span
@@ -1119,7 +1126,6 @@ export const EditMovie = () => {
                                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddNewGenre(); }}
                                                 >
                                                     <span className="edit_movie_genre_add_icon"></span>
-                                                    Нова категорія/жанр
                                                 </button>
                                             </div>
                                             );
@@ -1130,7 +1136,7 @@ export const EditMovie = () => {
                         </div>
 
                         <div className="edit_movie_section">
-                            <div className="edit_movie_section_title">Каталог</div>
+                            <div className="edit_movie_section_title"></div>
                             <div className="edit_movie_catalog">
                                 <div className="edit_movie_catalog_row">
                                     {['films', 'series', 'cartoons', 'animatedSeries', 'interview'].map(key => (
@@ -1160,24 +1166,24 @@ export const EditMovie = () => {
                         </div>
 
                         <div className="edit_movie_section">
-                            <div className="edit_movie_section_title">Опис</div>
+                            <div className="edit_movie_section_title"></div>
                             <textarea
                                 name={currentLanguage === 'ua' ? 'description' : 'descriptionEn'}
                                 className="edit_movie_textarea"
-                                placeholder="Опис фільму, цікаві факти, короткий зміст"
+                                placeholder=""
                                 value={currentLanguage === 'ua' ? formData.description : formData.descriptionEn}
                                 onChange={handleInputChange}
                             />
                         </div>
 
                         <div className="edit_movie_section">
-                            <div className="edit_movie_section_title">Актори та режирежисери</div>
+                            <div className="edit_movie_section_title"></div>
                             <div className="edit_movie_actors_list">
                                 <div className="edit_movie_actor_item edit_movie_actor_placeholder">
                                     <div className="edit_movie_actor_avatar"></div>
                                     <button className="edit_movie_add_actor_button" onClick={() => { setIsActorDropdownOpen(true); if (actorInputRef.current) actorInputRef.current.focus(); }}>
                                         <span className="edit_movie_add_icon"></span>
-                                        Додати
+                                        {uiDictionary?.editMovie?.addNewDirector || ''}
                                     </button>
                                 </div>
                                 {actorsAndDirectors.map(actor => (
@@ -1204,13 +1210,11 @@ export const EditMovie = () => {
                                     className={`edit_movie_tab ${contentType === 'film' ? 'active' : ''}`}
                                     onClick={() => setContentType('film')}
                                 >
-                                    Фільм
                                 </button>
                                 <button
                                     className={`edit_movie_tab ${contentType === 'series' ? 'active' : ''}`}
                                     onClick={() => setContentType('series')}
                                 >
-                                    Серіал
                                 </button>
                             </div>
 
@@ -1234,7 +1238,7 @@ export const EditMovie = () => {
                                                 }}
                                             >
                                                 <span className="edit_movie_content_delete_icon"></span>
-                                                Видалити
+                                                {uiDictionary?.editMovie?.delete || ''}
                                             </button>
                                         </div>
                                     ) : (
@@ -1245,7 +1249,6 @@ export const EditMovie = () => {
                                             }}
                                         >
                                             <span className="edit_movie_upload_content_icon"></span>
-                                            Завантажити контент
                                         </button>
                                     )}
                                 </div>
@@ -1256,7 +1259,7 @@ export const EditMovie = () => {
                                     {episodes.map(episode => (
                                         <div key={episode.id} className="edit_movie_episode_block">
                                             <div className="edit_movie_episode_cover">
-                                                <div className="edit_movie_episode_cover_label"><Trans i18nKey="admin.editMovie.episodeCover" /></div>
+                                                <div className="edit_movie_episode_cover_label">{uiDictionary?.editMovie?.episodeCover || ''}</div>
                                                 <input
                                                     ref={el => episodeCoverInputRefs.current[episode.id] = el}
                                                     type="file"
@@ -1286,7 +1289,7 @@ export const EditMovie = () => {
                                                                 className="edit_movie_reload_button"
                                                                 onClick={() => episodeCoverInputRefs.current[episode.id].click()}
                                                             >
-                                                                Перезавантажити
+                                                                {uiDictionary?.editMovie?.reload || ''}
                                                                 <span className="edit_movie_reload_icon"></span>
                                                             </button>
                                                             <button
@@ -1298,7 +1301,7 @@ export const EditMovie = () => {
                                                                 }}
                                                             >
                                                                 <span className="edit_movie_delete_icon"></span>
-                                                                Видалити
+                                                                {uiDictionary?.editMovie?.delete || ''}
                                                             </button>
                                                         </div>
                                                     </>
@@ -1328,7 +1331,7 @@ export const EditMovie = () => {
                                                                 }));
                                                             }}
                                                         >
-                                                            <span className="edit_movie_season_dropdown_value">{episode.season} Сезон</span>
+                                                            <span className="edit_movie_season_dropdown_value">{episode.season}</span>
                                                             <span className={`edit_movie_season_dropdown_arrow ${openDropdowns[`season-${episode.id}`] ? 'open' : ''}`}></span>
                                                         </div>
                                                         {openDropdowns[`season-${episode.id}`] && (
@@ -1346,7 +1349,7 @@ export const EditMovie = () => {
                                                                                 setOpenDropdowns(prev => ({ ...prev, [`season-${episode.id}`]: false }));
                                                                             }}
                                                                         >
-                                                                            <span className="edit_movie_season_list_item_text">{seasonNum} Сезон</span>
+                                                                            <span className="edit_movie_season_list_item_text">{seasonNum}</span>
                                                                             <span
                                                                                 className="edit_movie_season_list_item_delete"
                                                                                 onClick={(e) => handleDeleteSeason(seasonNum, e)}
@@ -1363,7 +1366,7 @@ export const EditMovie = () => {
                                                                     }}
                                                                 >
                                                                     <span className="edit_movie_season_list_add_icon"></span>
-                                                                    Додати
+                                                                    {uiDictionary?.editMovie?.addNewDirector || ''}
                                                                 </button>
                                                             </div>
                                                         )}
@@ -1380,7 +1383,7 @@ export const EditMovie = () => {
                                                                 }));
                                                             }}
                                                         >
-                                                            <span className="edit_movie_episode_dropdown_value">{episode.episode} Серія</span>
+                                                            <span className="edit_movie_episode_dropdown_value">{episode.episode}</span>
                                                             <span className={`edit_movie_episode_dropdown_arrow ${openDropdowns[`episode-${episode.id}`] ? 'open' : ''}`}></span>
                                                         </div>
                                                         {openDropdowns[`episode-${episode.id}`] && (
@@ -1398,7 +1401,7 @@ export const EditMovie = () => {
                                                                                 setOpenDropdowns(prev => ({ ...prev, [`episode-${episode.id}`]: false }));
                                                                             }}
                                                                         >
-                                                                            <span className="edit_movie_episode_list_item_text">{episodeNum} Серія</span>
+                                                                            <span className="edit_movie_episode_list_item_text">{episodeNum}</span>
                                                                             <span
                                                                                 className="edit_movie_episode_list_item_delete"
                                                                                 onClick={(e) => handleDeleteEpisodeFromList(episodeNum, e)}
@@ -1415,7 +1418,7 @@ export const EditMovie = () => {
                                                                     }}
                                                                 >
                                                                     <span className="edit_movie_episode_list_add_icon"></span>
-                                                                    Додати
+                                                                    {uiDictionary?.editMovie?.addNewDirector || ''}
                                                                 </button>
                                                             </div>
                                                         )}
@@ -1425,15 +1428,15 @@ export const EditMovie = () => {
                                                         onClick={() => handleDeleteEpisode(episode.id)}
                                                     >
                                                         <span className="edit_movie_delete_icon"></span>
-                                                        Видалити
+                                                        {uiDictionary?.editMovie?.delete || ''}
                                                     </button>
                                                 </div>
                                                 <div className="edit_movie_input_group">
-                                                    <label className="edit_movie_input_label"><Trans i18nKey="admin.editMovie.episodeTitle" /></label>
+                                                    <label className="edit_movie_input_label">{uiDictionary?.editMovie?.episodeTitle || ''}</label>
                                                     <input
                                                         type="text"
                                                         className="edit_movie_input"
-                                                        placeholder={t('admin.editMovie.episodeTitle')}
+                                                        placeholder={uiDictionary?.editMovie?.episodeTitle || ''}
                                                         value={currentLanguage === 'ua' ? (episode.title || '') : (episode.titleEn || '')}
                                                         onChange={(e) => {
                                                             setEpisodes(prev => prev.map(ep =>
@@ -1446,10 +1449,10 @@ export const EditMovie = () => {
                                                     />
                                                 </div>
                                                 <div className="edit_movie_input_group">
-                                                    <label className="edit_movie_input_label">Опис</label>
+                                                    <label className="edit_movie_input_label"></label>
                                                     <textarea
                                                         className="edit_movie_textarea"
-                                                        placeholder="Короткий опис серии"
+                                                        placeholder=""
                                                         value={currentLanguage === 'ua' ? (episode.description || '') : (episode.descriptionEn || '')}
                                                         onChange={(e) => {
                                                             setEpisodes(prev => prev.map(ep =>
@@ -1503,7 +1506,6 @@ export const EditMovie = () => {
                                                         }}
                                                     >
                                                         <span className="edit_movie_upload_content_icon"></span>
-                                                        Завантажити контент
                                                     </button>
                                                 )}
                                             </div>
@@ -1511,14 +1513,14 @@ export const EditMovie = () => {
                                     ))}
                                     <button className="edit_movie_add_episode_button" onClick={handleAddEpisode}>
                                         <span className="edit_movie_add_icon"></span>
-                                        Додати Епізод
+                                        {uiDictionary?.editMovie?.addNewDirector || ''} Епізод
                                     </button>
                                 </div>
                             )}
                         </div>
 
                         <div className="edit_movie_section">
-                            <div className="edit_movie_section_title"><Trans i18nKey="admin.editMovie.reviews" /> <span className="edit_movie_reviews_count">{reviews.length}/20</span></div>
+                            <div className="edit_movie_section_title">{uiDictionary?.editMovie?.reviews || ''} <span className="edit_movie_reviews_count">{reviews.length}/20</span></div>
                             <div className="edit_movie_reviews_list">
                                 {reviews.map(review => (
                                     <div key={review.id} className="edit_movie_review_item">
@@ -1540,7 +1542,6 @@ export const EditMovie = () => {
                                                     className="edit_movie_review_read_more"
                                                     onClick={() => handleToggleReview(review)}
                                                 >
-                                                    Читати повністю
                                                 </button>
                                             )}
                                         </div>
@@ -1553,7 +1554,7 @@ export const EditMovie = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button className="edit_movie_load_more_button">Завантажити ще</button>
+                            <button className="edit_movie_load_more_button"></button>
                         </div>
                     </div>
                 </div>
@@ -1561,11 +1562,11 @@ export const EditMovie = () => {
                 <div className="edit_movie_footer">
                     <button className="edit_movie_delete_button" onClick={handleDelete}>
                         <span className="edit_movie_delete_icon"></span>
-                        <Trans i18nKey="admin.editMovie.deleteMovie" />
+                        {uiDictionary?.editMovie?.deleteMovie || ''}
                     </button>
                     <button className="edit_movie_save_button" onClick={handleSave}>
                         <span className="edit_movie_save_icon"></span>
-                        <Trans i18nKey="admin.editMovie.save" />
+                        {uiDictionary?.editMovie?.save || ''}
                     </button>
                 </div>
             </div>

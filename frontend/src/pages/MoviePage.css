@@ -1,6 +1,8 @@
 .movie_page {
     padding-top: 100px;
     background: #262630;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 .movie_page_poster {
@@ -321,7 +323,7 @@ transition: transform 0.3s ease;
     color: #F8F8FE;
     font-size: 18px;
     font-weight: 600;
-    font-family: "Raleway", sans-serif;
+    font-family: "Inter", sans-serif;
     position: relative;
     z-index: 1;
 }

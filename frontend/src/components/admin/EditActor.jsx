@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api';
+import { api, fetchUiDictionary } from '../../services/api';
 import './EditActor.css';
 
 const activityTypes = ['Актор', 'Акторка', 'Режисер', 'Режисерка'];
@@ -14,9 +13,9 @@ const cities = ['Паріж', 'Лондон', 'Київ', 'Вашингтон', 
 
 const DRAFT_KEY = 'edit_actor_draft';
 
-export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchMovie, selectedMovies, onMoviesAdded, onOpenSearchActor, selectedActors, onActorsAdded }) => {
-    const { t } = useTranslation();
+export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchMovie, selectedMovies, onMoviesAdded, onOpenSearchActor, selectedActors, onActorsAdded, uiDictionary }) => {
     const modalRef = useRef(null);
+    const [localUiDictionary, setLocalUiDictionary] = useState(uiDictionary);
     const fileInputRef = useRef(null);
     const dropdownMenuClickRef = useRef(false);
 
@@ -25,7 +24,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     const [nameEn, setNameEn] = useState('');
     const [surname, setSurname] = useState('');
     const [surnameEn, setSurnameEn] = useState('');
-    const [activityType, setActivityType] = useState('Актор');
+    const [activityType, setActivityType] = useState('');
     const [gender, setGender] = useState('');
 
     const [day, setDay] = useState('');
@@ -75,6 +74,20 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
     };
 
     useEffect(() => {
+        if (!uiDictionary) {
+            (async () => {
+                try {
+                    const data = await fetchUiDictionary();
+                    setLocalUiDictionary(data);
+                } catch (error) {
+                }
+            })();
+        } else {
+            setLocalUiDictionary(uiDictionary);
+        }
+    }, [uiDictionary]);
+
+    useEffect(() => {
         if (!isOpen) return;
 
         if (actor) {
@@ -83,7 +96,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             setNameEn(actor.nameEn || '');
             setSurname(names.slice(1).join(' ') || '');
             setSurnameEn(actor.surnameEn || '');
-            setActivityType(actor.role || 'Актор');
+            setActivityType(actor.role || '');
             setGender(actor.gender || '');
             setAvatarUrl(resolvePath(actor.image));
 
@@ -115,7 +128,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 setNameEn(data.nameEn || '');
                 setSurname(data.surname || '');
                 setSurnameEn(data.surnameEn || '');
-                setActivityType(data.activityType || 'Актор');
+                setActivityType(data.activityType || '');
                 setGender(data.gender || '');
                 setDay(data.day || '');
                 setMonth(data.month || '');
@@ -129,7 +142,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                 setNameEn('');
                 setSurname('');
                 setSurnameEn('');
-                setActivityType('Актор');
+                setActivityType('');
                 setGender('');
                 setDay('');
                 setMonth('');
@@ -245,18 +258,18 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
 
         } catch (error) {
             console.error(error);
-            alert("Помилка збереження актора.");
+            alert("");
         }
     };
 
     const handleDelete = async () => {
-        if (actor && window.confirm('Ви впевнені, що хочете видалити цього актора?')) {
+        if (actor && window.confirm('')) {
             try {
                 await api.delete(`/admin/persons/${actor.id}`);
                 onClose();
                 window.location.reload();
             } catch (error) {
-                alert("Помилка видалення.");
+                alert("");
             }
         }
     };
@@ -295,6 +308,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
             <div className="edit_actor_input_block">
                 <div className="edit_actor_dropdown_wrapper" ref={ref}>
                     <div className={`edit_actor_dropdown ${isOpen?'open':''} ${value?'has-value':''}`} onClick={()=>{if(!isOpen)closeAllDropdownsExcept(setIsOpen);setIsOpen(!isOpen)}}>
+                        <span className="edit_actor_dropdown_label">{label}</span>
                         <span className="edit_actor_dropdown_value">{value||''}</span>
                     </div>
                     {isOpen && createPortal(
@@ -314,7 +328,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
         <div className="edit_actor_overlay" role="dialog" aria-modal="true">
             <div className="edit_actor_modal" ref={modalRef}>
                 <div className="edit_actor_close" onClick={handleClose}></div>
-                <div className="edit_actor_header"><div className="edit_actor_title">{actor ? <Trans i18nKey="admin.editActor.editTitle" defaults="Редагування актора" /> : <Trans i18nKey="admin.editActor.title" />}</div></div>
+                <div className="edit_actor_header"><div className="edit_actor_title">{localUiDictionary?.editActor?.title || ''}</div></div>
                 <div className="edit_actor_content">
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{display:'none'}} accept="image/png, image/jpeg" />
                     <div className="edit_actor_main_content">
@@ -333,7 +347,8 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                     <div className="edit_actor_avatar_role">{activityType||''}</div>
                                 </div>
                             </div>
-                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.mainInfo" /></div>
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title">{localUiDictionary?.editActor?.mainInfo || ''}</div>
                                 <div className="edit_actor_language_tabs">
                                     <button
                                         className={`edit_actor_tab ${currentLanguage === 'ua' ? 'active' : ''}`}
@@ -358,7 +373,7 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                             onChange={e => currentLanguage === 'ua' ? setName(e.target.value) : setNameEn(e.target.value)} 
                                             placeholder=" "
                                         />
-                                        <label htmlFor="an"><Trans i18nKey="admin.editActor.name" /></label>
+                                        <label htmlFor="an">{localUiDictionary?.editActor?.name || ''}</label>
                                     </div>
                                     <div className="edit_actor_input_block">
                                         <input 
@@ -369,38 +384,42 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                                             onChange={e => currentLanguage === 'ua' ? setSurname(e.target.value) : setSurnameEn(e.target.value)} 
                                             placeholder=" "
                                         />
-                                        <label htmlFor="as"><Trans i18nKey="admin.editActor.surname" /></label>
+                                        <label htmlFor="as">{localUiDictionary?.editActor?.surname || ''}</label>
                                     </div>
                                 </div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.activityType'), activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'act', activityDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.gender'), gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'gen', genderDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.activityType || '', activityType, activityTypes, isActivityOpen, setIsActivityOpen, setActivityType, 'act', activityDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.gender || '', gender, genders, isGenderOpen, setIsGenderOpen, setGender, 'gen', genderDropdownRef)}
                                 </div>
                             </div>
-                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthDate" /></div>
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title">{localUiDictionary?.editActor?.birthDate || ''}</div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.day'), day, days, isDayOpen, setIsDayOpen, setDay, 'dd', dayDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.month'), month, months, isMonthOpen, setIsMonthOpen, setMonth, 'mm', monthDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.year'), year, years, isYearOpen, setIsYearOpen, setYear, 'yy', yearDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.day || '', day, days, isDayOpen, setIsDayOpen, setDay, 'dd', dayDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.month || '', month, months, isMonthOpen, setIsMonthOpen, setMonth, 'mm', monthDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.year || '', year, years, isYearOpen, setIsYearOpen, setYear, 'yy', yearDropdownRef)}
                                 </div>
                             </div>
-                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.birthPlace" /></div>
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title">{localUiDictionary?.editActor?.birthPlace || ''}</div>
                                 <div className="edit_actor_inputs_row">
-                                    {renderDropdown(t('admin.editActor.country'), country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'cnt', countryDropdownRef)}
-                                    {renderDropdown(t('admin.editActor.city'), city, cities, isCityOpen, setIsCityOpen, setCity, 'ct', cityDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.country || '', country, countries, isCountryOpen, setIsCountryOpen, setCountry, 'cnt', countryDropdownRef)}
+                                    {renderDropdown(localUiDictionary?.editActor?.city || '', city, cities, isCityOpen, setIsCityOpen, setCity, 'ct', cityDropdownRef)}
                                 </div>
                             </div>
                         </div>
                         <div className="edit_actor_right_column">
-                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.filmography" /></div>
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title">{localUiDictionary?.editActor?.filmography || ''}</div>
                                 <div className="edit_actor_filmography">
-                                    <div className="edit_actor_film_placeholder" onClick={handleAddFilm}><button className="edit_actor_add_film_button"><span className="edit_actor_add_film_icon"></span><Trans i18nKey="admin.editActor.addMovie" /></button></div>
+                                    <div className="edit_actor_film_placeholder" onClick={handleAddFilm}><button className="edit_actor_add_film_button"><span className="edit_actor_add_film_icon"></span>{localUiDictionary?.editActor?.addMovie || ''}</button></div>
                                     {filmography.map(f=><div key={f.id} className="edit_actor_film_poster"><img src={f.image} alt={f.name}/><div className="edit_actor_film_remove" onClick={()=>handleRemoveFilm(f.id)}></div></div>)}
                                 </div>
                             </div>
-                            <div className="edit_actor_section"><div className="edit_actor_section_title"><Trans i18nKey="admin.editActor.relatives" /></div>
+                            <div className="edit_actor_section">
+                                <div className="edit_actor_section_title">{localUiDictionary?.editActor?.relatives || ''}</div>
                                 <div className="edit_actor_relatives">
-                                    <div className="edit_actor_relative_placeholder" onClick={handleAddRelative}><div className="edit_actor_relative_avatar"></div><button className="edit_actor_add_relative_button" onClick={e=>{e.stopPropagation();handleAddRelative()}}><span className="edit_actor_add_relative_icon"></span><Trans i18nKey="admin.editActor.add" /></button></div>
+                                    <div className="edit_actor_relative_placeholder" onClick={handleAddRelative}><div className="edit_actor_relative_avatar"></div><button className="edit_actor_add_relative_button" onClick={e=>{e.stopPropagation();handleAddRelative()}}><span className="edit_actor_add_relative_icon"></span>{localUiDictionary?.editActor?.add || ''}</button></div>
                                     {relatives.map(r=><div key={r.id} className="edit_actor_relative_item"><div className="edit_actor_relative_avatar_wrapper"><div className="edit_actor_relative_avatar">{r.image&&<img src={r.image} alt={r.name}/>}</div><div className="edit_actor_relative_remove" onClick={()=>handleRemoveRelative(r.id)}></div></div><div className="edit_actor_relative_info"><div className="edit_actor_relative_name">{r.name}</div>{r.role&&<div className="edit_actor_relative_role">{r.role}</div>}</div></div>)}
                                 </div>
                             </div>
@@ -408,8 +427,8 @@ export const EditActor = ({ isOpen, onClose, actor = null, onSave, onOpenSearchM
                     </div>
                 </div>
                 <div className="edit_actor_footer">
-                    {actor && <button className="edit_actor_delete_button" onClick={handleDelete}><span className="edit_actor_delete_icon"></span><Trans i18nKey="admin.editActor.delete" /></button>}
-                    <button className="edit_actor_save_button" onClick={handleSave}><span className="edit_actor_save_icon"></span><Trans i18nKey="admin.editActor.save" /></button>
+                    {actor && <button className="edit_actor_delete_button" onClick={handleDelete}><span className="edit_actor_delete_icon"></span>{localUiDictionary?.editActor?.delete || ''}</button>}
+                    <button className="edit_actor_save_button" onClick={handleSave}><span className="edit_actor_save_icon"></span>{localUiDictionary?.editActor?.save || ''}</button>
                 </div>
             </div>
         </div>

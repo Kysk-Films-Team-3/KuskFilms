@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
-import { fetchTitles, getFilmsPageMeta } from '../services/api';
+import { fetchTitles, getFilmsPageMeta, fetchUiDictionary } from '../services/api';
 import './Films.css';
 
 export const Films = () => {
@@ -29,6 +29,7 @@ export const Films = () => {
     const [selectedItemId, setSelectedItemId] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [uiDictionary, setUiDictionary] = useState(null);
     const sortRef = useRef(null);
     const genreRef = useRef(null);
     const yearRef = useRef(null);
@@ -169,13 +170,23 @@ export const Films = () => {
                     }
                 }
             } catch (err) {
-                setError(err.message || 'Ошибка загрузки данных');
+                setError(err.message || '');
             } finally {
                 setLoading(false);
             }
         };
         
         loadPageMeta();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
     }, []);
 
     const genres = pageMeta?.filters?.genres || [];
@@ -241,7 +252,7 @@ export const Films = () => {
                         
                         return {
                             id: title.id,
-                            name: title.title || `Фільм ${title.id}`,
+                            name: title.title || '',
                             image: title.posterUrl || '',
                             hoverImage: title.posterUrl || '',
                             rating: rating,
@@ -250,7 +261,7 @@ export const Films = () => {
                             linedate: year ? year.toString() : '',
                             line1: genresStr,
                             line2: '',
-                            season: title.type === 'SERIES' ? '1 Сезон' : '',
+                            season: title.type === 'SERIES' ? '' : '',
                             isSaved: title.isSaved || false
                         };
                     })
@@ -263,7 +274,7 @@ export const Films = () => {
                 
                 setFilms(mappedFilms);
             } catch (error) {
-                setError(error.message || 'Ошибка загрузки фильмов');
+                setError(error.message || '');
             } finally {
                 setFilmsLoading(false);
             }
@@ -327,7 +338,7 @@ export const Films = () => {
                         
                         return {
                             id: title.id,
-                            name: title.title || `Фільм ${title.id}`,
+                            name: title.title || '',
                             image: title.posterUrl || '',
                             hoverImage: title.posterUrl || '',
                             rating: rating,
@@ -336,7 +347,7 @@ export const Films = () => {
                             linedate: year ? year.toString() : '',
                             line1: genresStr,
                             line2: '',
-                            season: title.type === 'SERIES' ? '1 Сезон' : '',
+                            season: title.type === 'SERIES' ? '' : '',
                             isSaved: title.isSaved || false
                         };
                     })
@@ -349,7 +360,7 @@ export const Films = () => {
                 
                 setFilms(mappedFilms);
             } catch (error) {
-                setError(error.message || 'Помилка загрузки фильмів');
+                setError(error.message || '');
             } finally {
                 setFilmsLoading(false);
             }
@@ -399,7 +410,7 @@ export const Films = () => {
         return (
             <div className="films_page">
                 <div className="films_container">
-                    <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка...</div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}></div>
                 </div>
             </div>
         );
@@ -530,7 +541,7 @@ export const Films = () => {
                     </div>
 
                     <div className="films_rating_slider_group">
-                        <span className="films_rating_label">{pageMeta?.filters?.ratingLabel || ''}</span>
+                        <span className="films_rating_label">{uiDictionary?.common?.ratingLabel || pageMeta?.filters?.ratingLabel || ''}</span>
                         <div className="films_rating_slider_container">
                             <div 
                                 className="films_rating_slider_wrapper" 
@@ -610,13 +621,13 @@ export const Films = () => {
                                 <span className="films_rating_value films_rating_value_max">{ratingMax.toFixed(1)}</span>
                             </div>
                         </div>
-                        <button className="films_reset_button" onClick={handleReset}>{pageMeta?.filters?.resetButtonLabel || ''}</button>
+                        <button className="films_reset_button" onClick={handleReset}>{uiDictionary?.common?.deleteBtn || pageMeta?.filters?.resetButtonLabel || ''}</button>
                     </div>
                 </div>
 
                 <div className="films_grid">
                     {filmsLoading && (
-                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}>Загрузка фильмов...</div>
+                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}></div>
                     )}
                     {!filmsLoading && films.length > 0 ? (
                         films.map((film) => (
@@ -641,6 +652,7 @@ export const Films = () => {
                                             className={`films_film_card_save films_film_action ${
                                                 isFavorite(film.id) ? 'active' : ''
                                             }`}
+                                            data-tooltip={uiDictionary?.common?.watchLater || ''}
                                             onClick={async (e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
@@ -649,6 +661,7 @@ export const Films = () => {
                                         />
                                         <div
                                             className="films_film_card_repost films_film_action"
+                                            data-tooltip={uiDictionary?.common?.share || ''}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
@@ -685,7 +698,7 @@ export const Films = () => {
                             </div>
                         ))
                     ) : !filmsLoading ? (
-                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}>Фильми не знайдені</div>
+                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}></div>
                     ) : null}
                 </div>
             </div>

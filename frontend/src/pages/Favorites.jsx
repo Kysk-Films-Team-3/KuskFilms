@@ -1,25 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFavorites } from '../context/FavoritesContext';
+import { fetchUiDictionary } from '../services/api';
 import './Favorites.css';
 
 export function Favorites() {
     const { favorites, toggleFavorite, loading, loadFavorites } = useFavorites();
+    const [uiDictionary, setUiDictionary] = useState(null);
 
     useEffect(() => {
         loadFavorites();
     }, [loadFavorites]);
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
+    }, []);
+
     if (loading) {
         return (
             <div className="favorite_page">
-                <div className="favorite_title"></div>
+                <div className="favorite_title">{uiDictionary?.common?.favorites || ''}</div>
             </div>
         );
     }
 
     return (
         <div className="favorite_page">
-            <div className="favorite_title"></div>
+            <div className="favorite_title">{uiDictionary?.common?.favorites || ''}</div>
 
             {favorites.length === 0 ? (
                 <div className="favorite_subtitle"></div>
@@ -30,6 +42,7 @@ export function Favorites() {
                             key={film.id}
                             film={film}
                             toggleFavorite={toggleFavorite}
+                            uiDictionary={uiDictionary}
                         />
                     ))}
                 </div>
@@ -38,7 +51,7 @@ export function Favorites() {
     );
 }
 
-function FavoriteCard({ film, toggleFavorite }) {
+function FavoriteCard({ film, toggleFavorite, uiDictionary }) {
     if (!film) return null;
 
     const handleToggle = async () => {
@@ -59,6 +72,7 @@ function FavoriteCard({ film, toggleFavorite }) {
                         className={`favorite_actor_card_save favorite_actor_film_action ${
                             film.isSaved ? 'active' : ''
                         }`}
+                        data-tooltip={uiDictionary?.common?.watchLater || ''}
                         onClick={handleToggle}
                     />
                 </div>

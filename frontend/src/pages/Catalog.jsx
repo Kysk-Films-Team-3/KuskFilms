@@ -180,7 +180,7 @@ export const Catalog = () => {
                 const data = await getCatalogPageData();
                 setPageData(data);
             } catch (err) {
-                setError(err.message || 'Помилка загрузки данних');
+                setError(err.message || '');
                 setPageData(null);
             } finally {
                 setLoading(false);
@@ -194,7 +194,7 @@ export const Catalog = () => {
             <div className="catalog_page">
                 <div className="catalog_container">
                     <div className="catalog_title"></div>
-                    <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка...</div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}></div>
                 </div>
             </div>
         );
@@ -206,7 +206,7 @@ export const Catalog = () => {
                 <div className="catalog_container">
                     <div className="catalog_title"></div>
                     <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-                        Помилка: {error}
+                        {error}
                     </div>
                 </div>
             </div>
@@ -218,7 +218,7 @@ export const Catalog = () => {
             <div className="catalog_page">
                 <div className="catalog_container">
                     <div className="catalog_title"></div>
-                    <div style={{ padding: '20px', textAlign: 'center' }}>Немає данних</div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}></div>
                 </div>
             </div>
         );
@@ -266,7 +266,6 @@ export const Catalog = () => {
                     </div>
                 ) : (
                     <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                        Жанри тимчасово недоступні
                     </div>
                 )}
             </div>
@@ -338,7 +337,6 @@ export const Catalog = () => {
                             })
                         ) : (
                             <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                                Коллекції тимчасово недоступні
                             </div>
                         )}
                     </div>

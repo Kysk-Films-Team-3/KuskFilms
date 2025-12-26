@@ -17,7 +17,7 @@ export const RulesPage = () => {
     }, []);
 
     if (!pageData) {
-        return <div className="rules_page">Завантаження...</div>;
+        return <div className="rules_page"></div>;
     }
 
     return (

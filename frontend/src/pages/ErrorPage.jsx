@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Trans } from "react-i18next";
 import "./ErrorPage.css";
 
 export const ErrorPage = () => {
@@ -15,9 +14,8 @@ export const ErrorPage = () => {
     return (
         <div className="error_page">
             <div className="error_image"></div>
-            <h1 className="error_title"><Trans i18nKey="errorPage.title" /></h1>
+            <h1 className="error_title"></h1>
             <p className="error_text">
-                <Trans i18nKey="errorPage.text" />
             </p>
         </div>
     );

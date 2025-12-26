@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 import { useHasRole } from '../services/useHasRole';
 
 export const AdminPage = () => {
-    const { t } = useTranslation();
     const [adminData, setAdminData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,7 +11,7 @@ export const AdminPage = () => {
 
     useEffect(() => {
         if (!hasAdminRole) {
-            setError(t("adminPage.error403"));
+            setError('');
             setLoading(false);
             return;
         }
@@ -28,9 +26,9 @@ export const AdminPage = () => {
                 setAdminData(response.data);
             } catch (err) {
                 if (err.response && err.response.status === 403) {
-                    setError(t("adminPage.errorBackend"));
+                    setError('');
                 } else {
-                    setError(`${t("adminPage.errorApi")} ${err.message}`);
+                    setError(err.message || '');
                 }
             } finally {
                 setLoading(false);
@@ -38,24 +36,24 @@ export const AdminPage = () => {
         };
 
         fetchAdminData();
-    }, [hasAdminRole, t]);
+    }, [hasAdminRole]);
 
     return (
         <div className="admin-page-container" style={{ padding: '20px', minHeight: '80vh' }}>
-            <h1><Trans i18nKey="adminPage.title" /></h1>
+            <h1></h1>
 
-            {loading && <p><Trans i18nKey="adminPage.loading" /></p>}
+            {loading && <p></p>}
 
             {error && (
                 <div style={{ color: 'red', border: '1px solid red', padding: '10px' }}>
-                    <h3><Trans i18nKey="adminPage.errorTitle" /></h3>
+                    <h3></h3>
                     <p>{error}</p>
                 </div>
             )}
 
             {adminData && (
                 <div>
-                    <h3><Trans i18nKey="adminPage.usersList" /></h3>
+                    <h3></h3>
                     <pre>{JSON.stringify(adminData, null, 2)}</pre>
                 </div>
             )}

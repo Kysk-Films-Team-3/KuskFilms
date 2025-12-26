@@ -17,7 +17,7 @@ export const PrivacyPage = () => {
     }, []);
 
     if (!pageData) {
-        return <div className="privacy_page">Завантаження...</div>;
+        return <div className="privacy_page"></div>;
     }
 
     return (

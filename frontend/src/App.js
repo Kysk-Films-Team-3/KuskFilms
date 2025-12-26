@@ -8,6 +8,7 @@ import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import { keycloak } from 'services/keycloak';
 import PlayerOverlay  from "./components/player/PlayerOverlay";
 import { CommentModal } from "./components/modal/CommentModal";
+import { PromoInput } from "./components/modal/PromoInput";
 import { List } from './components/admin/List';
 import { EditActor } from './components/admin/EditActor';
 import { SearchMovie } from './components/admin/SearchMovie';
@@ -99,8 +100,7 @@ const AppContent = () => {
                 />
             )}
 
-            {/* Закомментированные компоненты должны быть в фигурных скобках в JSX */}
-            {/* {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />} */}
+            {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
 
             {activeModal === 'CommentModal' && <CommentModal isOpen onClose={closeModal} />}
 
@@ -112,14 +112,6 @@ const AppContent = () => {
                 <ActorRecommendations actor={activeModal.actor} onClose={closeModal} />
             )}
 
-            {/*
-            {activeModal === 'registrationComplete' && (
-               <RegistrationComplete isOpen onClose={closeModal} />
-            )}
-            {activeModal === 'forgotComplete' && (
-               <ForgotComplete isOpen onClose={closeModal} />
-            )}
-            */}
 
             {activeModal === 'adminList' && hasAdminRole && (
                 <List

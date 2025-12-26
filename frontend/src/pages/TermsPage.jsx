@@ -17,7 +17,7 @@ export const TermsPage = () => {
     }, []);
 
     if (!pageData) {
-        return <div className="terms_page">Завантаження...</div>;
+        return <div className="terms_page"></div>;
     }
 
     return (

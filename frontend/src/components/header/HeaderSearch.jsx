@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
 import './HeaderSearch.css';
 
 export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searchQuery, searchSuggestionsTitle, isSearching = false, onActorClick }) => {
-    const { t } = useTranslation();
     const showPopular = searchQuery === '';
     
     const filmsRef = useRef(null);
@@ -232,8 +230,8 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                                 draggable="false"
                                                 onDragStart={(e) => e.preventDefault()}
                                             />
-                                            <p className="header_actor_name"></p>
-                                            <p className="header_actor_role"></p>
+                                            <p className="header_actor_name">{actor.name || ''}</p>
+                                            <p className="header_actor_role">{actor.role || ''}</p>
                                         </Link>
                                     </div>
                                 ))}
@@ -245,13 +243,13 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
             ) : (
                 <div className="search_results_display">
                     {isSearching ? (
-                        <p className="no_results_text">Завантаження...</p>
+                        <p className="no_results_text"></p>
                     ) : (
                         <>
                             <div className="search_results_columns">
                                 {searchResults.films.length > 0 && (
                                     <div className="search_results_films_column">
-                                        <h3><Trans i18nKey="category.films" /></h3>
+                                        <h3></h3>
                                         {searchResults.films.map(film => (
                                             <Link to={`/movie/${film.id}`} key={film.id} className="search_item_card">
                                                 <img src={film.image || 'https://via.placeholder.com/300x450'} className="search_item_image" alt={film.title} />
@@ -292,7 +290,7 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                 )}
                             </div>
                             {searchResults.films.length === 0 && searchResults.actors.length === 0 && searchQuery.length >= 2 && (
-                                <p className="no_results_text">Нічого не знайдено</p>
+                                <p className="no_results_text"></p>
                             )}
                         </>
                     )}

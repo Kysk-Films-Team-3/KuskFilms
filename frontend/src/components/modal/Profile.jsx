@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
 import './Profile.css';
-import { fetchUserProfile, uploadAvatar } from '../../services/api';
+import { fetchUserProfile, uploadAvatar, fetchUiDictionary } from '../../services/api';
 import { useKeycloak } from '@react-keycloak/web';
 
 export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
     const profileRef = useRef(null);
-    const { t } = useTranslation();
     const { keycloak } = useKeycloak();
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [nickname, setNickname] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [uiDictionary, setUiDictionary] = useState(null);
 
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -28,7 +27,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
             const updatedProfile = await uploadAvatar(file);
             onProfileUpdate(updatedProfile);
         } catch (err) {
-            setError(t("profile.errorAvatar"));
+            setError(uiDictionary?.profile?.errorAvatar || '');
         } finally {
             setIsUploading(false);
         }
@@ -39,7 +38,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
         const fetchProfileData = async () => {
             if (!keycloak.authenticated) {
-                setError(t("profile.errorAuth"));
+                setError(uiDictionary?.profile?.errorAuth || '');
                 setLoading(false);
                 return;
             }
@@ -56,7 +55,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 setNickname(response.username || keycloak.tokenParsed?.preferred_username || '');
 
             } catch (err) {
-                setError(t("profile.errorLoad"));
+                setError(uiDictionary?.profile?.errorLoad || '');
 
                 setName(keycloak.tokenParsed?.given_name || '');
                 setLastName(keycloak.tokenParsed?.family_name || '');
@@ -69,6 +68,24 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
         fetchProfileData();
 
     }, [isOpen, keycloak.authenticated, keycloak.tokenParsed]);
+
+    useEffect(() => {
+        if (isOpen && userProfile) {
+            setName(keycloak.tokenParsed?.given_name || '');
+            setLastName(keycloak.tokenParsed?.family_name || '');
+            setNickname(userProfile.username || keycloak.tokenParsed?.preferred_username || '');
+        }
+    }, [userProfile, isOpen, keycloak.tokenParsed]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
+    }, []);
 
     const canSave = name.trim() && lastName.trim() && nickname.trim();
 
@@ -83,7 +100,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
             onClose();
         } catch (err) {
-            setError(t("profile.errorSave"));
+            setError(uiDictionary?.profile?.errorSave || '');
         } finally {
             setLoading(false);
         }
@@ -112,11 +129,11 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                 <div className="profile_close_icon" onClick={onClose}></div>
 
                 <div className="profile_title">
-                    <Trans i18nKey="profile.editTitle" />
+                    {uiDictionary?.profile?.editTitle || ''}
                 </div>
 
                 <div className="profile_content">
-                    {loading && <p style={{ textAlign: 'center' }}><Trans i18nKey="profile.loading" /></p>}
+                    {loading && <p style={{ textAlign: 'center' }}>{uiDictionary?.profile?.loading || ''}</p>}
                     {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
                     {!loading && (
                         <>
@@ -152,7 +169,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                         onChange={e => setName(e.target.value)}
                                     />
                                     <label htmlFor="profileName">
-                                        <Trans i18nKey="profile.firstName" />
+                                        {uiDictionary?.profile?.firstName || ''}
                                     </label>
                                 </div>
                                 <div className="profile_input_block">
@@ -165,7 +182,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                         onChange={e => setLastName(e.target.value)}
                                     />
                                     <label htmlFor="profileLastName">
-                                        <Trans i18nKey="profile.lastName" />
+                                        {uiDictionary?.profile?.lastName || ''}
                                     </label>
                                 </div>
 
@@ -179,7 +196,7 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                         onChange={e => setNickname(e.target.value)}
                                     />
                                     <label htmlFor="profileNickname">
-                                        <Trans i18nKey="profile.nickname" />
+                                        {uiDictionary?.profile?.nickname || ''}
                                     </label>
                                 </div>
                             </div>
@@ -195,9 +212,9 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
                                 fontWeight: '500'
                             }}>
                                 {userProfile?.isPremium ? (
-                                    <Trans i18nKey="profile.premiumActive">Premium активен</Trans>
+                                    uiDictionary?.profile?.premiumActive || ''
                                 ) : (
-                                    <Trans i18nKey="profile.premiumInactive">Premium не активен</Trans>
+                                    uiDictionary?.profile?.premiumInactive || ''
                                 )}
                             </div>
                         </>
@@ -206,14 +223,14 @@ export const Profile = ({ isOpen, onClose, userProfile, onProfileUpdate }) => {
 
                 <div className="profile_button_block">
                     <button className="profile_button_exit" onClick={onClose}>
-                        <Trans i18nKey="profile.exit" />
+                        {uiDictionary?.profile?.exit || ''}
                     </button>
                     <button
                         className={`profile_button_save ${canSave && !loading ? 'active' : ''}`}
                         onClick={handleSave}
                         disabled={!canSave || loading}
                     >
-                        {loading ? <Trans i18nKey="profile.saving" /> : <Trans i18nKey="profile.save" />}
+                        {loading ? '' : (uiDictionary?.profile?.save || '')}
                     </button>
                 </div>
             </div>

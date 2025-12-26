@@ -65,7 +65,8 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                         .map(item => ({
                             id: item.id,
                             name: item.title,
-                            image: item.imageUrl
+                            image: item.imageUrl,
+                            role: item.subtitle || ''
                         }));
                     setPopularFilms(films);
                     setPopularActors(actors);
@@ -333,7 +334,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                     <div className="header_search_left_icon" />
                                     <input
                                         type="text"
-                                        placeholder={headerData?.texts?.searchPlaceholder || ""}
+                                        placeholder={headerData?.ui?.searchPlaceholder || ""}
                                         autoFocus
                                         value={searchQuery}
                                         onChange={handleSearchInputChange}

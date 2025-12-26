@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getNewPopularPageData } from '../services/api';
+import { getNewPopularPageData, fetchUiDictionary } from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import { ShareModal } from '../components/modal/ShareModal';
 import './NewAndPopular.css';
@@ -16,6 +16,7 @@ export const NewAndPopular = () => {
     const [pageData, setPageData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [uiDictionary, setUiDictionary] = useState(null);
     const filmsRefs = useRef({});
     const [scrollStates, setScrollStates] = useState({});
     const [selectedItemId, setSelectedItemId] = useState(null);
@@ -247,13 +248,23 @@ export const NewAndPopular = () => {
                 const data = await getNewPopularPageData();
                 setPageData(data);
             } catch (err) {
-                setError(err.message || 'Ошибка загрузки данных');
+                setError(err.message || '');
                 setPageData(null);
             } finally {
                 setLoading(false);
             }
         };
         loadPageData();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
     }, []);
 
     useEffect(() => {
@@ -278,8 +289,8 @@ export const NewAndPopular = () => {
     if (loading) {
         return (
             <div className="popular_page">
-                <div className="popular_page_title"></div>
-                <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка...</div>
+                <div className="popular_page_title">{uiDictionary?.common?.newAndPopular || ''}</div>
+                <div style={{ padding: '20px', textAlign: 'center' }}></div>
             </div>
         );
     }
@@ -287,9 +298,9 @@ export const NewAndPopular = () => {
     if (error) {
         return (
             <div className="popular_page">
-                <div className="popular_page_title"></div>
+                <div className="popular_page_title">{uiDictionary?.common?.newAndPopular || ''}</div>
                 <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-                    Помилка: {error}
+                    {error}
                 </div>
             </div>
         );
@@ -298,8 +309,8 @@ export const NewAndPopular = () => {
     if (!pageData) {
         return (
             <div className="popular_page">
-                <div className="popular_page_title"></div>
-                <div style={{ padding: '20px', textAlign: 'center' }}>Немає данних</div>
+                <div className="popular_page_title">{uiDictionary?.common?.newAndPopular || ''}</div>
+                <div style={{ padding: '20px', textAlign: 'center' }}></div>
             </div>
         );
     }
@@ -324,7 +335,7 @@ export const NewAndPopular = () => {
             linedate: year,
             line1: title.genres && Array.isArray(title.genres) ? title.genres.join(", ") : '',
             line2: '',
-            season: title.type === 'SERIES' ? '1 Сезон' : '',
+            season: title.type === 'SERIES' ? '' : '',
             isSaved: title.isSaved || false
         };
     };
@@ -334,7 +345,7 @@ export const NewAndPopular = () => {
 
     return (
         <div className="popular_page">
-            <div className="popular_page_title"></div>
+            <div className="popular_page_title">{uiDictionary?.common?.newAndPopular || ''}</div>
             
             {pageData.promo1 && (
                 <div className="popular_ad_block">
@@ -443,7 +454,6 @@ export const NewAndPopular = () => {
                             })
                         ) : (
                             <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                                Коллекції Недоступні
                             </div>
                         )}
                     </div>
@@ -479,6 +489,7 @@ export const NewAndPopular = () => {
                                     <div className="popular_film_header">
                                         <div
                                             className={`popular_film_save popular_film_action ${isFavorite(film.id) ? "active" : ""}`}
+                                            data-tooltip={uiDictionary?.common?.watchLater || ''}
                                             onClick={async (e) => {
                                                 e.stopPropagation();
                                                 await toggleFavorite(film.id);
@@ -486,6 +497,7 @@ export const NewAndPopular = () => {
                                         />
                                         <div 
                                             className="popular_film_repost popular_film_action" 
+                                            data-tooltip={uiDictionary?.common?.share || ''}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShareModal({ isOpen: true, film: film });
@@ -493,6 +505,7 @@ export const NewAndPopular = () => {
                                         />
                                         <div 
                                             className="popular_film_remuve popular_film_action" 
+                                            data-tooltip={uiDictionary?.common?.dislike || ''}
                                             onClick={(e) => e.stopPropagation()}
                                         />
                                     </div>
@@ -588,6 +601,7 @@ export const NewAndPopular = () => {
                                     <div className="popular_film_header">
                                         <div
                                             className={`popular_film_save popular_film_action ${isFavorite(film.id) ? "active" : ""}`}
+                                            data-tooltip={uiDictionary?.common?.watchLater || ''}
                                             onClick={async (e) => {
                                                 e.stopPropagation();
                                                 await toggleFavorite(film.id);
@@ -595,6 +609,7 @@ export const NewAndPopular = () => {
                                         />
                                         <div 
                                             className="popular_film_repost popular_film_action" 
+                                            data-tooltip={uiDictionary?.common?.share || ''}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShareModal({ isOpen: true, film: film });
@@ -602,6 +617,7 @@ export const NewAndPopular = () => {
                                         />
                                         <div 
                                             className="popular_film_remuve popular_film_action" 
+                                            data-tooltip={uiDictionary?.common?.dislike || ''}
                                             onClick={(e) => e.stopPropagation()}
                                         />
                                     </div>

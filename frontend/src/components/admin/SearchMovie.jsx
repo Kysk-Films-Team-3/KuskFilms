@@ -1,17 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
-import { api } from '../../services/api';
+import { api, fetchUiDictionary } from '../../services/api';
 import './SearchMovie.css';
 
 export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
-    const { t } = useTranslation();
+    const [uiDictionary, setUiDictionary] = useState(null);
     const navigate = useNavigate();
     const modalRef = useRef(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedMovies, setSelectedMovies] = useState([]);
     const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchUiDictionary();
+                setUiDictionary(data);
+            } catch (error) {
+            }
+        })();
+    }, []);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -94,7 +103,7 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                 <div className="search_movie_close" onClick={onClose}></div>
 
                 <div className="search_movie_header">
-                    <div className="search_movie_title"><Trans i18nKey="admin.searchMovie.title" /></div>
+                    <div className="search_movie_title">{uiDictionary?.searchMovie?.title || ''}</div>
                 </div>
 
                 <div className="search_movie_content">
@@ -103,7 +112,7 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                         <input
                             type="text"
                             className="search_movie_search_input"
-                            placeholder={t('admin.searchMovie.placeholder')}
+                            placeholder={uiDictionary?.searchMovie?.placeholder || ''}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -128,7 +137,7 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                                     }}
                                 >
                                     <span className="search_movie_add_icon"></span>
-                                    <Trans i18nKey="admin.searchMovie.addMovie" />
+                                    {uiDictionary?.searchMovie?.addMovie || ''}
                                 </button>
                             </div>
                         )}
@@ -136,9 +145,9 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                         {movies.length === 0 && searchQuery && (
                             <div className="search_movie_empty_state">
                                 <div className="search_movie_empty_icon"></div>
-                                <div className="search_movie_empty_title"><Trans i18nKey="admin.searchMovie.emptyStateTitle" /></div>
+                                <div className="search_movie_empty_title">{uiDictionary?.searchMovie?.emptyStateTitle || ''}</div>
                                 <div className="search_movie_empty_message">
-                                    <Trans i18nKey="admin.searchMovie.emptyStateMessage" />
+                                    {uiDictionary?.searchMovie?.emptyStateMessage || ''}
                                 </div>
                             </div>
                         )}
@@ -170,12 +179,12 @@ export const SearchMovie = ({ isOpen, onClose, onSelectMovies }) => {
                     {selectedMovies.length > 0 && (
                         <button className="search_movie_delete_button" onClick={handleDelete}>
                             <span className="search_movie_delete_icon"></span>
-                            <Trans i18nKey="admin.searchMovie.delete" />
+                            {uiDictionary?.searchMovie?.delete || ''}
                         </button>
                     )}
                     <button className="search_movie_save_button" onClick={handleSave}>
                         <span className="search_movie_save_icon"></span>
-                        <Trans i18nKey="admin.searchMovie.save" />
+                        {uiDictionary?.searchMovie?.save || ''}
                     </button>
                 </div>
             </div>
