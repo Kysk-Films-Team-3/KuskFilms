@@ -8,43 +8,27 @@ export const PaymentSuccess = ({ onProfileUpdate }) => {
     useEffect(() => {
         const updateProfileAndRedirect = async () => {
             try {
-                let profile = await fetchUserProfile();
+                const profile = await fetchUserProfile();
+                
+                const updatedProfile = {
+                    ...profile,
+                    isPremium: true
+                };
                 
                 if (onProfileUpdate) {
-                    onProfileUpdate(profile);
+                    onProfileUpdate(updatedProfile);
                 }
-                
-                if (!profile.isPremium) {
-                    const maxAttempts = 5;
-                    const delayMs = 1500;
-                    
-                    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-                        await new Promise(resolve => setTimeout(resolve, delayMs));
-                        
-                        try {
-                            profile = await fetchUserProfile();
-                            if (onProfileUpdate) {
-                                onProfileUpdate(profile);
-                            }
-                            
-                            if (profile.isPremium) {
-                                break;
-                            }
-                        } catch (err) {
-                            console.error(`Error reloading profile (attempt ${attempt}):`, err);
-                        }
-                    }
-                }
-                
-                setTimeout(() => {
-                    navigate("/", { replace: true });
-                }, 1000);
-                
             } catch (error) {
-                setTimeout(() => {
-                    navigate("/", { replace: true });
-                }, 1000);
+                const fallbackProfile = {
+                    isPremium: true
+                };
+                
+                if (onProfileUpdate) {
+                    onProfileUpdate(fallbackProfile);
+                }
             }
+            
+            navigate("/", { replace: true });
         };
 
         updateProfileAndRedirect();

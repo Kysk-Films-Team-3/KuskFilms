@@ -6,7 +6,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import '../i18n/i18n';
 import { ShareModal } from '../components/modal/ShareModal';
 
-export const Home = ({ onOpenActorRecs }) => {
+export const Home = ({ onOpenActorRecs, userProfile }) => {
     const [currentSlide, setCurrentSlide] = useState(1);
     const [isHovered, setIsHovered] = useState(false);
     const carouselTrackRef = useRef(null);
@@ -153,8 +153,9 @@ export const Home = ({ onOpenActorRecs }) => {
                     subcategories: sections.map(section => ({
                         id: `section-${section.id}`,
                         title: section.title,
+                        order: section.order,
                         films: section.films
-                    }))
+                    })).sort((a, b) => a.order - b.order)
                 }];
                 
                 setAllContent(mappedContent);
@@ -461,138 +462,28 @@ export const Home = ({ onOpenActorRecs }) => {
             </div>
 
             <div className="home_dynamic">
-                {filteredContent.map(cat =>
-                    cat.subcategories
-                        .map(sub => (
-                            <div key={sub.id} className="home_block">
-                                <div className="home_block_header">
-                                    <div className="home_block_title">{sub.title}</div>
-                                    <div className="home_block_arrow"></div>
-                                </div>
-                                <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
-                                <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
-                                <div className="home_films_wrapper"   onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()}  onMouseUp={() => handleFilmsMouseUp()}
-                                     onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
-
-                                    <div className="home_films">
-                                        {sub.films.map(film => (
-                                            <div 
-                                                key={film.id} 
-                                                className="home_film_card" 
-                                                onMouseEnter={() => setSelectedItemId(film.id)} 
-                                                onMouseLeave={() => setSelectedItemId(null)}
-                                                onClick={(e) => {
-
-                                                    if (!e.target.closest('.home_film_action')) {
-                                                        navigate(`/movie/${film.id}`);
-                                                    }
-                                                }}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
-                                                <div className="home_film_header">
-                                                    <div
-                                                        className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
-                                                        data-tooltip={uiDictionary?.common?.watchLater || ''}
-                                                        onClick={async (e) => {
-                                                            e.stopPropagation();
-                                                            await toggleFavorite(film.id);
-                                                        }}
-                                                    />
-
-                                                    <div 
-                                                        className="home_film_repost home_film_action" 
-                                                        data-tooltip={uiDictionary?.common?.share || ''}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setShareModal({ isOpen: true, film: film });
-                                                        }}
-                                                    />
-                                                    <div 
-                                                        className="home_film_remuve home_film_action" 
-                                                        data-tooltip={uiDictionary?.common?.dislike || ''}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    />
-                                                </div>
-
-                                                <div className="home_film_text">
-                                                    <div className="home_film_rating">{film.rating}</div>
-                                                    <div className="home_film_line">
-                                                        <div className="home_film_line1">
-                                                            {film.linedate && <span className="home_film_date">{film.linedate}</span>}
-                                                            {film.line1 && ` ${film.line1}`}
-                                                        </div>
-                                                        {film.line2 && <div className="home_film_line2">{film.line2}</div>}
-                                                    </div>
-                                                    {film.season && <div className="home_film_season">{film.season}</div>}
-                                                </div>
-                                            </div>
-
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                )}
-
                 {activeCategories.length === 0 && (
                     <>
-
-                        <div className="home_stars_choice_block">
-                            <div className="home_stars_header">
-                                <div className="home_stars_choice_title">{uiDictionary?.common?.starsRecommend || ''}</div>
-                                <div className="home_stars_choice_arrow"></div>
-                            </div>
-
-                            <div className="home_stars_actor">
-                                {starsActors.map((actor, index) => (
-                                    <div 
-                                        key={actor.id || actor.collectionId} 
-                                        className={actor.className || `home_stars_actor_${index + 1}`} 
-                                        style={actor.actorImageUrl ? { backgroundImage: `url(${actor.actorImageUrl})` } : {}}
-                                        onClick={() => handleActorClick(actor)}
-                                    >
-                                        <div className="home_stars_text">
-                                            {actor.badgeText && (
-                                                <div className="home_stars_collection">
-                                                    <div className="home_stars_collection_title">
-                                                        {actor.badgeText}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {actor.description && (
-                                                <div className="home_stars_collection_watch">
-                                                    {actor.description}
-                                                </div>
-                                            )}
-                                            {actor.actorName && (
-                                                <div className="home_stars_collection_watch_actor">
-                                                    {actor.actorName}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {filteredContent.map(cat =>
-                            cat.subcategories
-                                .map(sub => (
-                                    <div key={sub.id} className="home_block">
-
-                                        <div className="home_block_header">
-                                            <div className="home_block_title">{sub.title}</div>
-                                            <div className="home_block_arrow"></div>
-                                        </div>
-                                        <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
-                                        <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
-                                        <div className="home_films_wrapper"   onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()} onMouseUp={() => handleFilmsMouseUp()}
-                                             onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
-
-                                            <div className="home_films">
-                                                {sub.films.map(film => (
-                                                    <div 
+                        {filteredContent.map(cat => {
+                            const sectionsBeforeStars = cat.subcategories.filter(sub => sub.order === 1);
+                            const sectionsBetweenStarsAndPromo = cat.subcategories.filter(sub => sub.order === 2);
+                            const sectionsAfterPromo = cat.subcategories.filter(sub => sub.order === 5);
+                            
+                            return (
+                                <>
+                                    {sectionsBeforeStars.map(sub => (
+                                        <div key={sub.id} className="home_block">
+                                            <div className="home_block_header">
+                                                <div className="home_block_title">{sub.title}</div>
+                                                <div className="home_block_arrow"></div>
+                                            </div>
+                                            <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
+                                            <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
+                                            <div className="home_films_wrapper" onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()} onMouseUp={() => handleFilmsMouseUp()}
+                                                 onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
+                                                <div className="home_films">
+                                                    {sub.films.map(film => (
+                                                        <div 
                                                         key={film.id} 
                                                         className="home_film_card" 
                                                         onMouseEnter={() => setSelectedItemId(film.id)} 
@@ -643,84 +534,261 @@ export const Home = ({ onOpenActorRecs }) => {
                                                         </div>
                                                     </div>
 
-                                                ))}
+                                                    ))}
+                                                </div>
                                             </div>
+                                        </div>
+                                    ))}
+                                    
+                                    <div className="home_stars_choice_block">
+                                        <div className="home_stars_header">
+                                            <div className="home_stars_choice_title">{uiDictionary?.common?.starsRecommend || ''}</div>
+                                            <div className="home_stars_choice_arrow"></div>
+                                        </div>
+                                        <div className="home_stars_actor">
+                                            {starsActors.map((actor, index) => (
+                                                <div 
+                                                    key={actor.id || actor.collectionId} 
+                                                    className={actor.className || `home_stars_actor_${index + 1}`} 
+                                                    style={actor.actorImageUrl ? { backgroundImage: `url(${actor.actorImageUrl})` } : {}}
+                                                    onClick={() => handleActorClick(actor)}
+                                                >
+                                                    <div className="home_stars_text">
+                                                        {actor.badgeText && (
+                                                            <div className="home_stars_collection">
+                                                                <div className="home_stars_collection_title">
+                                                                    {actor.badgeText}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {actor.description && (
+                                                            <div className="home_stars_collection_watch">
+                                                                {actor.description}
+                                                            </div>
+                                                        )}
+                                                        {actor.actorName && (
+                                                            <div className="home_stars_collection_watch_actor">
+                                                                {actor.actorName}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                ))
-                        )}
-                        {promoData && (
-                            <div className="home_ad_block">
-                                <div className="home_ad" style={{ backgroundImage: `url(${promoData.imageUrl})` }}>
-                                    <div className="home_ad_text_block">
-                                        {promoData.badgeText && (
-                                            <div className="home_ad_new_block">
-                                                {promoData.badgeText}
+                                    
+                                    {sectionsBetweenStarsAndPromo.map(sub => (
+                                        <div key={sub.id} className="home_block">
+                                            <div className="home_block_header">
+                                                <div className="home_block_title">{sub.title}</div>
+                                                <div className="home_block_arrow"></div>
                                             </div>
-                                        )}
-                                        <div className="home_ad_title">
-                                            {promoData.title}
-                                        </div>
-                                        <div className="home_ad_line_block">
-                                            {promoData.rating && (
-                                                <div className="home_ad_line_rating">{promoData.rating}</div>
-                                            )}
-                                            {promoData.year && (
-                                                <div className="home_ad_line_time">{promoData.year}</div>
-                                            )}
-                                            {promoData.genre && (
-                                                <div className="home_ad_line_genre">
-                                                    {promoData.genre}
+                                            <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
+                                            <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
+                                            <div className="home_films_wrapper" onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()} onMouseUp={() => handleFilmsMouseUp()}
+                                                 onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
+                                                <div className="home_films">
+                                                    {sub.films.map(film => (
+                                                        <div 
+                                                            key={film.id} 
+                                                            className="home_film_card" 
+                                                            onMouseEnter={() => setSelectedItemId(film.id)} 
+                                                            onMouseLeave={() => setSelectedItemId(null)}
+                                                            onClick={(e) => {
+                                                                if (!e.target.closest('.home_film_action')) {
+                                                                    navigate(`/movie/${film.id}`);
+                                                                }
+                                                            }}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
+                                                            <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
+                                                            <div className="home_film_header">
+                                                                <div
+                                                                    className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
+                                                                    data-tooltip={uiDictionary?.common?.watchLater || ''}
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        await toggleFavorite(film.id);
+                                                                    }}
+                                                                />
+                                                                <div 
+                                                                    className="home_film_repost home_film_action" 
+                                                                    data-tooltip={uiDictionary?.common?.share || ''}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setShareModal({ isOpen: true, film: film });
+                                                                    }}
+                                                                />
+                                                                <div 
+                                                                    className="home_film_remuve home_film_action" 
+                                                                    data-tooltip={uiDictionary?.common?.dislike || ''}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                />
+                                                            </div>
+                                                            <div className="home_film_text">
+                                                                <div className="home_film_rating">{film.rating}</div>
+                                                                <div className="home_film_line">
+                                                                    <div className="home_film_line1">
+                                                                        {film.linedate && <span className="home_film_date">{film.linedate}</span>}
+                                                                        {film.line1 && ` ${film.line1}`}
+                                                                    </div>
+                                                                    {film.line2 && <div className="home_film_line2">{film.line2}</div>}
+                                                                </div>
+                                                                {film.season && <div className="home_film_season">{film.season}</div>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            )}
-                                            {promoData.duration && (
-                                                <div className="home_ad_line_time">
-                                                    {promoData.duration}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {promoData.description && (
-                                            <div className="home_ad_subtitle">
-                                                {promoData.description}
                                             </div>
-                                        )}
-
-                                        <div className="home_ad_button">
-                                            {promoData.buttonText && (
-                                                <div className="home_ad_premium_button">
-                                                    {promoData.buttonText}
-                                                </div>
-                                            )}
-                                            <div className="home_ad_info_button"></div>
-                                            <div
-                                                className={`home_ad_save_button ${isFavorite(promoData.id) ? "active" : ""}`}
-                                                onClick={async () => {
-                                                    if (promoData.id) {
-                                                        await toggleFavorite(promoData.id);
-                                                    }
-                                                }}
-                                            ></div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                                    ))}
+                                    
+                                    {promoData && (
+                                        <div className="home_ad_block">
+                                            <div className="home_ad" style={{ backgroundImage: `url(${promoData.imageUrl})` }}>
+                                                <div className="home_ad_text_block">
+                                                    {promoData.badgeText && (
+                                                        <div className="home_ad_new_block">
+                                                            {promoData.badgeText}
+                                                        </div>
+                                                    )}
+                                                    <div className="home_ad_title">
+                                                        {promoData.title}
+                                                    </div>
+                                                    <div className="home_ad_line_block">
+                                                        {promoData.rating && (
+                                                            <div className="home_ad_line_rating">{promoData.rating}</div>
+                                                        )}
+                                                        {promoData.year && (
+                                                            <div className="home_ad_line_time">{promoData.year}</div>
+                                                        )}
+                                                        {promoData.genre && (
+                                                            <div className="home_ad_line_genre">
+                                                                {promoData.genre}
+                                                            </div>
+                                                        )}
+                                                        {promoData.duration && (
+                                                            <div className="home_ad_line_time">
+                                                                {promoData.duration}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {promoData.description && (
+                                                        <div className="home_ad_subtitle">
+                                                            {promoData.description}
+                                                        </div>
+                                                    )}
+                                                    <div className="home_ad_button">
+                                                        <div 
+                                                            className="home_ad_premium_button"
+                                                            onClick={() => {
+                                                                if (!userProfile?.isPremium) {
+                                                                    navigate('/premium');
+                                                                } else if (promoData.id) {
+                                                                    navigate(`/movie/${promoData.id}`);
+                                                                }
+                                                            }}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
+                                                            {userProfile?.isPremium ? 'Дивитися' : 'Оформити преміум'}
+                                                        </div>
+                                                        <div className="home_ad_info_button"></div>
+                                                        <div
+                                                            className={`home_ad_save_button ${isFavorite(promoData.id) ? "active" : ""}`}
+                                                            onClick={async () => {
+                                                                if (promoData.id) {
+                                                                    await toggleFavorite(promoData.id);
+                                                                }
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {sectionsAfterPromo.map(sub => (
+                                        <div key={sub.id} className="home_block">
+                                            <div className="home_block_header">
+                                                <div className="home_block_title">{sub.title}</div>
+                                                <div className="home_block_arrow"></div>
+                                            </div>
+                                            <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
+                                            <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
+                                            <div className="home_films_wrapper" onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()} onMouseUp={() => handleFilmsMouseUp()}
+                                                 onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
+                                                <div className="home_films">
+                                                    {sub.films.map(film => (
+                                                        <div 
+                                                            key={film.id} 
+                                                            className="home_film_card" 
+                                                            onMouseEnter={() => setSelectedItemId(film.id)} 
+                                                            onMouseLeave={() => setSelectedItemId(null)}
+                                                            onClick={(e) => {
+                                                                if (!e.target.closest('.home_film_action')) {
+                                                                    navigate(`/movie/${film.id}`);
+                                                                }
+                                                            }}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
+                                                            <img src={selectedItemId === film.id ? film.hoverImage : film.image} alt={film.title} className="film_img"/>
+                                                            <div className="home_film_header">
+                                                                <div
+                                                                    className={`home_film_save home_film_action ${isFavorite(film.id) ? "active" : ""}`}
+                                                                    data-tooltip={uiDictionary?.common?.watchLater || ''}
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        await toggleFavorite(film.id);
+                                                                    }}
+                                                                />
+                                                                <div 
+                                                                    className="home_film_repost home_film_action" 
+                                                                    data-tooltip={uiDictionary?.common?.share || ''}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setShareModal({ isOpen: true, film: film });
+                                                                    }}
+                                                                />
+                                                                <div 
+                                                                    className="home_film_remuve home_film_action" 
+                                                                    data-tooltip={uiDictionary?.common?.dislike || ''}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                />
+                                                            </div>
+                                                            <div className="home_film_text">
+                                                                <div className="home_film_rating">{film.rating}</div>
+                                                                <div className="home_film_line">
+                                                                    <div className="home_film_line1">
+                                                                        {film.linedate && <span className="home_film_date">{film.linedate}</span>}
+                                                                        {film.line1 && ` ${film.line1}`}
+                                                                    </div>
+                                                                    {film.line2 && <div className="home_film_line2">{film.line2}</div>}
+                                                                </div>
+                                                                {film.season && <div className="home_film_season">{film.season}</div>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            );
+                        })}
                     </>
                 )}
-                {filteredContent.map(cat =>
-                    cat.subcategories
-                        .map(sub => (
+                
+                {activeCategories.length > 0 && filteredContent.map(cat =>
+                    cat.subcategories.map(sub => (
                             <div key={sub.id} className="home_block">
-
                                 <div className="home_block_header">
                                     <div className="home_block_title">{sub.title}</div>
                                     <div className="home_block_arrow"></div>
                                 </div>
                                 <div className={`films_scroll_btn left ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtStart ?? true) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'left')}/>
                                 <div className={`films_scroll_btn right ${!scrollStates[sub.id]?.isScrollable || (scrollStates[sub.id]?.isAtEnd ?? false) ? 'hidden' : ''}`} onClick={() => scrollFilms(sub.id, 'right')}/>
-                                <div className="home_films_wrapper"   onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()}  onMouseUp={() => handleFilmsMouseUp()}
-                                     onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)}  onScroll={() => handleScroll(sub.id)}  ref={setFilmRef(sub.id)}>
+                                <div className="home_films_wrapper" onMouseDown={(e) => handleFilmsMouseDown(e, sub.id)} onMouseLeave={() => handleFilmsMouseLeave()} onMouseUp={() => handleFilmsMouseUp()}
+                                     onMouseMove={(e) => handleFilmsMouseMove(e, sub.id)} onScroll={() => handleScroll(sub.id)} ref={setFilmRef(sub.id)}>
                                     <div className="home_films">
                                         {sub.films.map(film => (
                                             <div 
@@ -745,9 +813,6 @@ export const Home = ({ onOpenActorRecs }) => {
                                                             await toggleFavorite(film.id);
                                                         }}
                                                     />
-
-
-
                                                     <div 
                                                         className="home_film_repost home_film_action" 
                                                         data-tooltip={uiDictionary?.common?.share || ''}
@@ -762,7 +827,6 @@ export const Home = ({ onOpenActorRecs }) => {
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </div>
-
                                                 <div className="home_film_text">
                                                     <div className="home_film_rating">{film.rating}</div>
                                                     <div className="home_film_line">

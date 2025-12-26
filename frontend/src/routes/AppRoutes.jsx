@@ -34,12 +34,12 @@ export const AppRoutes = ({ userProfile, onProfileUpdate, onLoginClick, onDevice
             <Route
                 element={<Layout onLoginClick={onLoginClick} userProfile={userProfile} onProfileClick={onProfileClick} onPromoInputClick={onPromoInputClick} onOpenLogoutModal={onOpenLogoutModal} onOpenListModal={onOpenListModal}/>}
             >
-                <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} />} />
+                <Route path="/" element={<Home onOpenActorRecs={onOpenActorRecs} userProfile={userProfile} />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/films" element={<Films />} />
                 <Route path="/search" element={<SearchResults />} />
-                <Route path="/new" element={<NewAndPopular />} />
-                <Route path="/new-popular" element={<NewAndPopular />} />
+                <Route path="/new" element={<NewAndPopular userProfile={userProfile} />} />
+                <Route path="/new-popular" element={<NewAndPopular userProfile={userProfile} />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/Favorites" element={<Favorites />} />
                 <Route path="/movie/:id" element={<MoviePage onCommentModalClick={onCommentModalClick} userProfile={userProfile} />} />

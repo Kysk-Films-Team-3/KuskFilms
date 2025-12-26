@@ -5,7 +5,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import { ShareModal } from '../components/modal/ShareModal';
 import './NewAndPopular.css';
 
-export const NewAndPopular = () => {
+export const NewAndPopular = ({ userProfile }) => {
     const collectionsRef = useRef(null);
     const [scrollState, setScrollState] = useState({
         isAtStart: true,
@@ -326,16 +326,20 @@ export const NewAndPopular = () => {
             }
         }
         
+        const genresStr = title.genres && Array.isArray(title.genres) ? title.genres.join(", ") : '';
+        const country = 'США';
+        const season = title.type === 'SERIES' ? '1 сезон' : '';
+        
         return {
             id: title.id,
             title: title.title || '',
             image: title.posterUrl || '',
             hoverImage: title.posterUrl || '',
             rating: title.rating ? parseFloat(title.rating).toFixed(1) : null,
-            linedate: year,
-            line1: title.genres && Array.isArray(title.genres) ? title.genres.join(", ") : '',
-            line2: '',
-            season: title.type === 'SERIES' ? '' : '',
+            linedate: year || '',
+            line1: genresStr,
+            line2: country,
+            season: season,
             isSaved: title.isSaved || false
         };
     };
@@ -373,9 +377,19 @@ export const NewAndPopular = () => {
                                 <div className="popular_ad_subtitle">{pageData.promo1.description}</div>
                             )}
                             <div className="popular_ad_button">
-                                {pageData.promo1.buttonText && (
-                                    <div className="popular_ad_premium_button">{pageData.promo1.buttonText}</div>
-                                )}
+                                <div 
+                                    className="popular_ad_premium_button"
+                                    onClick={() => {
+                                        if (!userProfile?.isPremium) {
+                                            navigate('/premium');
+                                        } else if (pageData.promo1.id) {
+                                            navigate(`/movie/${pageData.promo1.id}`);
+                                        }
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {userProfile?.isPremium ? 'Дивитися' : 'Оформити преміум'}
+                                </div>
                                 <div className="popular_ad_info_button"></div>
                                 <div 
                                     className={`popular_ad_save_button ${pageData.promo1.isSaved ? 'active' : ''}`}
@@ -387,7 +401,7 @@ export const NewAndPopular = () => {
                 </div>
             )}
 
-            {pageData.collectionsTitle && (
+            {(pageData.collectionsTitle || (pageData.collections && pageData.collections.length > 0)) && (
                 <div className="popular_collections_section">
                     <div className="popular_collections_header">
                         <h2 className="popular_collections_title">{pageData.collectionsTitle}</h2>
@@ -516,7 +530,8 @@ export const NewAndPopular = () => {
                                         <div className="popular_film_line">
                                             <div className="popular_film_line1">
                                                 {film.linedate && <span className="popular_film_date">{film.linedate}</span>}
-                                                {film.line1 && <span> {film.line1}</span>}
+                                                {film.linedate && film.line1 && <span> </span>}
+                                                {film.line1 && <span>{film.line1}</span>}
                                             </div>
                                             {film.line2 && (
                                                 <div className="popular_film_line2">{film.line2}</div>
@@ -559,9 +574,19 @@ export const NewAndPopular = () => {
                                 <div className="popular_ad_subtitle">{pageData.promo2.description}</div>
                             )}
                             <div className="popular_ad_button">
-                                {pageData.promo2.buttonText && (
-                                    <div className="popular_ad_premium_button">{pageData.promo2.buttonText}</div>
-                                )}
+                                <div 
+                                    className="popular_ad_premium_button"
+                                    onClick={() => {
+                                        if (!userProfile?.isPremium) {
+                                            navigate('/premium');
+                                        } else if (pageData.promo2.id) {
+                                            navigate(`/movie/${pageData.promo2.id}`);
+                                        }
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {userProfile?.isPremium ? 'Дивитися' : 'Оформити преміум'}
+                                </div>
                                 <div className="popular_ad_info_button"></div>
                                 <div 
                                     className={`popular_ad_save_button ${pageData.promo2.isSaved ? 'active' : ''}`}
@@ -628,7 +653,8 @@ export const NewAndPopular = () => {
                                         <div className="popular_film_line">
                                             <div className="popular_film_line1">
                                                 {film.linedate && <span className="popular_film_date">{film.linedate}</span>}
-                                                {film.line1 && <span> {film.line1}</span>}
+                                                {film.linedate && film.line1 && <span> </span>}
+                                                {film.line1 && <span>{film.line1}</span>}
                                             </div>
                                             {film.line2 && (
                                                 <div className="popular_film_line2">{film.line2}</div>

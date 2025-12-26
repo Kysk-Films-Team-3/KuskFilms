@@ -851,6 +851,24 @@
     pointer-events: none;
 }
 
+.popular_film_card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 16px;
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.popular_film_card:hover::after {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
 .popular_film_header {
     margin-left: 60px;
     position: absolute;
@@ -862,6 +880,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    z-index: 2;
 }
 
 .popular_film_card:hover .popular_film_header {
@@ -877,6 +896,7 @@
     display: flex;
     flex-direction: column;
     color: #fff;
+    z-index: 2;
 }
 
 .popular_film_card:hover .popular_film_text {
@@ -1135,7 +1155,7 @@
     }
 
     .popular_series_action::after {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .popular_films_header {
@@ -1196,7 +1216,7 @@
     }
 
     .popular_film_action::after {
-        font-size: 14px;
+        font-size: 16px;
     }
 }
 

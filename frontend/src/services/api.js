@@ -148,10 +148,17 @@ export const transformSections = (sections) => {
         return [];
     }
 
-    return sections.map(section => ({
-        id: section.categoryId,
-        title: section.title,
-        films: section.items.map(item => {
+    return sections.map(section => {
+        let order = 999;
+        if (section.categoryId === 100) order = 1;
+        else if (section.categoryId === 101) order = 2;
+        else if (section.categoryId === 102) order = 5;
+
+        return {
+            id: section.categoryId,
+            title: section.title,
+            order: order,
+            films: section.items.map(item => {
             let rating = null;
             if (item.rating !== null && item.rating !== undefined) {
                 const ratingNum = typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating);
@@ -173,7 +180,8 @@ export const transformSections = (sections) => {
                 isSaved: item.isSaved || false
             };
         })
-    }));
+    };
+    }).sort((a, b) => a.order - b.order);
 };
 
 export const transformCelebrities = (celebrities) => {
