@@ -17,7 +17,129 @@ class PublicLayoutController(
     @Value("\${minio.bucket-name:images}") private val folderName: String
 ) {
 
-    // --- HEADER ---
+    // ==========================================
+    // 1. НОВЫЙ ЭНДПОИНТ: СЛОВАРЬ ИНТЕРФЕЙСА
+    // ==========================================
+    @GetMapping("/ui-dictionary")
+    fun getUiDictionary(): ResponseEntity<UiDictionaryDto> {
+        return ResponseEntity.ok(UiDictionaryDto(
+            common = CommonUiDto(
+                watchLater = "Дивитимуся",
+                share = "Поділитися",
+                dislike = "Не подобається",
+                newBadge = "Новинка",
+                starsRecommend = "Зірки рекомендують",
+                newAndPopular = "Нове & Популярне",
+                favorites = "Обране",
+                deleteBtn = "Видалити",
+                ratingLabel = "рейтинг"
+            ),
+            profile = ProfileUiDto(
+                editTitle = "Редагування профілю",
+                firstName = "Ім'я",
+                lastName = "Прізвище",
+                nickname = "Нікнейм",
+                exit = "Вийти",
+                save = "Зберегти",
+                premiumActive = "Premium активний",
+                premiumInactive = "Premium не активний"
+            ),
+            list = ListUiDto(
+                title = "Список",
+                persons = "Персони",
+                movies = "Фільми",
+                edit = "Редагувати",
+                delete = "Видалити",
+                save = "Зберегти",
+                exit = "Вийти",
+                create = "Створити",
+                addMovie = "Додати фільм",
+                searchMoviePlaceholder = "Введіть назву фільму",
+                searchPersonPlaceholder = "Введіть ім'я актора, акторки чи режисера",
+                emptyStateTitle = "Увага, виявлена помилка",
+                emptyStateMessage = "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+            ),
+            editActor = EditActorUiDto(
+                title = "Редагування профілю",
+                mainInfo = "Основна інформація",
+                name = "Ім'я",
+                surname = "Прізвище",
+                activityType = "Вид діяльності",
+                gender = "Стать",
+                birthDate = "Дата народження",
+                day = "День",
+                month = "Місяць",
+                year = "Рік",
+                birthPlace = "Місто народження",
+                country = "Країна",
+                city = "Місто",
+                filmography = "Фільмографія",
+                addMovie = "Додати фільм",
+                relatives = "Родичі",
+                add = "Додати",
+                delete = "Видалити",
+                save = "Зберегти"
+            ),
+            editMovie = EditMovieUiDto(
+                title = "Редагування фільму",
+                images = "Зображення",
+                cover = "Обкладинка",
+                logo = "Логотип фільму",
+                background = "Фоновий постер",
+                reload = "Перезавантажити",
+                delete = "Видалити",
+                upload = "Завантажити",
+                movieTitle = "Назва фільму",
+                shortDescription = "Короткий опис",
+                director = "Режисер",
+                directors = "Режисери фільму",
+                addNewDirector = "Новий режисер",
+                actors = "Актори",
+                movieActors = "Актори фільму",
+                year = "Рік",
+                duration = "Тривалість",
+                genres = "Жанри",
+                categories = "Категорії",
+                seasons = "Сезони",
+                episodes = "Серії",
+                episodeCover = "Обкладинка Серії",
+                episodeTitle = "Назва Серії",
+                reviews = "Відгуки",
+                save = "Зберегти",
+                deleteMovie = "Видалити фільм"
+            ),
+            searchMovie = SearchMovieUiDto(
+                title = "Пошук фільму",
+                placeholder = "Введіть назву фільму, серіалу або шоу",
+                addMovie = "Додати фільм",
+                delete = "Видалити",
+                save = "Зберегти",
+                emptyStateTitle = "Увага, виявлена помилка",
+                emptyStateMessage = "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+            ),
+            searchActor = SearchActorUiDto(
+                title = "Пошук актора",
+                placeholder = "Введіть ім'я актора",
+                create = "Створити",
+                delete = "Видалити",
+                save = "Зберегти",
+                emptyStateTitle = "Увага, виявлена помилка",
+                emptyStateMessage = "Нічого не знайдено! Для точного пошуку, введіть оригінальну назву."
+            ),
+            confirmDelete = ConfirmDeleteUiDto(
+                deleteMovies = "Видалити ці фільми",
+                deletePersons = "Видалити цих персон",
+                confirmDeleteMovies = "Ви впевнені, що хочете видалити ці фільми?",
+                confirmDeletePersons = "Ви впевнені, що хочете видалити цих персон?",
+                exit = "Вийти",
+                delete = "Видалити"
+            )
+        ))
+    }
+
+    // ==========================================
+    // 2. HEADER (С НОВЫМ ПОЛЕМ)
+    // ==========================================
     @GetMapping("/header")
     fun getHeaderData(): ResponseEntity<HeaderDataDto> {
         return ResponseEntity.ok(
@@ -31,13 +153,17 @@ class PublicLayoutController(
                     switchLang = "Перемкнути на українську",
                     adminPanel = "Адмін панель",
                     logout = "Вийти",
-                    loginBtn = "Увійти" // <-- ДОБАВЛЕНО
+                    loginBtn = "Увійти",
+                    // НОВОЕ ПОЛЕ ИЗ ТЗ
+                    searchPlaceholder = "Назва фільму, серіалу, ім'я артера, режисера"
                 )
             )
         )
     }
 
-    // --- FOOTER ---
+    // ==========================================
+    // 3. FOOTER (КАК БЫЛО)
+    // ==========================================
     @GetMapping("/footer")
     fun getFooterData(): ResponseEntity<FooterDataDto> {
         return ResponseEntity.ok(
@@ -58,11 +184,12 @@ class PublicLayoutController(
         )
     }
 
-    // --- STATIC PAGES ---
+    // ==========================================
+    // 4. СТАТИЧЕСКИЕ СТРАНИЦЫ (КАК БЫЛО)
+    // ==========================================
     @GetMapping("/pages/{slug}")
     fun getPageContent(@PathVariable slug: String): ResponseEntity<Any> {
         val content: Any? = when (slug) {
-            // Юридические страницы (Новое)
             "terms" -> LegalPageDto(
                 title = "Угода користувача",
                 sections = listOf(
@@ -96,8 +223,6 @@ class PublicLayoutController(
                     LegalSectionDto("6. Відповідальність", "Рекомендації формуються автоматично на основі алгоритмів та не є гарантією того, що контент відповідатиме вашим очікуванням. Ми не несемо відповідальності за зміст рекомендованого контенту, але постійно працюємо над покращенням точності рекомендацій.")
                 )
             )
-
-            // Предыдущие страницы (FAQ, About и т.д.) - без изменений
             "devices" -> DevicesPageDto(
                 title = "Список пристроїв",
                 items = listOf(
@@ -192,7 +317,9 @@ class PublicLayoutController(
         return if (content != null) ResponseEntity.ok(content) else ResponseEntity.notFound().build()
     }
 
-    // === PRIVATES (без изменений) ===
+    // ==========================================
+    // 5. PRIVATE HELPERS
+    // ==========================================
     private fun resolveImageUrl(path: String?): String {
         if (path.isNullOrBlank()) return ""
         if (path.startsWith("http")) return path

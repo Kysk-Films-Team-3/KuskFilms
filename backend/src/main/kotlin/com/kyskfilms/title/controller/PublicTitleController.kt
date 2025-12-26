@@ -38,7 +38,7 @@ class PublicTitleController(
     @Value("\${minio.bucket-name:images}") private val folderName: String
 ) {
 
-    // 1. Метаданные для каталога (фильтры)
+    // 1. Метаданные для каталога
     @GetMapping("/page-meta")
     fun getMoviesPageMeta(): ResponseEntity<MoviesPageMetaDto> {
         val genres = genreRepository.findAll().map { it.name }.sorted()
@@ -69,7 +69,7 @@ class PublicTitleController(
         return titlesPage.map { it.toDto(savedIds.contains(it.id)) }
     }
 
-    // 3. СТРАНИЦА ФИЛЬМА (Полная сборка с UI текстами)
+    // 3. СТРАНИЦА ФИЛЬМА (Полная сборка с новыми UI текстами)
     @GetMapping("/{id}/page")
     @Transactional(readOnly = true)
     fun getTitlePage(@PathVariable id: Int): ResponseEntity<TitlePageResponse> {
@@ -92,12 +92,31 @@ class PublicTitleController(
         val actorsText = actors.take(3).joinToString(", ") { it.person!!.name } + if (actors.size > 3) "..." else ""
 
         val castDto = (directors + actors).map {
-            PersonDto(it.person!!.id!!, it.person.name, resolveUrl(it.person.photoUrl), if(it.role=="ACTOR") "Актор" else "Режисер")
+            PersonDto(
+                it.person!!.id!!,
+                it.person.name,
+                resolveUrl(it.person.photoUrl),
+                if(it.role=="ACTOR") "Акторка" else "Режисер" // ТЗ просило Акторка/Режисер
+            )
         }
 
-        // Отзывы и Рекомендации
-        val reviews = commentRepository.findAllByTitleIdOrderByCreatedAtDesc(id, PageRequest.of(0, 5))
-            .map { ReviewDto(it.id!!, "Користувач", it.text, it.rating ?: 10, it.createdAt.toLocalDate().toString()) }
+        // --- Хардкод отзыва Карины (ТЗ) ---
+        val specificReview = ReviewDto(
+            id = 999,
+            author = "Карина",
+            date = "3 листопада 2024",
+            rating = 10,
+            title = "Один із найулюбленіших фільмів",
+            text = "Люблю мотивуючі та життєствердні фільми, вони завжди діють терапевтично: одразу розумієш, що твої проблеми не такі вже й складні, руки-ноги-голова працюють, отже все інше можна вирішити. Якщо ви зустрічаєте негативні відгуки про цей фільм, то це або не зовсім розумні люди, або вони просто хочуть повипендрюватися в стилі «моя думка не така, як у всіх». Цей фільм однозначно шикарний, і про нього неможливо думати інакше, це не якесь фестивальне кіно, де думки діляться 50 на 50 після перегляду. «1+1» — шикарне кіно на всі 100 відсотків. Кіно, яке хочеться переглядати, плакати, знову переглядати через кілька років. І завжди воно залишається прекрасним."
+        )
+
+        // Реальные отзывы
+        val dbReviews = commentRepository.findAllByTitleIdOrderByCreatedAtDesc(id, PageRequest.of(0, 5))
+            .map { ReviewDto(it.id!!, "Користувач", it.createdAt.toLocalDate().toString(), it.rating ?: 10, "", it.text) }
+
+        // Объединяем (Карина первая)
+        val allReviews = listOf(specificReview) + dbReviews
+
         val recommendations = titleRepository.findRecommendations(id, PageRequest.of(0, 5)).map { it.toDto(false) }
 
         return ResponseEntity.ok(TitlePageResponse(
@@ -112,19 +131,30 @@ class PublicTitleController(
             duration = if (title.type == TitleType.MOVIE) "2г 15хв" else "${title.seasons.size} сезони",
             shortDescription = title.description?.take(150)?.plus("...") ?: "",
 
-            // UI ТЕКСТЫ (Хардкод с бэка)
+            // --- НОВЫЕ UI ТЕКСТЫ (ТЗ) ---
+            rateLabel = "Поставте оцінку",
+            rateSubtextLabel = "Оцінки покращують ваші рекомендації",
+            deleteLabel = "Видалити",
+            premiumLabel = "Оформити преміум",
+            watchLabel = "Дивитися",
+            trailerLabel = "Трейлер",
+            castLabel = "Режисери та актори",
+            reviewsLabel = "Відгуки",
+            writeCommentLabel = "Написати коментар",
+            seeAlsoLabel = "Дивитися також",
+
             directorsText = directorsText,
             actorsText = actorsText,
             subscriptionPrice = "15€/місяць",
             subscriptionLabel = "у підписці Kysk",
-            hasPremium = false, // Заглушка
+            hasPremium = false,
             isSaved = isSaved,
             streamUrl = streamUrl,
             trailerUrl = trailerUrl,
             fullDescriptionTitle = "Опис",
             fullDescription = title.description ?: "Опис відсутній",
             cast = castDto,
-            reviews = reviews,
+            reviews = allReviews,
             recommendations = recommendations
         ))
     }
@@ -133,15 +163,14 @@ class PublicTitleController(
     private fun resolveUrl(path: String?): String? {
         if (path == null) return null
         if (path.startsWith("http")) return path
-
-        // Если в базе записано "images/file.png", мы убираем "images/"
-        // Если записано "file.png", ничего не меняется
         val cleanPath = path.removePrefix("$folderName/").removePrefix("/")
-
         return "$minioUrl/$folderName/$cleanPath"
     }
 
     private fun getCurrentUserId(): String? = (SecurityContextHolder.getContext().authentication?.principal as? Jwt)?.subject
-    // В методе toDto тоже используется resolveUrl, так что исправление применится везде
-    private fun Title.toDto(isSaved: Boolean) = TitleDto(this.id!!, this.title, this.slug, resolveUrl(this.posterUrl), this.rating, this.type, this.genres.map { it.name }, isSaved)
+
+    private fun Title.toDto(isSaved: Boolean) = TitleDto(
+        this.id!!, this.title, this.slug, resolveUrl(this.posterUrl),
+        this.rating, this.type, this.genres.map { it.name }, isSaved
+    )
 }

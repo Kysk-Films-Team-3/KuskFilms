@@ -32,6 +32,18 @@ data class TitlePageResponse(
     val fullDescriptionTitle: String, // "Опис"
     val fullDescription: String,
 
+    // НОВЫЕ ПОЛЯ UI (по ТЗ)
+    val rateLabel: String,          // Поставте оцінку
+    val rateSubtextLabel: String,   // Оцінки покращують ваші рекомендації
+    val deleteLabel: String,        // Видалити
+    val premiumLabel: String,       // Оформити преміум
+    val watchLabel: String,         // Дивитися
+    val trailerLabel: String,       // Трейлер
+    val castLabel: String,          // Режисери та актори
+    val reviewsLabel: String,       // Відгуки
+    val writeCommentLabel: String,  // Написати коментар
+    val seeAlsoLabel: String,       // Дивитися також
+
     // Списки объектов
     val cast: List<PersonDto>,
     val reviews: List<ReviewDto>,
@@ -50,5 +62,6 @@ data class ReviewDto(
     val author: String,
     val text: String,
     val rating: Int,
-    val date: String
+    val date: String,
+    val title: String, // <--- Добавлено
 )

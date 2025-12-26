@@ -1,7 +1,5 @@
 package com.kyskfilms.layout.dto
 
-import com.fasterxml.jackson.annotation.JsonInclude
-
 // --- HEADER ---
 data class HeaderDataDto(
     val navigation: List<MenuItemDto>,
@@ -10,13 +8,15 @@ data class HeaderDataDto(
 )
 
 data class HeaderUiDto(
-    val premiumBtn: String,      // "Преміум"
-    val promoCodeBtn: String,    // "Промокод"
-    val manageProfile: String,   // "Керувати профілем"
-    val switchLang: String,      // "Перемкнути на українську"
-    val adminPanel: String,      // "Адмін панель"
-    val logout: String,          // "Вийти"
-    val loginBtn: String         // "Увійти" (НОВЕ ПОЛЕ)
+    val premiumBtn: String,
+    val promoCodeBtn: String,
+    val manageProfile: String,
+    val switchLang: String,
+    val adminPanel: String,
+    val logout: String,
+    val loginBtn: String,
+
+    val searchPlaceholder: String
 )
 
 data class MenuItemDto(

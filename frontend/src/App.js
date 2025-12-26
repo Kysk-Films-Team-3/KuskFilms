@@ -4,13 +4,10 @@ import { AppRoutes } from './routes/AppRoutes';
 import { Profile } from './components/modal/Profile';
 import { Logout } from './components/modal/Logout';
 import { ActorRecommendations } from './components/modal/ActorRecommendations';
-import { RegistrationComplete } from './components/modal/RegistrationComplete';
-import { ForgotComplete } from './components/modal/ForgotComplete';
 import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import { keycloak } from 'services/keycloak';
 import PlayerOverlay  from "./components/player/PlayerOverlay";
-import {PromoInput} from "./components/modal/PromoInput";
-import {CommentModal} from "./components/modal/CommentModal";
+import { CommentModal } from "./components/modal/CommentModal";
 import { List } from './components/admin/List';
 import { EditActor } from './components/admin/EditActor';
 import { SearchMovie } from './components/admin/SearchMovie';
@@ -59,6 +56,7 @@ const AppContent = () => {
                     setUserProfile(profileData);
                 })
                 .catch(error => {
+                    console.error(error);
                 });
         }
 
@@ -91,30 +89,41 @@ const AppContent = () => {
                 onProfileClick={() => openModal('profile')}
                 onOpenListModal={() => openModal('adminList')}
             />
+
             {activeModal?.type === 'PlayerOverlay' && (
-                <PlayerOverlay 
-                    isOpen 
-                    onClose={closeModal} 
-                    titleId={activeModal.titleId} 
-                    episodeId={activeModal.episodeId} 
+                <PlayerOverlay
+                    isOpen
+                    onClose={closeModal}
+                    titleId={activeModal.titleId}
+                    episodeId={activeModal.episodeId}
                 />
             )}
-            {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />}
+
+            {/* Закомментированные компоненты должны быть в фигурных скобках в JSX */}
+            {/* {activeModal === 'PromoInput' && <PromoInput isOpen onClose={closeModal} />} */}
+
             {activeModal === 'CommentModal' && <CommentModal isOpen onClose={closeModal} />}
+
             {activeModal === 'logout' && <Logout isOpen onClose={closeModal} />}
+
             {activeModal === 'profile' && <Profile userProfile={userProfile} onProfileUpdate={setUserProfile} isOpen onClose={closeModal} />}
+
             {activeModal?.type === 'actorRecs' && (
                 <ActorRecommendations actor={activeModal.actor} onClose={closeModal} />
             )}
+
+            {/*
             {activeModal === 'registrationComplete' && (
-                <RegistrationComplete isOpen onClose={closeModal} />
+               <RegistrationComplete isOpen onClose={closeModal} />
             )}
             {activeModal === 'forgotComplete' && (
-                <ForgotComplete isOpen onClose={closeModal} />
+               <ForgotComplete isOpen onClose={closeModal} />
             )}
+            */}
+
             {activeModal === 'adminList' && hasAdminRole && (
-                <List 
-                    isOpen 
+                <List
+                    isOpen
                     onClose={closeModal}
                     onOpenEditActor={() => {
                         closeModal();
@@ -122,6 +131,7 @@ const AppContent = () => {
                     }}
                 />
             )}
+
             {activeModal === 'editActor' && (
                 <EditActor
                     isOpen
@@ -134,6 +144,7 @@ const AppContent = () => {
                     onActorsAdded={() => setSelectedActors([])}
                 />
             )}
+
             {activeModal === 'searchMovie' && (
                 <SearchMovie
                     isOpen
@@ -148,6 +159,7 @@ const AppContent = () => {
                     }}
                 />
             )}
+
             {activeModal === 'searchActor' && (
                 <SearchActor
                     isOpen
