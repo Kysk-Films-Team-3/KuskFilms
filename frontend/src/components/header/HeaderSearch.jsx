@@ -163,7 +163,7 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
             {showPopular ? (
                 <>
                     <span className="header_search_label">
-                        {searchSuggestionsTitle || <Trans i18nKey="searchFrequently" />}
+                        {searchSuggestionsTitle}
                     </span>
 
                     <div className="header_search_section">
@@ -232,8 +232,8 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                                 draggable="false"
                                                 onDragStart={(e) => e.preventDefault()}
                                             />
-                                            <p className="header_actor_name"><Trans i18nKey={`actors.${actor.name}`} /></p>
-                                            <p className="header_actor_role"><Trans i18nKey={`actorRoles.${actor.role}`} /></p>
+                                            <p className="header_actor_name"></p>
+                                            <p className="header_actor_role"></p>
                                         </Link>
                                     </div>
                                 ))}
@@ -257,7 +257,7 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                                 <img src={film.image || 'https://via.placeholder.com/300x450'} className="search_item_image" alt={film.title} />
                                                 <div className="search_item_info">
                                                     <p className="search_item_title">
-                                                        {film.title} <span className="search_item_type">({film.type || 'MOVIE'})</span>
+                                                        {film.title} <span className="search_item_type">({film.type || ''})</span>
                                                     </p>
                                                     {film.rating && (
                                                         <p className="search_item_rating">
@@ -272,7 +272,7 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                 )}
                                 {searchResults.actors.length > 0 && (
                                     <div className="search_results_actors_column">
-                                        <h3><Trans i18nKey="category.series" /></h3>
+                                        <h3></h3>
                                         {searchResults.actors.map(actor => (
                                             <div 
                                                 key={actor.id} 
@@ -283,7 +283,7 @@ export const HeaderSearch = ({ popularFilms, popularActors, searchResults, searc
                                                 <img src={actor.image || 'https://via.placeholder.com/300x450'} className="search_item_image_actor" alt={actor.name} />
                                                 <div className="search_item_info">
                                                     <p className="search_item_title">
-                                                        {actor.name} <span className="search_item_type">({actor.activityType || 'Actor'})</span>
+                                                        {actor.name} <span className="search_item_type">({actor.activityType || ''})</span>
                                                     </p>
                                                 </div>
                                             </div>

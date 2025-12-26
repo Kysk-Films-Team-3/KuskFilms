@@ -267,7 +267,6 @@ export const ActorModal = ({ actor, onClose }) => {
                                                         setIsSortOpen(false); 
                                                     }}
                                                 >
-                                                    За датою
                                                 </button>
                                                 <button 
                                                     className={sortBy === 'rating' ? 'selected' : ''} 
@@ -276,7 +275,6 @@ export const ActorModal = ({ actor, onClose }) => {
                                                         setIsSortOpen(false); 
                                                     }}
                                                 >
-                                                    За рейтингом
                                                 </button>
                                             </div>
                                         )}

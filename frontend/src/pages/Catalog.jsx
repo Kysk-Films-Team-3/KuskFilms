@@ -180,7 +180,7 @@ export const Catalog = () => {
                 const data = await getCatalogPageData();
                 setPageData(data);
             } catch (err) {
-                setError(err.message || 'Ошибка загрузки данных');
+                setError(err.message || 'Помилка загрузки данних');
                 setPageData(null);
             } finally {
                 setLoading(false);
@@ -206,7 +206,7 @@ export const Catalog = () => {
                 <div className="catalog_container">
                     <div className="catalog_title"></div>
                     <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-                        Ошибка: {error}
+                        Помилка: {error}
                     </div>
                 </div>
             </div>
@@ -218,7 +218,7 @@ export const Catalog = () => {
             <div className="catalog_page">
                 <div className="catalog_container">
                     <div className="catalog_title"></div>
-                    <div style={{ padding: '20px', textAlign: 'center' }}>Нет данных</div>
+                    <div style={{ padding: '20px', textAlign: 'center' }}>Немає данних</div>
                 </div>
             </div>
         );
@@ -266,7 +266,7 @@ export const Catalog = () => {
                     </div>
                 ) : (
                     <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                        Жанры временно недоступны
+                        Жанри тимчасово недоступні
                     </div>
                 )}
             </div>
@@ -338,7 +338,7 @@ export const Catalog = () => {
                             })
                         ) : (
                             <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                                Коллекции временно недоступны
+                                Коллекції тимчасово недоступні
                             </div>
                         )}
                     </div>

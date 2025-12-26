@@ -42,7 +42,6 @@ export const Premium = () => {
                 setError(result.message || 'Не вдалося створити сесію оплати');
             }
         } catch (err) {
-            console.error("Ошибка при создании сессии оплаты:", err);
             setError('Не вдалося створити сесію оплати');
         } finally {
             setIsLoading(false);

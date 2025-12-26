@@ -388,18 +388,18 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                     )}
 
                     {!isPremiumPage && (
-                        <Link to="/Premium" className="header_premium">Premium</Link>
+                        <Link to="/Premium" className="header_premium">{headerData?.ui?.premiumBtn}</Link>
                     )}
 
                     <div className="header_promo" onClick={onPromoInputClick}>
                         <div className="header_promo_icon" />
-                        <span className="header_promo_text">Промокод</span>
+                        <span className="header_promo_text">{headerData?.ui?.promoCodeBtn}</span>
                     </div>
 
                     {isLoggedIn ? (
                         <div className="header_profile">
                             <div onClick={toggleDropdown} className="header_profile_switch">
-                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`} aria-label={isDropdownOpen ? "Закрити меню" : "Відкрити меню"} />
+                                <div className={`header_arrow ${isDropdownOpen ? 'open' : ''}`}  />
 
                                 <div className="header_avatar">
                                     {avatarUrl && (
@@ -438,7 +438,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                         <li>
                                             <button onClick={() => {onProfileClick();  handleMenuItemClick();}}  className="dropdown_link">
                                                 <div className="dropdown_icon manage_icon"></div>
-                                                Керувати профілем
+                                                {headerData?.ui?.manageProfile}
                                             </button>
                                         </li>
 
@@ -452,7 +452,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 }}
                                             >
                                                 <div className="dropdown_icon language_icon"></div>
-                                                {i18n.language === 'ua' ? 'Перемкнути на англійську' : 'Перемкнути на українську'}
+                                                {headerData?.ui?.switchLang}
                                             </button>
                                         </li>
                                         {hasAdminRole && (
@@ -467,7 +467,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                     className="dropdown_link"
                                                 >
                                                     <div className="dropdown_icon settings_icon"></div>
-                                                    Адмін панель
+                                                    {headerData?.ui?.adminPanel}
                                                 </button>
                                             </li>
                                         )}
@@ -482,7 +482,7 @@ export const Header = ({ userProfile, onProfileClick, onPromoInputClick, onOpenL
                                                 }}
                                             >
                                                 <div className="dropdown_icon logout_icon"></div>
-                                                Вийти
+                                                {headerData?.ui?.logout}
                                             </Link>
                                         </li>
                                     </ul>

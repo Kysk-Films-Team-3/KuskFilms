@@ -468,7 +468,7 @@ export const MoviePage = ({ onCommentModalClick }) => {
                                     className="movie_also_watch_item"
                                     onMouseEnter={() => setSelectedItemId(film.id)}
                                     onMouseLeave={() => setSelectedItemId(null)}
-                                    onClick={() => handleMovieClick(film.id)} // Добавлен клик
+                                    onClick={() => handleMovieClick(film.id)}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <img

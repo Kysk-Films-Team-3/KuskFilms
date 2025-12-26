@@ -13,7 +13,6 @@ export function Favorites() {
         return (
             <div className="favorite_page">
                 <div className="favorite_title"></div>
-                <div className="favorite_subtitle"></div>
             </div>
         );
     }

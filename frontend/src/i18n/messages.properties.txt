@@ -1,0 +1,468 @@
+#Header
+
+item.label = Головна
+item.label = Каталог
+item.label = Нове & Популярне
+item.label = Обране
+premiumBtn = Преміум
+promoCodeBtn = Промокод
+loginBtn = Увійти
+manageProfile = Керувати профілем
+switchLang = Перемкнути на Англійську
+adminPanel = Адмін панель
+logout = Вийти
+
+headerData?.texts?.searchPlaceholder = Назва фільму, серіалу, ім'я артера, режисера
+
+
+#Footer
+
+column.title = Kysk
+link.label = Про нас
+link.label = Кар'єра в Kysk
+link.label = Агенти Kysk
+column.title = Допомога
+link.label = Запитання та відповіді
+link.label = Список пристроїв
+link.label = Дистриб'юторам
+link.label = Контакти
+column.title = Інше
+link.label = Акції та пропозиції
+link.label = © 2012-2025 ТОВ «Kysk»
+link.label = Загальноукраїнські канали доступні для безкоштовного перегляду цілодобово
+link.label = ПЗ ТОВ «Kysk» полягає у реєстрі вітчизняного ПЗ
+link.label = Угода користувача
+link.label = Політика конфіденційності
+link.label = Правила рекомендацій
+
+
+#MoviePage
+
+movie.title = The Matrix
+movie.rating = 8.7
+releaseYear = 2025
+genres = Кіно
+movie.duration = 66 хв.
+movie.directorsText = Режисер: 
+movie.actorsText = Актори: 
+movie.shortDescription = Безжурний сенегалець повертає радість життя паралізованому аристократу. Французька хітова комедія про дружбу
+movie.subscriptionPrice =15€/місяць
+movie.subscriptionLabel = у підписці Kysk
+movie.fullDescriptionTitle = Опис
+movie.fullDescription = Життєствердна комедія про дружбу та подолання труднощів. Філіппу потрібен догляд, і серед усіх претендентів на посаду помічника він обирає молодого сенегальця Дріса з кримінальним минулим. Незважаючи на расові та класові відмінності, Філіпп і Дріс стають справжніми друзями та отримують новий досвід. Дивовижна й надихаюча історія, заснована на реальних подіях.
+
+
+
+
+#Home
+
+slide.new = Новинка
+slide.title = Interstellar
+slide.rating = 8.9
+slide.year = 2025
+slide.genre = Кіно
+slide.duration = 2г 15хв
+category.name = Кіно та розваги
+category.name = Фітнес та спорт
+sub.title = Популярне на KyskFilms
+sub.title = Фільми
+sub.title = Серіали
+???stars.title = Зірки рекомендують
+actor.badgeText = Колекція
+actor.description = Що дивиться
+actor.actorName = Кіану Рівз
+pageData.promo.badgeText = Прем'єра
+pageData.promo.title = Interstellar
+pageData.promo.rating = 8.9
+pageData.promo.year = 2025
+pageData.promo.genre = Кіно
+pageData.promo.duration = 2г.30хв.
+pageData.promo.description = Уенсдей, дочка Гомеса та Мортіші Аддамс, навчається в академії Nevermore. Їй належить освоїти екстрасенсорні здібності, щоб зупинити місцевого серійного вбивцю та розкрити таємницю батьків.
+pageData.promo2buttonText = Оформити преміум
+
+
+#Catalog
+
+pageData.title = Каталог
+genre.name = Фільми
+genre.name = Серіали
+genre.name = Мультфільми
+genre.name = Мультсеріали
+genre.name = Інтерв'ю
+genre.name = Аніме
+genre.name = Концерти
+genre.name = Реаліті Шоу
+genre.name = Кулінарія
+genre.name = Програми
+genre.name = Опера
+genre.name = Природа
+genre.name = Мистецтво
+genre.name = Фітнес
+genre.name = Лекціі
+pageData.collectionsTitle = Добірки
+collection.title = Колекція
+collection.description = Антиутопія
+collection.description = Антигерои
+collection.description = Сила дружби
+collection.description = Романтика
+
+
+#New and Popular
+
+??? = Нове & Популярне
+pageData.promo1.badgeText = Новий сезон
+pageData.promo1.title = Cyberpunk: Edgerunners
+pageData.promo1.rating = 8.6
+pageData.promo1.year = 2025
+pageData.promo1.genre = Кіно
+pageData.promo1.duration = 2г.4 хв.
+pageData.promo1.description = Уенсдей, дочка Гомеса та Мортіші Аддамс, навчається в академії Nevermore. Їй належить освоїти екстрасенсорні здібності, щоб зупинити місцевого серійного вбивцю та розкрити таємницю батьків.
+pageData.promo1.buttonText = Оформити преміум
+pageData.collectionsTitle = Добірки
+collection.title = Колекція
+collection.description = Антиутопія
+collection.description = Антигерои
+collection.description = Сила дружби
+collection.description = Романтика
+pageData.newSeriesTitle = Новинки серіалів
+film.rating = 8.0
+film.title = Dune: Part Two
+film.linedate = 2025
+film.line1 = Кіно
+film.line2 = США
+film.season = 1 сезон
+pageData.promo2.badgeText = Прем'єра
+pageData.promo2.title = Interstellar
+pageData.promo2.rating = 8.9
+pageData.promo2.year = 2025
+pageData.promo2.genre = Кіно
+pageData.promo2.duration = 2г.30хв.
+pageData.promo2.description = Уенсдей, дочка Гомеса та Мортіші Аддамс, навчається в академії Nevermore. Їй належить освоїти екстрасенсорні здібності, щоб зупинити місцевого серійного вбивцю та розкрити таємницю батьків.
+pageData.promo2buttonText = Оформити преміум
+pageData.newMoviesTitle = Новинки фільмів
+film.rating = 8.0
+film.title = Dune: Part Two
+film.linedate = 2025
+film.line1 = Кіно
+film.line2 = США
+film.season = 1 сезон
+
+
+#Favorite
+
+??? = Обране
+film.rating = 8.0
+film.title = Dune: Part Two
+film.linedate = 2025
+film.line1 = Кіно
+film.line2 = США
+film.season = 1 сезон
+
+
+#Premium
+
+premiumData.backButton = Назад
+premiumData.title = Підтвердіть вибір
+premiumData.planName = Kysk преміум
+premiumData.price = 15€
+premiumData.feature = Більше 70 000 фільмів, серіалів та мультфільмів
+premiumData.feature = Каталог фільмів і серіалів Viju і Paramount
+premiumData.feature = Батьківський контроль
+premiumData.feature = Завантаження та перегляд без інтернету
+premiumData.buttonText = Оформити
+
+
+#Promocode
+
+promoUi.title = Промокод
+promoUi.inputPlaceholder = Введіть промокод
+promoUi.buttonText = Активувати
+promoUi.footerText = ●Промокод діє за умови дотримання правил сервісу
+
+
+#Exit
+
+logoutData.title = Точно хочеш вийти з облікового запису?
+logoutData.description = Акаунт буде видалено з устрою. Потрібен повторний вхід для доступу до рекомендацій, історії переглядів та управління підпискою
+logoutData.stayButton = Залишитися
+logoutData.logoutButton = Вийти
+
+
+#Films
+
+pageMeta.title = Фільми
+pageMeta.description = Колекція фільмів KYSK
+pageMeta?.filters?.ratingLabel = Рейтинг
+pageMeta?.filters?.resetButtonLabel = Скинути
+film.rating = 8.0
+film.title = Dune: Part Two
+film.linedate = 2025
+film.line1 = Кіно
+film.line2 = США
+film.season = 1 сезон
+
+#Share
+
+shareData.ui.modalTitle = Поділитися
+shareData.contentTitle = Dune: Part Two
+shareData.shareMessage = Дивись «Dune: Part Two» на KyskFilms!
+shareData.ui.copiedState = Копіювати
+shareData.ui.copyButton = Скопійовано
+shareData.ui.facebookLabel = Фейсбук
+shareData.ui.twitterLabel = Твітер
+shareData.ui.telegramLabel = Телеграм
+
+
+#ActorRecomendation
+
+picksData?.title = Рекомендації до перегляду від
+actor.name =  Джейсона Стетхема
+picksData.quote = Дивиться на тих, хто грає по-своїм — і завжди виглядає на мільйон.
+
+
+#Actor
+
+personData.name = Марго Роббі
+personData.activityType = Margot Robbie
+personData.ui?.ageLabel = Вік:
+personData.age = 35
+personData.ui?.ageUnit = Років
+personData.ui?.birthDateLabel = Дата народження:
+personData.birthDate = 02.07.1990
+personData.ui?.genderLabel = Стать:
+personData.ui?.genderMale = Чоловіча
+personData.ui?.genderFemale = Жіноча
+personData.ui?.relativesLabel = Родичі:
+rel.name = Лахлан Роббі
+rel.relationship = (брат/сестра)
+personData.ui?.birthPlaceLabel = Місце народження:
+personData.birthPlace = Делбі, Квінсленд, Австралія
+personData.ui?.filmographyTitle = Фільмографія
+
+
+#Header Search
+
+searchSuggestionsTitle = Часто шукають
+actor.name = Джейсон Стетхем
+actor.role = Актор
+
+#Search
+
+searchData.ui?.resultsTitlePrefix = Результат пошуку
+searchData.ui?.emptyTitle = Увага, виявлена помилка
+searchData.ui?.emptyDescription = Нічого не знайдено! Для точного пошуку, введіть оригінальну назву.
+searchData.ui?.personsSection = Актори та режисери:
+person.name = Барбі Уайльд
+person.activityType = Акторка
+searchData.ui?.titlesSection = Фільми та серіали:
+title.title = Барбі
+
+
+#Comments
+
+commentsData?.ui?.writeCommentTitle =  Написати коментар
+commentsData?.ui?.rateLabel = Поставте оцінку
+commentsData?.ui?.deleteButton = Видалити
+commentsData?.ui?.placeholderTitle = Заголовок
+commentsData?.ui?.placeholderTitle = Мені дуже сподоба...
+commentsData?.ui?.placeholderTitle = Коментар
+commentsData?.ui?.placeholderTitle = Мені дуже сподоба...
+commentsData.ui.rules = • Будьте ввічливими
+commentsData.ui.rules = • Не публікуйте спойлери
+commentsData.ui.rules = • Заборонено спам і рекламу
+commentsData?.ui?.submitButton = Надіслати коментар
+
+
+
+#About
+
+pageData?.title = Про KyskFilms
+pageData?.description  = KyskFilms — це сучасний стримінговий сервіс, створений для людей, які цінують якісний контент, зручний інтерфейс та високі стандарти перегляду. Ми поєднуємо стильний дизайн, продуману навігацію та рекомендації, що працюють саме для вас.
+pageData?.missionTitle = Наша місія
+pageData?.missionText = Ми прагнемо зробити кіно ближчим, доступнішим і приємнішим для кожного глядача. Наша мета — забезпечити комфортне середовище для перегляду улюблених фільмів і серіалів без зайвих перешкод.
+pageData?.valuesTitle = Наші цінності
+pageData?.value = Якість — від інтерфейсу до стриму.
+pageData?.value = Зручність використання.
+pageData?.value = Прозорість та відкритість.
+pageData?.value = Користувач у центрі уваги.
+pageData?.value = Повага до контенту та авторського права.
+pageData?.teamTitle = Команда
+pageData?.teamText = Ми — молода команда розробників, дизайнерів та ентузіастів, яка прагне створити найкращу українську платформу для перегляду фільмів. Ваш комфорт — наше натхнення.
+
+
+#Careers
+
+pageData?.title = Кар’єра в Kysk
+pageData?.intro = Ми створюємо сучасний український стримінговий сервіс і шукаємо талановитих людей, які хочуть разом з нами формувати майбутнє кінорозваг.
+pageData?.whyTitle = Чому Kysk?
+pageData?.reason = Можливість впливати на ключові рішення продукту.
+pageData?.reason = Надихаюча та підтримуюча команда.
+pageData?.reason = Сучасний технологічний стек.
+pageData?.reason = Гнучкий графік та віддалена робота.
+pageData?.reason = Продукт, яким користуються тисячі людей.
+pageData?.vacanciesTitle  = Відкриті вакансії
+vacancy.title = Frontend-розробник (React)
+vacancy.description = Створення інтерфейсу, UI-компонентів, оптимізація продуктивності, робота з відеоплеєром та модулем рекомендацій.
+vacancy.title = Backend-розробник (Node.js/Kotlin)
+vacancy.description = Робота над API, системою рекомендацій, авторизацією, аналітикою та масштабуванням сервісу.
+vacancy.title = UI/UX дизайнер
+vacancy.description = Розробка інтерфейсів, покращення користувацького досвіду, створення нової візуальної айдентики Kysk.
+pageData?.notFoundTitle = Не знайшли свою роль?
+pageData?.notFoundText  = Ми завжди відкриті до талановитих людей. Надішліть своє резюме на нашу пошту — і ми обов’язково розглянемо вашу кандидатуру.
+pageData?.sendResumeBtn = Надіслати резюме
+
+
+#Agents
+
+pageData?.title = Агенти Kysk
+pageData?.intro = Агенти Kysk — це люди, які допомагають нам створювати найкращий кіно-досвід в Україні. Вони тестують новий функціонал, пропонують фільми, перевіряють якість контенту та підтримують спільноту.
+pageData?.whoAreAgentsTitle = Хто такі агенти?
+pageData?.whoAreAgentsText = Це команда ентузіастів та експертів, які мають доступ до ранніх оновлень, закритих тестувань та внутрішніх інструментів Kysk. Кожен агент впливає на те, яким буде наш сервіс завтра.
+pageData?.rolesTitle = Ролі агентів
+role.title = Контент-скаут
+role.description = Шукає нові фільми, серіали та тренди. Пропонує контент для платформи.
+role.title = Тестер продукту
+role.description = Перевіряє новий функціонал, знаходить помилки та оцінює зручність і продуктивність.
+role.title = Аналітик рекомендацій
+role.description = Допомагає покращувати систему персональних рекомендацій через зворотний зв’язок та аналітику.
+role.title = Модератор спільноти
+role.description = Підтримує здорову атмосферу, допомагає користувачам і відповідає на запитання.
+pageData?.howToTitle = Як стати агентом?
+pageData?.howToText = Ми відбираємо найактивніших користувачів та людей з досвідом у медіа, аналітиці, дизайні або розробці. Хочеш приєднатися?
+pageData?.applyButton = Подати заявку
+
+
+#Faq
+
+pageData?.title = Питання та відповіді
+item.question = Що таке Kysk?
+item.answer = Kysk — це сучасний український стримінговий сервіс для перегляду фільмів і серіалів у зручному та високоякісному форматі.
+item.question = Як оформити підписку?
+item.answer = Перейдіть у розділ «Преміум», оберіть тариф та здійсніть оплату. Підписка активується миттєво.
+item.question = Чи можна користуватися Kysk без підписки?
+item.answer = Так, частина контенту доступна безкоштовно. Але преміум-підписка відкриває додаткові можливості, ексклюзиви та перегляд без реклами.
+item.question = Чи безпечно зберігати платіжні дані в Kysk?
+item.answer = Так. Дані зашифровані, не зберігаються у відкритому вигляді та обробляються виключно сертифікованими міжнародними платіжними системами.
+item.question = Чи є субтитри та різні аудіодоріжки?
+item.answer = Так. Багато фільмів мають українську та оригінальну аудіодоріжки, а також субтитри. Ми постійно розширюємо доступність контенту.
+item.question = Як скасувати підписку?
+item.answer = У вашому профілі є розділ «Керування підпискою», де ви можете вимкнути автоматичне поновлення в будь-який час.
+
+
+#Devices
+
+pageData?.title = Список пристроїв
+item.name = Смартфони
+item.description = Платформа підтримує сучасні смартфони на iOS та Android.
+item.name = Комп’ютери та ноутбуки
+item.description = Працює в будь-якому сучасному браузері: Windows, macOS, Linux.
+item.name = Smart TV
+item.description = Підтримуються телевізори з браузером або Android TV.
+
+
+#Distributors
+
+pageData?.title = Для дистриб’юторів
+pageData?.cooperationTitle = Співпраця з Kysk
+pageData?.cooperationDesc = Ми відкриті до партнерства з дистриб’юторами та правовласниками, які бажають розмістити свій контент на нашій платформі.
+pageData?.cooperationTitle = Наші вимоги
+pageData?.cooperationDesc = Ми працюємо виключно з легальним контентом, на який наявні всі необхідні права. Перевага надається матеріалам у високій якості (FullHD / UHD), а також за наявності метаданих та локалізації.
+pageData?.cooperationTitle = Що ми пропонуємо
+pageData?.cooperationDesc = Розміщення контенту на сучасній платформі з прозорою аналітикою, захистом від піратства та доступом до широкої української аудиторії.
+pageData?.cooperationTitle = Зв’яжіться з нами
+pageData?.cooperationDesc = Напишіть нам на корпоративну адресу — і ми оперативно відповімо, обговоримо умови співпраці та допоможемо розмістити ваш контент.
+pageData?.sendProposalBtn = Надіслати пропозицію
+
+
+#Contacts
+
+pageData?.title = Контакти
+pageData?.lead = З будь-яких питань щодо сервісу, пропозицій або співпраці — ми завжди на зв’язку.
+pageData?.writeQuestionBtn = Написати запитання
+pageData?.responseTime = Відповідаємо протягом 24 годин.
+
+
+#Promo
+
+pageData?.title = Акції та пропозиції
+pageData?.subtitle = Вигідні преміум-пропозиції та ексклюзивні промокоди.
+pageData?.premiumTitle = Преміум зі знижкою
+pageData?.premiumText = Повний доступ до каталогу, 4K та перегляд без реклами.
+pageData?.buyPremiumBtn = Купити Преміум
+pageData?.copiedMsg = Cкопійовано
+promo.code = KYSK25
+promo.description = -30% для нових користувачів
+pageData?.copyBtn = Скопіювати
+promo.code = FREEWEEK
+promo.description = 7 днів преміум безкоштовно
+pageData?.copyBtn = Скопіювати
+
+
+#Terms
+
+pageData.title = Угода користувача
+section.title = 1. Загальні положення
+section.content = Ця Угода користувача (далі - «Угода») регулює відносини між ТОВ «Kysk» (далі - «Сервіс», «Ми», «Нас») та користувачем (далі - «Користувач», «Ви») щодо використання інформаційного ресурсу KyskFilms. Використовуючи наш сервіс, Ви автоматично погоджуєтесь з умовами цієї Угоди.
+section.title = 2. Реєстрація та обліковий запис
+section.content = Для доступу до повного функціоналу сервісу необхідно створити обліковий запис. Ви зобов'язуєтесь надавати точну та актуальну інформацію під час реєстрації. Ви несете відповідальність за збереження конфіденційності свого пароля та за всі дії, здійснені під вашим обліковим записом.
+section.title = 3. Використання сервісу
+section.content = Сервіс надається «як є» для особистого, некомерційного використання. Заборонено використовувати сервіс для незаконних цілей, порушення авторських прав, або будь-якої діяльності, що може завдати шкоди сервісу або іншим користувачам.
+section.title = 4. Підписки та оплата
+section.content = Деякі послуги можуть вимагати оплати. Умови підписки та оплати описані окремо. Ми залишаємо за собою право змінювати ціни та умови підписки з попереднім повідомленням користувачів.
+section.title = 5. Інтелектуальна власність
+section.content = Весь контент, доступний на платформі, включаючи фільми, серіали, зображення, логотипи та інші матеріали, є власністю їх відповідних власників та захищений законами про авторське право. Будь-яке несанкціоноване використання заборонено.
+section.title = 6. Зміни в Угоді
+section.content = Ми залишаємо за собою право вносити зміни до цієї Угоди. Про суттєві зміни ми повідомимо користувачів через наш сервіс або електронну пошту. Продовжуючи використовувати сервіс після змін, Ви погоджуєтесь з новими умовами.
+
+
+#Privacy
+
+pageData.title = Політика конфіденційності
+section.title = 1. Збір інформації
+section.content = Ми збираємо інформацію, яку Ви надаєте нам безпосередньо (ім'я, електронна пошта, номер телефону), а також технічну інформацію про Ваш пристрій та використання сервісу (IP-адреса, тип браузера, переглянуті фільми) для покращення якості послуг.
+section.title = 2. Використання інформації
+section.content = Зібрана інформація використовується для надання та покращення послуг, персоналізації досвіду перегляду, обробки платежів, комунікації з користувачами та забезпечення безпеки сервісу.
+section.title = 3. Захист даних
+section.content = Ми вживаємо технічних та організаційних заходів для захисту Ваших персональних даних від несанкціонованого доступу, втрати або знищення. Однак жоден метод передачі через інтернет не є абсолютно безпечним.
+section.title = 4. Розкриття інформації третім особам
+section.content = Ми не продаємо та не передаємо Ваші персональні дані третім особам, за винятком випадків, коли це необхідно для надання послуг, виконання законних вимог, або за Вашою згодою.
+section.title = 5. Cookies та аналогічні технології
+section.content = Ми використовуємо cookies та аналогічні технології для збереження Ваших налаштувань, аналізу використання сервісу та персоналізації контенту. Ви можете налаштувати свій браузер для відмови від cookies, але це може вплинути на функціональність сервісу.
+section.title = 6. Ваші права
+section.content = Ви маєте право на доступ до своїх персональних даних, їх виправлення, видалення або обмеження обробки. Для реалізації цих прав зверніться до нас через контактну інформацію, вказану на сайті.
+
+
+#Rules
+
+pageData.title = Правила застосування рекомендаційних технологій
+section.title = 1. Загальні положення
+section.content = На інформаційному ресурсі KyskFilms застосовуються рекомендаційні технології відповідно до Правил, затверджених законодавством України. Ці технології призначені для персоналізації контенту та покращення користувацького досвіду.
+section.title = 2. Принципи роботи рекомендаційних систем
+section.content = Рекомендаційні технології аналізують вашу історію перегляду, вподобання, рейтинги та інші поведінкові дані для формування персоналізованих рекомендацій. Система враховує жанри, акторів, режисерів та інші характеристики контенту, який ви переглядаєте.
+section.title = 3. Використання даних
+section.content = Для роботи рекомендаційних систем ми використовуємо анонімізовані дані про вашу активність на платформі: переглянуті фільми та серіали, додані до обраного, оцінки та інші взаємодії з контентом. Ці дані обробляються автоматично та не передаються третім особам.
+section.title = 4. Прозорість алгоритмів
+section.content = Ми прагнемо забезпечити прозорість роботи рекомендаційних систем. Користувачі мають можливість бачити, чому їм рекомендуються певні фільми або серіали, та впливати на формування рекомендацій через свої дії на платформі.
+section.title = 5. Контроль користувача
+section.content = Ви можете впливати на рекомендації, додаючи контент до обраного, ставлячи оцінки, переглядаючи різноманітний контент. Також ви маєте можливість очистити історію перегляду або скинути налаштування рекомендацій у розділі налаштувань профілю.
+section.title = 6. Відповідальність
+section.content = Рекомендації формуються автоматично на основі алгоритмів та не є гарантією того, що контент відповідатиме вашим очікуванням. Ми не несемо відповідальності за зміст рекомендованого контенту, але постійно працюємо над покращенням точності рекомендацій.
+
+
+#Profile
+
+#List
+
+#EditActor
+
+#EditMovie
+ 
+#SeachMovie
+
+#SeachActor
+
+#confirmDelete
+
+
+
+

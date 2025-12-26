@@ -289,7 +289,7 @@ export const NewAndPopular = () => {
             <div className="popular_page">
                 <div className="popular_page_title"></div>
                 <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-                    Ошибка: {error}
+                    Помилка: {error}
                 </div>
             </div>
         );
@@ -299,7 +299,7 @@ export const NewAndPopular = () => {
         return (
             <div className="popular_page">
                 <div className="popular_page_title"></div>
-                <div style={{ padding: '20px', textAlign: 'center' }}>Нет данных</div>
+                <div style={{ padding: '20px', textAlign: 'center' }}>Немає данних</div>
             </div>
         );
     }
@@ -443,7 +443,7 @@ export const NewAndPopular = () => {
                             })
                         ) : (
                             <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                                Коллекции временно недоступны
+                                Коллекції Недоступні
                             </div>
                         )}
                     </div>

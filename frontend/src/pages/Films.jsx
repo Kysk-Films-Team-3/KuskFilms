@@ -349,7 +349,7 @@ export const Films = () => {
                 
                 setFilms(mappedFilms);
             } catch (error) {
-                setError(error.message || 'Ошибка загрузки фильмов');
+                setError(error.message || 'Помилка загрузки фильмів');
             } finally {
                 setFilmsLoading(false);
             }
@@ -408,14 +408,6 @@ export const Films = () => {
     if (error || !pageMeta) {
         return (
             <div className="films_page">
-                <div className="films_container">
-                    <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-                        {error || 'Ошибка загрузки данных'}
-                    </div>
-                    <div style={{ padding: '10px', textAlign: 'center', color: '#999', fontSize: '12px' }}>
-                        Проверьте консоль браузера для деталей
-                    </div>
-                </div>
             </div>
         );
     }
@@ -538,7 +530,7 @@ export const Films = () => {
                     </div>
 
                     <div className="films_rating_slider_group">
-                        <span className="films_rating_label">{pageMeta?.filters?.ratingLabel || 'Рейтинг'}</span>
+                        <span className="films_rating_label">{pageMeta?.filters?.ratingLabel || ''}</span>
                         <div className="films_rating_slider_container">
                             <div 
                                 className="films_rating_slider_wrapper" 
@@ -618,7 +610,7 @@ export const Films = () => {
                                 <span className="films_rating_value films_rating_value_max">{ratingMax.toFixed(1)}</span>
                             </div>
                         </div>
-                        <button className="films_reset_button" onClick={handleReset}>{pageMeta?.filters?.resetButtonLabel || 'Скинути'}</button>
+                        <button className="films_reset_button" onClick={handleReset}>{pageMeta?.filters?.resetButtonLabel || ''}</button>
                     </div>
                 </div>
 
@@ -693,7 +685,7 @@ export const Films = () => {
                             </div>
                         ))
                     ) : !filmsLoading ? (
-                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}>Фильмы не найдены</div>
+                        <div style={{ color: '#F8F8FE', padding: '20px', gridColumn: '1 / -1', textAlign: 'center' }}>Фильми не знайдені</div>
                     ) : null}
                 </div>
             </div>

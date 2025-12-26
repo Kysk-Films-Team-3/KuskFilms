@@ -377,11 +377,11 @@ export const Home = ({ onOpenActorRecs }) => {
                                         <div className="home_slide_text">
                                             {slide.isNew && (
                                                 <div className="home_slide_new">
-                                                    <div className="home_slide_new_title"><Trans i18nKey="slide.new"/></div>
+                                                    <div className="home_slide_new_title"></div>
                                                 </div>
                                             )}
                                             <div className="home_slide_film_name">
-                                                {slide.title || 'Без названия'}
+                                                {slide.title || ''}
                                             </div>
                                             <div className="home_slide_line_block">
                                                 {slide.rating && (
@@ -531,7 +531,7 @@ export const Home = ({ onOpenActorRecs }) => {
 
                         <div className="home_stars_choice_block">
                             <div className="home_stars_header">
-                                <div className="home_stars_choice_title"><Trans i18nKey="stars.title" /></div>
+                                <div className="home_stars_choice_title">actor.title</div>
                                 <div className="home_stars_choice_arrow"></div>
                             </div>
 

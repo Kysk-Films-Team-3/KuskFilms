@@ -64,7 +64,7 @@ export const CommentModal = ({ isOpen, onClose }) => {
         return (
             <div className="comment_overlay">
                 <div className="comment_modal" ref={commentRef}>
-                    <button className="comment_close" onClick={onClose}>×</button>
+                    <button className="comment_close" onClick={onClose}></button>
                     <p></p>
                 </div>
             </div>
@@ -75,7 +75,7 @@ export const CommentModal = ({ isOpen, onClose }) => {
         <div className="comment_overlay">
             <div className="comment_modal" ref={commentRef}>
 
-                <button className="comment_close" onClick={onClose}>×</button>
+                <button className="comment_close" onClick={onClose}></button>
 
                 <h2 className="comment_title">{commentsData?.ui?.writeCommentTitle || ''}</h2>
 
